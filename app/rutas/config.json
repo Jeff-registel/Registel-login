@@ -1,0 +1,7 @@
+{
+    "nodos-soportados": 100,
+    "extensiones-a-ocultar": [
+        ".ejs",
+        ".json"
+    ]
+}

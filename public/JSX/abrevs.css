@@ -1,0 +1,47 @@
+.ta-right{
+        text-align: right;
+}
+
+.ta-center{
+        text-align: center;
+}
+
+.ta-left{
+        text-align: left;
+}
+
+.c-white{
+        color: white !important;
+}
+
+.pad-10{
+        padding: 10px;
+}
+
+.pad-20{
+        padding: 20px;
+}
+
+.w-100P{
+        width: 100%;
+}
+
+.d-inline-block{
+        display: inline-block;
+}
+
+.d-none{
+        display: none;
+}
+
+.silueta-blanca{
+        filter: brightness(0) invert(1);
+}
+
+.no-min-width{
+        min-width: 0 !important;
+}
+
+.white-space-nowrap{
+        white-space: nowrap;
+}

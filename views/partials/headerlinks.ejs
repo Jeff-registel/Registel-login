@@ -1,0 +1,40 @@
+<script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.20/babel.min.js"></script>
+<script src="https://unpkg.com/@mui/material@latest/umd/material-ui.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-bootstrap@next/dist/react-bootstrap.min.js" crossorigin></script>
+
+<script src="/JS/main.js"></script>
+<script src="/JSX/main.jsx" type="text/babel"></script>
+<% if (user) { %>
+  <script src="/JSX/menu-izquierda.jsx" type="text/babel"></script>
+  <style>
+      body {
+          background: #121212;
+      }
+  </style>
+<% } %>
+
+<script src="/img/jsx-svg/logos.jsx" type="text/babel"></script>
+
+<link rel="stylesheet" href="/main.css">
+
+<link rel="stylesheet" href="/JSX/abrevs.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<meta property="og:site_name" content="Regisdataweb" />
+<meta property="og:title" content="Regisdataweb" />
+<meta property="og:description" content="Regisdataweb: Información real para decisiones efectivas" />
+
+<meta property="og:image" content="https://docs.google.com/drawings/d/e/2PACX-1vQjYk__JxUsXs9VBGC7hJoXHNKJOT7F6Fe-XJQZiHWfzqcxZekMABUV5H3WTAvRlc2X4I_KSerM-2SA/pub?w=256" />
+
+<link rel="icon" type="image/png" href="https://docs.google.com/drawings/d/e/2PACX-1vQjYk__JxUsXs9VBGC7hJoXHNKJOT7F6Fe-XJQZiHWfzqcxZekMABUV5H3WTAvRlc2X4I_KSerM-2SA/pub?w=64" />
+
+<script src="/socket.io/socket.io.js"></script>
+
+<script>
+  const socket = io();
+
+  let user = <%- user ? JSON.stringify(user) : "undefined" %>;
+  let info_pagina = <%- JSON.stringify(info_pagina) %>;
+</script>

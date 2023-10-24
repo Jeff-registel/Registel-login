@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Regisdataweb</title>
+
+        <%- include(info_pagina.subir_a_raiz + 'partials/headerlinks') %>
+
+        <% if(user){ %>
+                <script>
+                        location.href = '/login/';
+                </script>
+        <% } %>
+</head>
+<body>
+
+        <div class="App">
+        </div>
+
+        <script src="/index.jsx" type="text/babel" defer></script>
+
+</body>
+</html>
