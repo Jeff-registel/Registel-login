@@ -17,9 +17,9 @@ for (let i = 1; i < config["nodos-soportados"]; i++) {
 }
 
 module.exports = function (app_pack) {
-  let { app, passport } = app_pack;
-
-  require("./rutas-manuales")(app, passport);
+  let { app } = app_pack;
+  
+  require("./rutas-manuales")(app_pack);
   
   Object.entries(mapa).forEach(([k, v]) => {
     app.get(k, v);

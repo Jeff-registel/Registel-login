@@ -17,7 +17,8 @@ const addScript = ({ src, type = "text/javascript", defer = false, onload }) => 
     }
     
     addLink("https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css");
-    
+    addScript({src: "/JS/ventana-flotante/index.js"});
+
     Iconos_fa_bs();
     SweetAlert2();
     

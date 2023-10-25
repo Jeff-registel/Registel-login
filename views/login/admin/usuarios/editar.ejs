@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Regisdataweb</title>
+
+  <%- include(info_pagina.subir_a_raiz + 'partials/headerlinks') %>
+</head>
+
+<body>
+  <style>
+    body{
+      display: flex;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .actualizar-usuario{
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      z-index: 100;
+    }
+
+    table {
+
+      & th,
+      & td {
+        padding: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      & th {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    }
+  </style>
+
+  <div class="App">
+  </div>
+
+  <script src="/login/admin/usuarios/editar.jsx" type="text/babel" defer></script>
+</body>
+
+</html>

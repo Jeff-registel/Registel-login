@@ -1,3 +1,10 @@
+<%
+    let search = URL && typeof URL == "string" && URL.includes("?") ? new URLSearchParams(URL.split("?")[1]): new URLSearchParams(""); 
+%>
+<script>
+  let search = new URLSearchParams(window.location.search);
+</script>
+
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.22.20/babel.min.js"></script>
@@ -6,8 +13,11 @@
 
 <script src="/JS/main.js"></script>
 <script src="/JSX/main.jsx" type="text/babel"></script>
+
 <% if (user) { %>
-  <script src="/JSX/menu-izquierda.jsx" type="text/babel"></script>
+  <% if(search.get("menu-izquierda") != "false"){ %>
+    <script src="/JSX/menu-izquierda.jsx" type="text/babel" defer></script>
+  <% } %>
   <style>
       body {
           background: #121212;
@@ -19,7 +29,6 @@
 
 <link rel="stylesheet" href="/main.css">
 
-<link rel="stylesheet" href="/JSX/abrevs.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
 <meta property="og:site_name" content="Regisdataweb" />
@@ -37,4 +46,5 @@
 
   let user = <%- user ? JSON.stringify(user) : "undefined" %>;
   let info_pagina = <%- JSON.stringify(info_pagina) %>;
+  
 </script>

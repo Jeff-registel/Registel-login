@@ -1,6 +1,8 @@
-let sql = require("../mysql.js");
+module.exports = (app_pack) => {
+  let { app, passport } = app_pack;
 
-module.exports = (app, passport) => {
+  let sql = require("../socket.io-sql")(app_pack);
+
   app.get("/API/login-usuario/:usuario/:contrasena", async (req, res) => {
     res.json({
       acceso: !!(await sql.verificarUsuario(req.params.usuario, req.params.contrasena)),

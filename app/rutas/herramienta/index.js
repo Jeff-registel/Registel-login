@@ -1,5 +1,4 @@
 function limpiar_ruta(ruta) {
-  console.log("limpiar_ruta", ruta);
   if (!ruta) {
     return ruta;
   }

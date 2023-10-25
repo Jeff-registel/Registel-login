@@ -1,4 +1,4 @@
-addLink('JSX/abrevs.css');
+addLink('/JSX/abrevs.css');
 
 Object.assign(window, window['MaterialUI']);
 
@@ -6,8 +6,8 @@ const darkTheme = createTheme({
     typography: {
         button: {
           textTransform: 'none'
-        }
-      },
+        },
+    },
     palette: {
         mode: 'dark',
         primary: {
