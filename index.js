@@ -1,14 +1,69 @@
 "use strict";
 require("./settings");
 
-var mysql = require('mysql');
+var mysql = require("mysql");
+let host = "198.251.74.11";
 
 var conexion = mysql.createConnection({
-        host: "198.251.74.11",
-        user: "root",
-        password: "diseno&desarrollo",
-        database: "bd_cooperativa_rdw"
+  host,
+  user: "root",
+  password: "diseno&desarrollo",
+  database: "bd_cooperativa_rdw",
 });
+
+function execSql(statement) {
+  let p = new Promise(function (res, rej) {
+    conexion.query(statement, function (err, result) {
+      if (err) rej(err);
+      else res(result);
+    });
+  });
+  return p;
+}
+
+const memoria = require("./app/memoria");
+
+(async () => {
+  let bases_de_datos = await execSql("SHOW DATABASES");
+  bases_de_datos = bases_de_datos.map((x) => x["Database"]);
+  bases_de_datos = bases_de_datos.filter(
+    (x) => x.startsWith("bd_") && x.endsWith("rdw")
+  );
+  console.log(bases_de_datos);
+  bases_de_datos.forEach(async (BD) => {
+    let tablas = await execSql("SHOW TABLES FROM " + BD);
+    tablas = Object.values(tablas).map((x) => x["Tables_in_" + BD]);
+    console.log(tablas);
+    tablas.forEach(async (Tabla) => {
+      let datos = await execSql("SELECT * FROM " + BD + "." + Tabla);
+      if (!datos.length) {
+        return;
+      }
+      let PK = Object.keys(datos[0]).find((x) => x.startsWith("PK"));
+      if (!PK) {
+        PK = Object.keys(datos[0]).find((x) => x.startsWith("id"));
+      }
+      if (!PK) {
+        return;
+      }
+
+      datos.forEach(async (dato) => {
+        console.log(host, BD, Tabla, dato[PK]);
+        await memoria.EXEC({
+          DOC: {
+            [host]: {
+              [BD]: {
+                [Tabla]: {
+                  [dato[PK] + ".json"]: dato,
+                },
+              },
+            },
+          },
+        });
+      });
+    });
+  });
+})();
 
 const http = require("http");
 const express = require("express");
@@ -40,18 +95,7 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-app.use(require('morgan')('combined'))
-
-function execSql(statement) {
-  let p = new Promise(function (res, rej) {
-          conexion.query(statement, function (err, result) {
-                  if (err) rej(err);
-                  else res(result);
-          });
-  });
-  return p;
-}
+app.use(require("morgan")("combined"));
 
 const pack_app = {
   io,
@@ -70,7 +114,10 @@ passport.use(
       passwordField: "contrasena",
     },
     async (usuario, contraseña, done) => {
-      let user = await pack_app.socketio_sql.verificarUsuario(usuario, contraseña);
+      let user = await pack_app.socketio_sql.verificarUsuario(
+        usuario,
+        contraseña
+      );
       if (!user) {
         return done(null, false);
       }
