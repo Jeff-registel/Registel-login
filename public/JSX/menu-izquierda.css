@@ -24,11 +24,11 @@ body{
 }
 
 .colapsado-vista{
-        display: block;
+        display: block !important;
 }
 
 .descolapsado-vista{
-        display: none;
+        display: none !important;
 }
 
 .seccion-boton-menu{
@@ -37,11 +37,11 @@ body{
 
 body:has(#estado-colpasamiento:checked){
         .menu-izquierda-desactivador{
-                display: block;
+                display: block !important;
         }
 
         .seccion-boton-menu.colapsador{
-                text-align: right;
+                text-align: right !important;
         }
 
         .colapsado-vista{
