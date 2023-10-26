@@ -1,15 +1,13 @@
 "use strict";
 require("./settings");
 
-var mysql = require("mysql");
-let host = "198.251.74.11";
+let templatesString = require("./templates-string");
 
-var conexion = mysql.createConnection({
-  host,
-  user: "root",
-  password: "diseno&desarrollo",
-  database: "bd_cooperativa_rdw",
-});
+var mysql = require("mysql");
+
+let SQL_config = require("./app/SQL-config");
+
+var conexion = mysql.createConnection(SQL_config);
 
 function execSql(statement) {
   let p = new Promise(function (res, rej) {
@@ -20,50 +18,6 @@ function execSql(statement) {
   });
   return p;
 }
-
-const memoria = require("./app/memoria");
-
-(async () => {
-  let bases_de_datos = await execSql("SHOW DATABASES");
-  bases_de_datos = bases_de_datos.map((x) => x["Database"]);
-  bases_de_datos = bases_de_datos.filter(
-    (x) => x.startsWith("bd_") && x.endsWith("rdw")
-  );
-  console.log(bases_de_datos);
-  bases_de_datos.forEach(async (BD) => {
-    let tablas = await execSql("SHOW TABLES FROM " + BD);
-    tablas = Object.values(tablas).map((x) => x["Tables_in_" + BD]);
-    console.log(tablas);
-    tablas.forEach(async (Tabla) => {
-      let datos = await execSql("SELECT * FROM " + BD + "." + Tabla);
-      if (!datos.length) {
-        return;
-      }
-      let PK = Object.keys(datos[0]).find((x) => x.startsWith("PK"));
-      if (!PK) {
-        PK = Object.keys(datos[0]).find((x) => x.startsWith("id"));
-      }
-      if (!PK) {
-        return;
-      }
-
-      datos.forEach(async (dato) => {
-        console.log(host, BD, Tabla, dato[PK]);
-        await memoria.EXEC({
-          DOC: {
-            [host]: {
-              [BD]: {
-                [Tabla]: {
-                  [dato[PK] + ".json"]: dato,
-                },
-              },
-            },
-          },
-        });
-      });
-    });
-  });
-})();
 
 const http = require("http");
 const express = require("express");
@@ -105,7 +59,7 @@ const pack_app = {
   urlencodedParser,
 };
 
-pack_app.socketio_sql = require("./app/socket.io-sql")(pack_app);
+pack_app.socketio_sql = require("./app/SQL-socket.io")(pack_app);
 
 passport.use(
   new passportLocal(
@@ -147,10 +101,14 @@ server.listen(app.get("port"), () => {
 app.get("/stop-server", (req, res) => {
   let user = req.user;
   if (!user) {
-    return res.send("No tienes permiso para hacer esto");
+    return res.send(templatesString.redirección({
+      textoPrincipal: "No has iniciado sesión",
+    }));
   }
   if (user["FK_PERFIL"] != 1) {
-    return res.send("No tienes permiso para hacer esto");
+    return res.send(templatesString.redirección({
+      textoPrincipal: "No tienes permiso para hacer esto",
+    }));
   }
   res.send("Server stopped");
   setTimeout(() => {

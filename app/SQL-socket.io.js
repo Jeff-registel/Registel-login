@@ -1,3 +1,8 @@
+const memoria = require("./memoria");
+
+let SQL2JSONBD = false;
+let SQL_config = require("./SQL-config");
+
 module.exports = function ({ io, execSql }) {
         async function verificarUsuario(usuario, contraseña) {
                 let result = await execSql(`SELECT * FROM tbl_usuario WHERE LOGIN = '${usuario}' AND CONTRASENA = SHA2('${contraseña}', 256)`);
@@ -36,6 +41,12 @@ module.exports = function ({ io, execSql }) {
         }
 
         io.on('connection', function (socket) {
+                socket.on('disconnect', function () {
+                        let URL = socket.handshake.headers.referer;
+                        if (URL.toString().includes("/login/admin/herramientas/SQL2JSONBD")) {
+                                SQL2JSONBD = false;
+                        }
+                });
 
                 socket.on('Verificar usuario', async function ({ usuario, contrasena }) {
                         io.to(socket.id).emit(
@@ -60,7 +71,7 @@ module.exports = function ({ io, execSql }) {
                                         return io.to(socket.id).emit("Usuario: editar: error!", {
                                                 error: "El usuario ya existe, intente otro login"
                                         });
-                                }       
+                                }
                         }
                         async function usuarioEditar(props) {
                                 return Object.entries(props).map(async ([k, v]) => {
@@ -129,6 +140,83 @@ module.exports = function ({ io, execSql }) {
                         );
                 });
 
+                //----------------------------------------------------------------------------------------------------------
+
+                socket.on('SQL2JSONBD: parar', async function () {
+                        console.log("SQL2JSONBD: parar");
+                        SQL2JSONBD = false;
+                });
+
+                socket.on('SQL2JSONBD', async function () {
+                        if (SQL2JSONBD) {
+                                return;
+                        }
+                        SQL2JSONBD = true;
+                        let bases_de_datos = await execSql("SHOW DATABASES");
+                        bases_de_datos = bases_de_datos.map((x) => x["Database"]);
+                        bases_de_datos = bases_de_datos.filter(
+                                (x) => x.startsWith("bd_") && x.endsWith("rdw")
+                        );
+                        io.to(socket.id).emit("SQL2JSONBD: respuesta: bases-de-datos", bases_de_datos);
+                        for (let i = 0; i < bases_de_datos.length; i++) {
+                                let BD = bases_de_datos[i];
+                                if (!SQL2JSONBD) {
+                                        return;
+                                }
+                                let tablas = await execSql("SHOW TABLES FROM " + BD);
+                                tablas = Object.values(tablas).map((x) => x["Tables_in_" + BD]);
+                                io.to(socket.id).emit("SQL2JSONBD: respuesta: tablas", tablas);
+                                for (let j = 0; j < tablas.length; j++) {
+                                        let Tabla = tablas[j];
+                                        if (!SQL2JSONBD) {
+                                                return;
+                                        }
+                                        for (let contador = 0; ; contador++) {
+                                                let querySQL = "SELECT * FROM " + BD + "." + Tabla + " LIMIT 2000 OFFSET " + (contador) * 2000;
+                                                console.log(querySQL);
+                                                let datos = await execSql(querySQL);
+                                                if (!datos.length) {
+                                                        break;
+                                                }
+                                                let PK = Object.keys(datos[0]).find((x) => x.startsWith("PK"));
+                                                if (!PK) {
+                                                        PK = Object.keys(datos[0]).find((x) => x.startsWith("id"));
+                                                }
+                                                if (!PK) {
+                                                        break
+                                                }
+
+                                                for (let k = 0; k < datos.length; k++) {
+                                                        let dato = datos[k];
+                                                        Object.entries(dato).forEach(([k, v]) => {
+                                                                if (!v) {
+                                                                        delete dato[k];
+                                                                }
+                                                        });
+                                                        if (!SQL2JSONBD) {
+                                                                return;
+                                                        }
+                                                        let queryJSON = {
+                                                                DOC: {
+                                                                        [SQL_config["host"]]: {
+                                                                                [BD]: {
+                                                                                        [Tabla]: {
+                                                                                                [dato[PK] + ".json"]: dato,
+                                                                                        },
+                                                                                },
+                                                                        },
+                                                                },
+                                                        }
+                                                        if (k % 233 == 0) {
+                                                                io.to(socket.id).emit("SQL2JSONBD: respuesta: query", queryJSON);
+                                                        }
+                                                        await memoria.EXEC(queryJSON);
+                                                }
+                                        }
+                                }
+                        }
+                        SQL2JSONBD = false;
+                });
         });
 
         return {

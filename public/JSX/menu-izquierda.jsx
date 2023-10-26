@@ -28,8 +28,18 @@ const MenuIzquierda = () => {
                                         </Button>
                                 </div>
 
-                                <BotonOpcionHerramienta font_awesome="fa-solid fa-house" label="Principal" href="/login" />
-                                <BotonOpcionHerramienta font_awesome="fa-regular fa-circle-user" label="Mi perfil" href="/login/mi-perfil" />
+                                <div>
+                                        <BotonOpcionHerramienta font_awesome="fa-solid fa-house" label="Principal" href="/login" />
+                                        <BotonOpcionHerramienta font_awesome="fa-regular fa-circle-user" label="Mi perfil" href="/login/mi-perfil" />
+                                        {
+                                                [1, 2].includes(user["FK_PERFIL"]) ?
+                                                        <React.Fragment>
+                                                                <BotonOpcionHerramienta font_awesome="fa-solid fa-screwdriver-wrench" label="Herramientas" href="/login/admin/" />
+                                                        </React.Fragment> :
+                                                        ""
+                                        }
+                                </div>
+
                                 <BotonOpcionHerramienta font_awesome="fa-solid fa-power-off" label="Cerrar sesión" href="/logout" />
 
                         </div>
@@ -38,7 +48,7 @@ const MenuIzquierda = () => {
         );
 };
 
-function BotonOpcionHerramienta({ font_awesome, label, href}) {
+function BotonOpcionHerramienta({ font_awesome, label, href }) {
         return (
                 <div class="seccion-boton-menu opcion-herramienta">
                         <Button
