@@ -13,7 +13,9 @@ function objeto(json) {
         let json_nuevo = fs.archivo.leer(
           archivo_ruta
         );
-        json_nuevo ??= {};
+        if(!json_nuevo){
+          json_nuevo = {};
+        }
         Object.assign(json_nuevo, nodo);
         fs.archivo.escribir({
           nombre: archivo_ruta,
