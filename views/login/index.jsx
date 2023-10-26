@@ -42,7 +42,7 @@ function Usuario({ usuario, ocultar }) {
                                 </Avatar>
                         </div>
                         <div className="usuario-nombre d-inline-block" style={{ width: 150, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis", textAlign: "left" }}>
-                                {usuario["NOMBRE"]} {usuario["APELLIDO"]}
+                                {usuario["NOMBRE"]}&nbsp;{usuario["APELLIDO"]}
                         </div>
                 </Button>
         );

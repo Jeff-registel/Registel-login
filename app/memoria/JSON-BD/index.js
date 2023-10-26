@@ -10,4 +10,5 @@ module.exports = {
     leer: require("./_READ"),
     EXEC: require("./-EXEC"),
     PACK: require("./_PACK"),
+    tools: require("./tools"),
 }

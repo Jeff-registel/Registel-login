@@ -1,6 +1,8 @@
 "use strict";
 require("./settings");
 
+//require("./app/internal-structures")
+
 let templatesString = require("./templates-string");
 
 var mysql = require("mysql");
@@ -27,6 +29,7 @@ const passportLocal = require("passport-local").Strategy;
 const socketio = require("socket.io");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
+const memoria = require("./app/memoria");
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const app = express();
 const server = http.createServer(app);
@@ -96,6 +99,17 @@ passport.deserializeUser(async function (NOMBRE, done) {
 
 server.listen(app.get("port"), () => {
   console.log("corriendo en el puerto:", app.get("port"));
+});
+
+app.get("/BD", async (req, res) => {
+  let URL = req.protocol + '://' + req.get('host') + req.originalUrl;
+  let partes = URL.split("?");
+  if (!partes[1]) {
+    return res.json({}).end();
+  }
+  let URLParams = new URLSearchParams(partes[1]);
+  let partesQuery = URLParams.get("queryURL2JSON").split("/");
+  res.json(memoria.tools.Array2Nodo(partesQuery).cabeza).end();
 });
 
 app.get("/stop-server", (req, res) => {

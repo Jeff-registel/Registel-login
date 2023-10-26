@@ -15,6 +15,10 @@ function Array2Nodo(array_ruta_nodo, argumentos = {}) {
         let ruta = [JSONBD_config.RAIZ,...array.map((e) => e.toString())].join("/");
         if (nombre.toString().endsWith(".json") && leer_json) {
           cabeza[nombre] = fs.archivo.leer(ruta);
+          let GET = `${ruta.replace(nombre,"")}@GET.js`;
+          if (fs.existe(GET)) {
+            cabeza[nombre] = require("../../../"+GET)(cabeza[nombre]);
+          }
         }
       } else {
         cabeza[nombre] = {};
@@ -22,6 +26,7 @@ function Array2Nodo(array_ruta_nodo, argumentos = {}) {
       cabeza = cabeza[nombre];
       cabeza_nombre = nombre;
     });
+    
   return {
     cuerpo,
     cabeza,
