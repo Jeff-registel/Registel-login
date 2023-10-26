@@ -1,5 +1,3 @@
-addLink("/JSX/menu-izquierda.css");
-
 let contenedor_menu_izquierda = document.createElement("div");
 
 const MenuIzquierda = () => {
