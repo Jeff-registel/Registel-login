@@ -37,19 +37,19 @@ body{
 
 body:has(#estado-colpasamiento:checked){
         .menu-izquierda-desactivador{
-                display: block !important;
+                display: block;
         }
 
         .seccion-boton-menu.colapsador{
-                text-align: right !important;
+                text-align: right;
         }
 
         .colapsado-vista{
-                display: none;
+                display: none !important;
         }
 
         .descolapsado-vista{
-                display: block;
+                display: block !important;
         }
 }
 
