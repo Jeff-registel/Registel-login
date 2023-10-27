@@ -21,6 +21,8 @@ function execSql(statement) {
   return p;
 }
 
+
+
 const http = require("http");
 const express = require("express");
 const session = require("express-session");
@@ -30,6 +32,7 @@ const socketio = require("socket.io");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const memoria = require("./app/memoria");
+const _fs = require("./app/memoria/_fs");
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const app = express();
 const server = http.createServer(app);
@@ -71,11 +74,18 @@ passport.use(
       passwordField: "contrasena",
     },
     async (usuario, contraseña, done) => {
-      let user = await pack_app.socketio_sql.verificarUsuario(
-        usuario,
-        contraseña
-      );
-      if (!user) {
+      let login = require("./" + memoria.config.RAIZ + "/usuarios/@MACROS.js")({
+        instruccion: "auth",
+        args: {
+          login: usuario,
+          contraseña,
+        },
+        url: "/usuarios/alias",
+      });
+      let { auth, usuario: user } = login;
+      console.log("usuario", usuario, "contraseña", contraseña);
+      console.log("login", login);
+      if (!auth) {
         return done(null, false);
       }
       return done(null, user);
@@ -84,12 +94,17 @@ passport.use(
 );
 
 passport.serializeUser(function (user, done) {
-  done(null, user["NOMBRE"]);
+  done(null, user["LOGIN"]);
 });
 
-passport.deserializeUser(async function (NOMBRE, done) {
-  let user = await pack_app.socketio_sql.usuarioInformacion(NOMBRE);
-  delete user["CONTRASENA"];
+passport.deserializeUser(async function (LOGIN, done) {
+  let user = require("./" + memoria.config.RAIZ + "/usuarios/@MACROS.js")({
+    instruccion: "alias",
+    args: {
+      login: LOGIN,
+    },
+    url: "/usuarios/alias",
+  });
   if (user) {
     done(null, user);
   } else {
@@ -108,7 +123,49 @@ app.get("/BD", async (req, res) => {
     return res.json({}).end();
   }
   let URLParams = new URLSearchParams(partes[1]);
-  let partesQuery = URLParams.get("queryURL2JSON").split("/");
+  let EXEC = URLParams.get("queryJSON-EXEC");
+  let urlQueryURL2JSON = URLParams.get("queryURL2JSON");
+
+  if (EXEC) {
+    return res.json(
+      memoria.EXEC(JSON.parse(EXEC))
+    ).end();
+  }
+
+  if (urlQueryURL2JSON) {
+    return QUERY2JSON();
+  }
+
+  function QUERY2JSON() {
+    let partesQuery = urlQueryURL2JSON.split("/");
+    let cabeza = partesQuery.at(-1);
+    if (cabeza.startsWith(":")) {
+      let MACROS = memoria.config.RAIZ + "/" + urlQueryURL2JSON.replace(cabeza, "@MACROS.js");
+      cabeza = cabeza.slice(1);
+
+      if (_fs.existe(MACROS)) {
+        let args = cabeza.split(";").filter((e) => e && e.includes("=")).map((e) => {
+          let i = e.split("=");
+          let llave = i[0];
+          let valor = i[1];
+          return { [llave]: valor };
+        }).reduce((a, b) => Object.assign(a, b), {});
+        let instruccion = args.i;
+        delete args.i;
+        return res.json(
+          require("./" + MACROS)({
+            instruccion,
+            args,
+            url: urlQueryURL2JSON,
+            query: cabeza
+          })
+        ).end();
+      } else {
+        return res.json({}).end();
+      }
+    }
+  }
+
   res.json(memoria.tools.Array2Nodo(partesQuery).cabeza).end();
 });
 

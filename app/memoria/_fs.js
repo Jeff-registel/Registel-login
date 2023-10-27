@@ -11,15 +11,13 @@ const {
 } = require("fs/promises");
 const { tmpdir } = require("os");
 const fs = require("fs");
-const fetch = require("node-fetch");
 const { join } = require("path");
 
-async function escribir(argumentos) {
-  let {
-    nombre,
-    array,
-    contenido
-  } = argumentos;
+async function escribir({
+  nombre,
+  array,
+  contenido
+}) {
 
   if (array) {
     nombre = array.join("/");
@@ -74,7 +72,7 @@ function leer(archivo_ruta) {
       return JSON.parse(texto);
     }
     return texto;
-  } catch (error) {}
+  } catch (error) { }
 }
 
 /*
@@ -86,14 +84,14 @@ async function renombrar(ruta_archivo_inicial, ruta_archivo_final) {
   try {
     fs.renameSync(ruta_archivo_inicial, ruta_archivo_final);
     return true;
-  } catch (error) {}
+  } catch (error) { }
 }
 
 async function mover(archivo_ruta_inicio, archivo_ruta_final) {
   try {
     fs.renameSync(archivo_ruta_inicio, archivo_ruta_final);
     return true;
-  } catch (error) {}
+  } catch (error) { }
 }
 
 /*
@@ -124,9 +122,9 @@ async function copiarArchivos(carpeta_inicial, carpeta_final, nombre_archivos) {
 }
 
 function carpeta_listar(ruta_carpeta) {
-  try{
+  try {
     return fs.readdirSync(ruta_carpeta, { withFileTypes: true });
-  }catch(error){
+  } catch (error) {
   }
   return []
 }
@@ -134,13 +132,13 @@ function carpeta_listar(ruta_carpeta) {
 function esArchivo(ruta_archivo) {
   try {
     return fs.lstatSync(ruta_archivo).isFile();
-  } catch (error) {}
+  } catch (error) { }
 }
 
 function esCarpeta(ruta_carpeta) {
   try {
     return fs.lstatSync(ruta_carpeta).isDirectory();
-  } catch (error) {}
+  } catch (error) { }
 }
 
 /*
@@ -150,11 +148,11 @@ async function eliminar(ruta_archivo) {
   try {
     if (fs.lstatSync(ruta_archivo).isFile()) {
       fs.unlinkSync(ruta_archivo);
-    }else{
+    } else {
       fs.rmSync(ruta_archivo, { recursive: true, force: true });
     }
     return true;
-  } catch (error) {}
+  } catch (error) { }
 }
 
 function añadir_evento_de_cambio(file, callback) {
@@ -222,7 +220,7 @@ async function eliminar_carpeta(path) {
   try {
     fs.rmdirSync(path);
     return true;
-  } catch (error) {}
+  } catch (error) { }
 }
 
 function existe(ruta) {
@@ -233,11 +231,10 @@ function existe(ruta) {
     if (fs.existsSync(ruta)) {
       return true;
     }
-  } catch (error) {}
+  } catch (error) { }
 }
 
 async function desdeURL(URL, ruta) {
-  let respuesta = await fetch(URL);
   let txt = await respuesta.text();
   return await escribir(ruta, txt);
 }
@@ -245,7 +242,6 @@ async function desdeURL(URL, ruta) {
 module.exports = {
   existe,
   join,
-  fetch,
   esArchivo,
   esCarpeta,
   archivo: {

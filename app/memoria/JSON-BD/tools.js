@@ -1,5 +1,4 @@
 let fs = require("../_fs");
-let { join } = require("path");
 let JSONBD_config = require("./__config.json");
 
 function array2Add(array_ruta_nodo, k, v) {
@@ -37,9 +36,10 @@ function Array2Nodo(
         let ruta = [JSONBD_config.RAIZ, ...array.map((e) => e.toString())].join(
           "/"
         );
+        console.log(nombre.toString().endsWith(".json"), leer_json);
         if (nombre.toString().endsWith(".json") && leer_json) {
           cabeza[nombre] = fs.archivo.leer(ruta);
-          let GET = `${ruta.replace(nombre, "")}@GET.js`;
+          let GET = ruta.replace(nombre, "@!GET.js");
           if (fs.existe(GET)) {
             cabeza[nombre] = require("../../../" + GET)({
               json: cabeza[nombre],
@@ -56,7 +56,6 @@ function Array2Nodo(
       cabeza = cabeza[nombre];
       cabeza_nombre = nombre;
     });
-
   return {
     cuerpo,
     cabeza,

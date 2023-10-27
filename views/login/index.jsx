@@ -21,21 +21,21 @@ ReactDOM.render(<App />, document.querySelector('.App'));
 
 function Usuario({ usuario, ocultar }) {
         return (
-                <Button 
-                //href={`/login/admin/usuarios/editar?usuario=${usuario["LOGIN"]}&menu-izquierda=false`}
-                onClick={() => {
-                        ventana_flotante["nueva-ventana"]({
-                                titulo_texto: "Editar usuario",
-                                html: `
-                                        <iframe src="/login/admin/usuarios/editar?usuario=${usuario["LOGIN"]}&menu-izquierda=false" class="w-100P h-100P border-0"></iframe>
+                <Button
+                        href={`/login/admin/usuarios/editar?usuario=${usuario["PK_USUARIO"]}&menu-izquierda=false`}
+                        /* onClick={() => {
+                                ventana_flotante["nueva-ventana"]({
+                                        titulo_texto: "Editar usuario",
+                                        html: `
+                                        <iframe src="/login/admin/usuarios/editar?usuario=${usuario["PK_USUARIO"]}&menu-izquierda=false" class="w-100P h-100P border-0"></iframe>
                                 `
-                        })
-                }}
-                className={
-                        (ocultar ? 'd-none' : '') +
-                        (usuario["ESTADO"] == 1 ? ' b-s-1px-darkgreen' : ' b-s-1px-darkred') +
-                        " usuario c-white m-5"
-                }>
+                                })
+                        }} */
+                        className={
+                                (ocultar ? 'd-none' : '') +
+                                (usuario["ESTADO"] == 1 ? ' b-s-1px-darkgreen' : ' b-s-1px-darkred') +
+                                " usuario c-white m-5"
+                        }>
                         <div className="d-inline-block usuario-imagen pad-20">
                                 <Avatar style={{ backgroundColor: `hsl(${(12 * (usuario["NOMBRE"].charCodeAt(0) + usuario["APELLIDO"].charCodeAt(0))) % 360}, 100%, 30%)` }}>
                                         {usuario["NOMBRE"][0]}{usuario["APELLIDO"][0]}
@@ -48,7 +48,21 @@ function Usuario({ usuario, ocultar }) {
         );
 }
 
-socket.on("Todos los usuarios: respuesta", (usuarios) => {
+
+async function render_todosLosUsuarios() {
+        let usuarios = ( await (await fetch("/BD?queryURL2JSON=usuarios/:i=todo")).json());
+
+        usuarios = usuarios.sort((a, b) => {
+                if (a["PK_USUARIO"] > b["PK_USUARIO"]) {
+                        return 1;
+                } else if (a["PK_USUARIO"] < b["PK_USUARIO"]) {
+                        return -1;
+                }
+                return 0;
+        });
+
+        console.log(usuarios[0]["ESTADO"]);
+
         if (![1, 2].includes(user["FK_PERFIL"])) {
                 return ReactDOM.render(
                         <React.Fragment>
@@ -59,8 +73,7 @@ socket.on("Todos los usuarios: respuesta", (usuarios) => {
                         , document.querySelector(".ultimos-usuarios-modificados")
                 );
         }
-        usuarios = usuarios.filter(e => e["LOGIN"] != user["LOGIN"]);
-        usuarios = usuarios.filter(e => e["FK_PERFIL"] > user["FK_PERFIL"]);
+        usuarios = usuarios.filter(e => e["PK_USUARIO"] != user["PK_USUARIO"] && e["FK_PERFIL"] > user["FK_PERFIL"]);
         ReactDOM.render(
                 <React.Fragment>
                         <h1>
@@ -68,7 +81,7 @@ socket.on("Todos los usuarios: respuesta", (usuarios) => {
                         </h1>
                         {
                                 usuarios.map((usuario, index) => {
-                                        return <Usuario usuario={usuario} ocultar={index >= 12}/>
+                                        return <Usuario usuario={usuario} ocultar={index >= 12} />
                                 })
                         }
                         <br />
@@ -96,10 +109,11 @@ socket.on("Todos los usuarios: respuesta", (usuarios) => {
                 </React.Fragment>
                 , document.querySelector(".ultimos-usuarios-modificados")
         );
-});
+}
+
 
 socket.on("Hay un cambio en la tabla: tbl_usuario", () => {
-        socket.emit("Todos los usuarios");
+        render_todosLosUsuarios();
 });
 
-socket.emit("Todos los usuarios");
+render_todosLosUsuarios();
