@@ -10,7 +10,6 @@ module.exports = ({ json, ruta, query, nombre, usuario, seguro }) => {
       },
     }),
   };
-  console.log(QUERY);
   memoria.EXEC(QUERY);
   if (seguro) {
     delete json["CONTRASENA"];
