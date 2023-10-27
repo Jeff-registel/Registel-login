@@ -1,3 +1,5 @@
+let memoria = require("../memoria");
+
 module.exports = (app_pack) => {
   let { app, passport } = app_pack;
 
@@ -5,7 +7,10 @@ module.exports = (app_pack) => {
 
   app.get("/API/login-usuario/:usuario/:contrasena", async (req, res) => {
     res.json({
-      acceso: !!(await sql.verificarUsuario(req.params.usuario, req.params.contrasena)),
+      acceso: !!(await sql.verificarUsuario(
+        req.params.usuario,
+        req.params.contrasena
+      )),
       usuario: req.params.usuario,
     });
   });
@@ -21,9 +26,6 @@ module.exports = (app_pack) => {
     passport.authenticate("local", {
       successRedirect: "/login",
       failureRedirect: "/",
-    }),
-    (req, res) => {
-      console.log(req.user);
-    }
+    })
   );
 };

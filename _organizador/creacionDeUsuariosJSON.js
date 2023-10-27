@@ -1,8 +1,4 @@
 
-const sha256 = require('sha256');
-
-console.log(sha256('registel'));
-
 var mysql = require("mysql");
 let memoria = require("../app/memoria");
 
@@ -21,11 +17,9 @@ function execSql(statement) {
 }
 
 async function main() {
-        console.log("Creando archivos JSON de usuarios...");
         let usuarios = await execSql("SELECT * FROM tbl_usuario");
         for (let i = 0; i < usuarios.length; i++) {
                 const usuario = usuarios[i];
-                console.log(`Creando archivo JSON de ${usuario["PK_USUARIO"]}`);
                 Object.entries(usuario).forEach(([key, value]) => {
                         if (!value) {
                                 delete usuario[key];

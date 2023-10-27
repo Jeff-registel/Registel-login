@@ -11,4 +11,5 @@ module.exports = {
     EXEC: require("./-EXEC"),
     PACK: require("./_PACK"),
     tools: require("./tools"),
+    config,
 }

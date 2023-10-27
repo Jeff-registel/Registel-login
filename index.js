@@ -102,7 +102,7 @@ server.listen(app.get("port"), () => {
 });
 
 app.get("/BD", async (req, res) => {
-  let URL = req.protocol + '://' + req.get('host') + req.originalUrl;
+  let URL = req.protocol + "://" + req.get("host") + req.originalUrl;
   let partes = URL.split("?");
   if (!partes[1]) {
     return res.json({}).end();
@@ -115,14 +115,18 @@ app.get("/BD", async (req, res) => {
 app.get("/stop-server", (req, res) => {
   let user = req.user;
   if (!user) {
-    return res.send(templatesString.redirección({
-      textoPrincipal: "No has iniciado sesión",
-    }));
+    return res.send(
+      templatesString.redirección({
+        textoPrincipal: "No has iniciado sesión",
+      })
+    );
   }
   if (user["FK_PERFIL"] != 1) {
-    return res.send(templatesString.redirección({
-      textoPrincipal: "No tienes permiso para hacer esto",
-    }));
+    return res.send(
+      templatesString.redirección({
+        textoPrincipal: "No tienes permiso para hacer esto",
+      })
+    );
   }
   res.send("Server stopped");
   setTimeout(() => {

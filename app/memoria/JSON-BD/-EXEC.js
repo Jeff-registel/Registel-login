@@ -39,7 +39,7 @@ function MANY({ instruccion, array }) {
   );
 }
 
-function ONE({ instruccion, json }) {
+function ONE({ instruccion, json, usuario}) {
   if (!json) {
     throw new Error("No se ha especificado el json");
   }
@@ -47,14 +47,17 @@ function ONE({ instruccion, json }) {
     instruccion = Object.keys(json)[0];
     json = json[instruccion];
   }
+  let args = {
+    usuario
+  };
   switch (instruccion) {
     case "READ":
-      return READ(json);
+      return READ(json, args);
     case "DOC":
-      DOC(json);
+      DOC(json, args);
       break;
     case "DELETE":
-      DELETE(json);
+      DELETE(json, args);
       break;
   }
 }

@@ -2,8 +2,30 @@ let fs = require("../_fs");
 let { join } = require("path");
 let JSONBD_config = require("./__config.json");
 
-function Array2Nodo(array_ruta_nodo, argumentos = {}) {
-  let { valor_de_ultimo_elemento = {}, leer_json = true } = argumentos;
+function array2Add(array_ruta_nodo, k, v) {
+  if (k == undefined) {
+    return;
+  }
+  array_ruta_nodo = array_ruta_nodo.replace(JSONBD_config.RAIZ+"/", "");
+  let QUERY_UPDATE = {};
+  let TQUERY_UPDATE = QUERY_UPDATE;
+  array_ruta_nodo.split("/").forEach((item, index, array) => {
+    if (index == array.length - 1) {
+      TQUERY_UPDATE[item] = {
+        [k]: v,
+      };
+      return;
+    }
+    TQUERY_UPDATE[item] = {};
+    TQUERY_UPDATE = TQUERY_UPDATE[item];
+  });
+  return QUERY_UPDATE;
+}
+
+function Array2Nodo(
+  array_ruta_nodo,
+  { valor_de_ultimo_elemento = {}, leer_json = true, seguro = true } = {}
+) {
   let cuerpo = {};
   let cabeza = cuerpo;
   let cabeza_nombre;
@@ -12,12 +34,20 @@ function Array2Nodo(array_ruta_nodo, argumentos = {}) {
     .forEach((nombre, indice, array) => {
       if (indice == array.length - 1) {
         cabeza[nombre] = valor_de_ultimo_elemento;
-        let ruta = [JSONBD_config.RAIZ,...array.map((e) => e.toString())].join("/");
+        let ruta = [JSONBD_config.RAIZ, ...array.map((e) => e.toString())].join(
+          "/"
+        );
         if (nombre.toString().endsWith(".json") && leer_json) {
           cabeza[nombre] = fs.archivo.leer(ruta);
-          let GET = `${ruta.replace(nombre,"")}@GET.js`;
+          let GET = `${ruta.replace(nombre, "")}@GET.js`;
           if (fs.existe(GET)) {
-            cabeza[nombre] = require("../../../"+GET)(cabeza[nombre]);
+            cabeza[nombre] = require("../../../" + GET)({
+              json: cabeza[nombre],
+              ruta,
+              nombre,
+              query: array,
+              seguro,
+            });
           }
         }
       } else {
@@ -26,7 +56,7 @@ function Array2Nodo(array_ruta_nodo, argumentos = {}) {
       cabeza = cabeza[nombre];
       cabeza_nombre = nombre;
     });
-    
+
   return {
     cuerpo,
     cabeza,
@@ -36,4 +66,5 @@ function Array2Nodo(array_ruta_nodo, argumentos = {}) {
 
 module.exports = {
   Array2Nodo,
+  array2Add,
 };
