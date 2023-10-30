@@ -23,7 +23,7 @@ function array2Add(array_ruta_nodo, k, v) {
 
 function Array2Nodo(
   array_ruta_nodo,
-  { valor_de_ultimo_elemento = {}, leer_json = true, seguro = true } = {}
+  { valor_de_ultimo_elemento = {}, leer_json = true, seguro = true, context = {} } = {}
 ) {
   let cuerpo = {};
   let cabeza = cuerpo;
@@ -36,7 +36,6 @@ function Array2Nodo(
         let ruta = [JSONBD_config.RAIZ, ...array.map((e) => e.toString())].join(
           "/"
         );
-        console.log(nombre.toString().endsWith(".json"), leer_json);
         if (nombre.toString().endsWith(".json") && leer_json) {
           cabeza[nombre] = fs.archivo.leer(ruta);
           let GET = ruta.replace(nombre, "@!GET.js");
@@ -47,6 +46,7 @@ function Array2Nodo(
               nombre,
               query: array,
               seguro,
+              context,
             });
           }
         }

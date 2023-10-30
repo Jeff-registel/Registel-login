@@ -1,7 +1,7 @@
 let config = require("./__config.json");
 let fs = require("../_fs")
 
-function objeto(json) {
+function objeto(json, context) {
   recorrer_arbol({
     [config.RAIZ]: json,
   });
@@ -31,6 +31,7 @@ function objeto(json) {
             ruta: archivo_ruta,
             nombre,
             query: json,
+            context
           });
         }
         fs.archivo.escribir({

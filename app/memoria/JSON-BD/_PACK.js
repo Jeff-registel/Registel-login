@@ -3,7 +3,6 @@ let fs = require("../_fs");
 let { join } = require("path");
 
 function pack(json) {
-  console.log("PACK", json);
   if (!json) {
     json = { [config.RAIZ]: true };
   }else{
@@ -27,9 +26,6 @@ function pack(json) {
       }
 
       let ruta = `${padres.join("/")}${padres.length ? "/" : ""}${nombre}`;
-
-      console.log("RUTA", ruta);
-      console.log("VALOR", valor);
 
       if (nombre.endsWith(".json")) {
         if (fs.esArchivo(ruta) && valor == true) {

@@ -15,17 +15,13 @@ ReactDOM.createRoot(document.querySelector(".App")).render(
 );
 
 async function render_usuario() {
-        console.log("render_usuario");
         let usuarioBD = (await (await fetch(`/BD?queryURL2JSON=usuarios/${usuarioPK}.json`)).json());
-        console.log("usuarioBD", usuarioBD);
         empresasLista = (await (await fetch(`/BD?queryURL2JSON=diccionarios/empresas.json`)).json());
-        console.log("empresasLista", empresasLista);
         delete empresasLista["__atributos__"];
         {
                 let empresasResumen = [];
                 let lugares = Object.keys(empresasLista);
                 lugares.forEach(lugar => {
-                        console.log("lugar", lugar);
                         let servicios = empresasLista[lugar]["Servicios"];
                         let nombresServicios = Object.keys(servicios);
                         nombresServicios.forEach(nombreServicio => {
@@ -36,7 +32,6 @@ async function render_usuario() {
                                 });
                         });
                 });
-                console.log("empresasResumen", empresasResumen);
                 empresasLista = empresasResumen;
         }
         ReactDOM.createRoot(document.querySelector(".usuario")).render(
@@ -99,9 +94,7 @@ async function render_usuario() {
         render_perfiles();
 
         async function render_perfiles() {
-                console.log("render_perfiles");
                 let tabla = (await (await fetch(`/BD?queryURL2JSON=diccionarios/perfiles-usuario.json`)).json()).perfiles;
-                console.log("tabla", tabla);
                 ReactDOM.createRoot(document.querySelector(".FK_PERFIL")).render(
                         <ThemeProvider theme={theme}>
                                 <FormControl size="small" style={{ width: 230 }}>
@@ -121,7 +114,6 @@ async function render_usuario() {
 
 
 function Empresas({ seleccion }) {
-        console.log("selected", seleccion);
         return <Autocomplete
                 multiple
                 options={empresasLista}
@@ -147,38 +139,40 @@ function Empresas({ seleccion }) {
                 )} />;
 }
 
-socket.on("Usuario: editar: ok!", () => {
-        console.log("ok");
-        document.body.style.backgroundColor = "#122512";
+socket.on("usuarios_modificados", (usuarios) => {
+        console.log("usuariosAWS", usuarios);
+        usuarios.forEach(usuario => {
+                if (usuario["PK_USUARIO"] == usuarioPK) {
+                        render_usuario();
+                }
+        });
 });
 
-socket.on("Usuario: editar: error!", () => {
-        console.log("error");
-        document.body.style.backgroundColor = "#251212";
-});
-
-socket.on("Hay un cambio en usuarios", async () => {
-        socket.emit("Usuario", usuarioPK);
-});
 
 async function actualizaUsuario() {
-        console.log(
-                (await (await fetch(`/BD?queryJSON-EXEC=${JSON.stringify({
-                        DOC: {
-                                usuarios: {
-                                        [`${usuarioPK}.json`]: {
-                                                NOMBRE: document.querySelector(".NOMBRE").querySelector("input").value,
-                                                APELLIDO: document.querySelector(".APELLIDO").querySelector("input").value,
-                                                CEDULA: document.querySelector(".CEDULA").querySelector("input").value,
-                                                TELEFONO: document.querySelector(".TELEFONO").querySelector("input").value,
-                                                LOGIN: document.querySelector(".LOGIN").querySelector("input").value,
-                                                EMAIL: document.querySelector(".EMAIL").querySelector("input").value,
-                                                FK_PERFIL: document.querySelector(".FK_PERFIL_SELECT").querySelector("input").value,
-                                                ESTADO: document.querySelector(".ESTADO").querySelector("input").checked,
-                                                EMPRESAS_ACCESO: AutocompleteEmpresas ?? [],
-                                        }
+        let json = (await (await fetch(`/BD?queryJSON-EXEC=${JSON.stringify({
+                DOC: {
+                        usuarios: {
+                                [`${usuarioPK}.json`]: {
+                                        NOMBRE: document.querySelector(".NOMBRE").querySelector("input").value,
+                                        APELLIDO: document.querySelector(".APELLIDO").querySelector("input").value,
+                                        CEDULA: document.querySelector(".CEDULA").querySelector("input").value,
+                                        TELEFONO: document.querySelector(".TELEFONO").querySelector("input").value,
+                                        LOGIN: document.querySelector(".LOGIN").querySelector("input").value,
+                                        EMAIL: document.querySelector(".EMAIL").querySelector("input").value,
+                                        FK_PERFIL: parseInt(document.querySelector(".FK_PERFIL_SELECT").querySelector("input").value),
+                                        ESTADO: document.querySelector(".ESTADO").querySelector("input").checked,
+                                        EMPRESAS_ACCESO: AutocompleteEmpresas ?? [],
                                 }
                         }
-                })}`)).json())
-        );
+                }
+        })}`)).json());
+        switch (json.status) {
+                case "ok!":
+                        document.body.style.backgroundColor = "#122512";
+                        break;
+                case "error!":
+                        document.body.style.backgroundColor = "#251212";
+                        break;
+        }
 }

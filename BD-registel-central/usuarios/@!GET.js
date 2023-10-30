@@ -1,7 +1,8 @@
-module.exports = ({ json, ruta, seguro = true }) => {
+module.exports = ({ json, ruta, seguro = true, context }) => {
   require("../@!GET")({
       json,
       ruta,
+      context,
   });
   require("./@!GET-SEGURIDAD")({
     json,

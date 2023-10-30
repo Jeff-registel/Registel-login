@@ -13,15 +13,20 @@ var conexion = mysql.createConnection(SQL_config);
 
 function execSql(statement) {
   let p = new Promise(function (res, rej) {
-    conexion.query(statement, function (err, result) {
-      if (err) rej(err);
-      else res(result);
-    });
+    try {
+      conexion.query(statement, function (err, result) {
+        if (err) {
+          rej(err);
+        } else {
+          res(result);
+        }
+      });
+    } catch (error) {
+      rej([]);
+    }
   });
   return p;
 }
-
-
 
 const http = require("http");
 const express = require("express");
@@ -32,7 +37,6 @@ const socketio = require("socket.io");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const memoria = require("./app/memoria");
-const _fs = require("./app/memoria/_fs");
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const app = express();
 const server = http.createServer(app);
@@ -83,8 +87,6 @@ passport.use(
         url: "/usuarios/alias",
       });
       let { auth, usuario: user } = login;
-      console.log("usuario", usuario, "contraseña", contraseña);
-      console.log("login", login);
       if (!auth) {
         return done(null, false);
       }
@@ -116,58 +118,7 @@ server.listen(app.get("port"), () => {
   console.log("corriendo en el puerto:", app.get("port"));
 });
 
-app.get("/BD", async (req, res) => {
-  let URL = req.protocol + "://" + req.get("host") + req.originalUrl;
-  let partes = URL.split("?");
-  if (!partes[1]) {
-    return res.json({}).end();
-  }
-  let URLParams = new URLSearchParams(partes[1]);
-  let EXEC = URLParams.get("queryJSON-EXEC");
-  let urlQueryURL2JSON = URLParams.get("queryURL2JSON");
-
-  if (EXEC) {
-    return res.json(
-      memoria.EXEC(JSON.parse(EXEC))
-    ).end();
-  }
-
-  if (urlQueryURL2JSON) {
-    return QUERY2JSON();
-  }
-
-  function QUERY2JSON() {
-    let partesQuery = urlQueryURL2JSON.split("/");
-    let cabeza = partesQuery.at(-1);
-    if (cabeza.startsWith(":")) {
-      let MACROS = memoria.config.RAIZ + "/" + urlQueryURL2JSON.replace(cabeza, "@MACROS.js");
-      cabeza = cabeza.slice(1);
-
-      if (_fs.existe(MACROS)) {
-        let args = cabeza.split(";").filter((e) => e && e.includes("=")).map((e) => {
-          let i = e.split("=");
-          let llave = i[0];
-          let valor = i[1];
-          return { [llave]: valor };
-        }).reduce((a, b) => Object.assign(a, b), {});
-        let instruccion = args.i;
-        delete args.i;
-        return res.json(
-          require("./" + MACROS)({
-            instruccion,
-            args,
-            url: urlQueryURL2JSON,
-            query: cabeza
-          })
-        ).end();
-      } else {
-        return res.json({}).end();
-      }
-    }
-  }
-
-  res.json(memoria.tools.Array2Nodo(partesQuery).cabeza).end();
-});
+require("./API_BD")(pack_app);
 
 app.get("/stop-server", (req, res) => {
   let user = req.user;

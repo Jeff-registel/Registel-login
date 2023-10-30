@@ -22,18 +22,18 @@ ReactDOM.render(<App />, document.querySelector('.App'));
 function Usuario({ usuario, ocultar }) {
         return (
                 <Button
-                        href={`/login/admin/usuarios/editar?usuario=${usuario["PK_USUARIO"]}&menu-izquierda=false`}
-                        /* onClick={() => {
+                        //href={`/login/admin/usuarios/editar?usuario=${usuario["PK_USUARIO"]}&menu-izquierda=false`}
+                        onClick={() => {
                                 ventana_flotante["nueva-ventana"]({
                                         titulo_texto: "Editar usuario",
                                         html: `
                                         <iframe src="/login/admin/usuarios/editar?usuario=${usuario["PK_USUARIO"]}&menu-izquierda=false" class="w-100P h-100P border-0"></iframe>
                                 `
                                 })
-                        }} */
+                        }}
                         className={
                                 (ocultar ? 'd-none' : '') +
-                                (usuario["ESTADO"] == 1 ? ' b-s-1px-darkgreen' : ' b-s-1px-darkred') +
+                                (usuario["ESTADO"] ? ' b-s-1px-darkgreen' : ' b-s-1px-darkred') +
                                 " usuario c-white m-5"
                         }>
                         <div className="d-inline-block usuario-imagen pad-20">
@@ -50,18 +50,16 @@ function Usuario({ usuario, ocultar }) {
 
 
 async function render_todosLosUsuarios() {
-        let usuarios = ( await (await fetch("/BD?queryURL2JSON=usuarios/:i=todo")).json());
+        let usuarios = (await (await fetch("/BD?queryURL2JSON=usuarios/:i=todo")).json());
 
         usuarios = usuarios.sort((a, b) => {
-                if (a["PK_USUARIO"] > b["PK_USUARIO"]) {
+                if (a["NOMBRE"].toLowerCase() > b["NOMBRE"].toLowerCase()) {
                         return 1;
-                } else if (a["PK_USUARIO"] < b["PK_USUARIO"]) {
+                } else if (a["NOMBRE"].toLowerCase() < b["NOMBRE"].toLowerCase()) {
                         return -1;
                 }
                 return 0;
         });
-
-        console.log(usuarios[0]["ESTADO"]);
 
         if (![1, 2].includes(user["FK_PERFIL"])) {
                 return ReactDOM.render(
@@ -73,7 +71,16 @@ async function render_todosLosUsuarios() {
                         , document.querySelector(".ultimos-usuarios-modificados")
                 );
         }
-        usuarios = usuarios.filter(e => e["PK_USUARIO"] != user["PK_USUARIO"] && e["FK_PERFIL"] > user["FK_PERFIL"]);
+        usuarios = usuarios.filter(e => {
+                if (user["FK_PERFIL"] == 1) {
+                        return true;
+                }
+                if (e["PK_USUARIO"] == user["PK_USUARIO"]) {
+                        return e["FK_PERFIL"] == user["FK_PERFIL"]
+                }
+                return e["FK_PERFIL"] > user["FK_PERFIL"];
+        });
+        console.log(usuarios);
         ReactDOM.render(
                 <React.Fragment>
                         <h1>
@@ -112,7 +119,8 @@ async function render_todosLosUsuarios() {
 }
 
 
-socket.on("Hay un cambio en la tabla: tbl_usuario", () => {
+socket.on("usuarios_modificados", (usuarios) => {
+        console.log("usuarios_modificados", usuarios);
         render_todosLosUsuarios();
 });
 
