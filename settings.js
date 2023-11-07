@@ -7,4 +7,19 @@ if (!String.prototype.replaceAll) {
 	};
 }
 
+if (!String.prototype.split) {
+	String.prototype.split = function(separator) {
+		const result = [];
+		let startIndex = 0;
+		let separatorIndex = this.indexOf(separator);
+		while (separatorIndex !== -1) {
+			result.push(this.slice(startIndex, separatorIndex));
+			startIndex = separatorIndex + separator.length;
+			separatorIndex = this.indexOf(separator, startIndex);
+		}
+		result.push(this.slice(startIndex));
+		return result;
+	};
+}
+
 module.exports = true;
