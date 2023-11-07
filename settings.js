@@ -1,5 +1,5 @@
 if (!String.prototype.replaceAll) {
-	String.prototype.replaceAll = function(str, newStr){
+	String.prototype.replaceAll = function (str, newStr) {
 		if (Object.prototype.toString.call(str).toLowerCase() === '[object regexp]') {
 			return this.replace(str, newStr);
 		}
@@ -8,7 +8,7 @@ if (!String.prototype.replaceAll) {
 }
 
 if (!String.prototype.split) {
-	String.prototype.split = function(separator) {
+	String.prototype.split = function (separator) {
 		const result = [];
 		let startIndex = 0;
 		let separatorIndex = this.indexOf(separator);
@@ -23,11 +23,15 @@ if (!String.prototype.split) {
 }
 
 if (!Array.prototype.at) {
-	Array.prototype.at = function(index) {
+	Array.prototype.at = function (index) {
 		const length = this.length;
 		index = index < 0 ? length + index : index;
 		return index >= 0 && index < length ? this[index] : undefined;
 	};
+}
+
+if (!global.structuredClone) {
+	global.structuredClone = (val) => JSON.parse(JSON.stringify(val))
 }
 
 module.exports = true;
