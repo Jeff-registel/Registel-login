@@ -35,6 +35,9 @@ function Iconos_fa_bs() {
 let alfabetoCesar = 'xnpoYBrJjdEZ9lKQAUMRb4zVÑ32wPvtCFaOLs1XefHI6NykTcSD87Gh0imqguW5'; //abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ1234567890
 
 function cifradoCesar(frase, clave = 3) {
+    if (!frase) {
+        return;
+    }
     let letra, respuesta = '';
     let cifrado = alfabetoCesar.slice(-clave);
     cifrado += alfabetoCesar.slice(0, alfabetoCesar.length - clave);
@@ -54,6 +57,9 @@ function cifradoCesar(frase, clave = 3) {
 }
 
 function descifradoCesar(frase, clave = 3) {
+    if (!frase) {
+        return "";
+    }
     let letra, respuesta = '';
     let cifrado = alfabetoCesar.slice(-clave);
     cifrado += alfabetoCesar.slice(0, alfabetoCesar.length - clave)
