@@ -68,6 +68,8 @@ function AUTH(query) {
 
   let LOGIN = query.args["login"];
 
+  console.log("--------------------");
+  console.log(query.url);
   let url = query.url;
   let cabeza = url.split("/").at(-1);
 

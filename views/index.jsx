@@ -44,6 +44,7 @@ function Formulario() {
                                                         error.innerHTML = "Contraseña incorrecta";
                                                         return;
                                                 }
+                                                localStorage.setItem("contraseña", contrasena);
                                                 document.querySelector("form").submit();
                                         }}>
                                                 Ingresar
