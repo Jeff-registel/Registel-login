@@ -20,6 +20,7 @@ async function main() {
         let usuarios = await execSql("SELECT * FROM tbl_usuario");
         for (let i = 0; i < usuarios.length; i++) {
                 const usuario = usuarios[i];
+                usuario["ESTADO"] = !!usuario["ESTADO"];
                 Object.entries(usuario).forEach(([key, value]) => {
                         if (!value) {
                                 delete usuario[key];
@@ -32,6 +33,7 @@ async function main() {
                         }
                 } else {
                         let empresas = require("../BD-registel-central/diccionarios/empresas.json");
+                        delete empresas["__atributos__"];
                         let lugares = Object.keys(empresas);
                         lugares.forEach(lugar => {
                                 let servicios = empresas[lugar]["Servicios"];

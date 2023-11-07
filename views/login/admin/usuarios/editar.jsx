@@ -140,7 +140,6 @@ function Empresas({ seleccion }) {
 }
 
 socket.on("usuarios_modificados", (usuarios) => {
-        console.log("usuariosAWS", usuarios);
         usuarios.forEach(usuario => {
                 if (usuario["PK_USUARIO"] == usuarioPK) {
                         render_usuario();
@@ -166,7 +165,12 @@ async function actualizaUsuario() {
                                 }
                         }
                 }
-        })}`)).json());
+        })}
+        &usuario=${JSON.stringify({
+                LoGIN: user["LOGIN"],
+                PK_USUARIO: user["PK_USUARIO"],
+        })}
+        `)).json());
         switch (json.status) {
                 case "ok!":
                         document.body.style.backgroundColor = "#122512";

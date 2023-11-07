@@ -1,7 +1,8 @@
-module.exports = async ({ json, contexto = {} }) => {
+module.exports = async ({ json, context = {}, query }) => {
         require("./@MACROS")["ESTAMPAS_DE_TIEMPO"]({
                 json,
-                contexto,
+                context,
+                query,
         });
         return json;
 };

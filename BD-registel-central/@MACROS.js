@@ -13,7 +13,7 @@ function ESTAMPAS_GET({ json, ruta, context = {}}) {
   memoria.EXEC(QUERY, context);
 }
 
-function ESTAMPAS_DE_TIEMPO({ json,  context = {} }) {
+function ESTAMPAS_DE_TIEMPO({ json,  context = {}, query }) {
   let ahora = new Date();
   if (!json["__atributos__"]) {
     json["__atributos__"] = {};
@@ -22,17 +22,17 @@ function ESTAMPAS_DE_TIEMPO({ json,  context = {} }) {
   let SET = atributos["SET"] ?? {};
   atributos["SET"] = SET;
 
-  console.log("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-  console.log(context);
-
   if (context.usuario) {
-    SET["ACTUALIZACIÓN"] = {
-      USUARIO: {
-        PK_USUARIO: context.usuario["PK_USUARIO"],
-        LOGIN: context.usuario["LOGIN"],
-      },
+    let ACTUALIZACIÓN = SET["ACTUALIZACIÓN"] ?? [];
+    ACTUALIZACIÓN.push({
       FECHA: ahora,
+      USUARIO: context.usuario,
+      //QUERY: query,
+    });
+    if (ACTUALIZACIÓN.length > 3) {
+      ACTUALIZACIÓN.shift();
     }
+    SET["ACTUALIZACIÓN"] = ACTUALIZACIÓN;
   }
   SET["FECHA_MODIFICACION"] = ahora;
   SET["CONTADOR"] = (SET["CONTADOR"] ?? 0) + 1;

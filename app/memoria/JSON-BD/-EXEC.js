@@ -7,8 +7,9 @@ function GENERAL(json, args = {}) {
     throw new Error("No se ha especificado el json");
   }
   let instruccion = Object.keys(json)[0];
-  console.log("instruccion", instruccion);
+  
   json = json[instruccion];
+  
   if (json instanceof Array) {
     return MANY({
       instruccion,
@@ -37,20 +38,18 @@ function MANY({ instruccion, array, context }) {
   );
 }
 
-function ONE({ instruccion, json, context ={}}) {
+function ONE({ instruccion, json, context = {} }) {
   if (!json) {
     throw new Error("No se ha especificado el json");
   }
-  console.log("Ejecutando instrucción", instruccion);
-  console.log("context", context);
   switch (instruccion) {
     case "READ":
-      return READ(json, context);
+      return READ(json, { context });
     case "DOC":
-      DOC(json, context);
+      DOC(json, { context });
       break;
     case "DELETE":
-      DELETE(json, context);
+      DELETE(json, { context });
       break;
   }
 }

@@ -5,10 +5,19 @@ let tiempo_ultima_modificacion = 0;
 let tiempo_espera_notificar_cambios = 3000;
 let usuarios_modificados = [];
 
-module.exports = async ({ json, json_new, json_old, ruta, nombre, context }) => {
+module.exports = async ({
+  json,
+  json_new,
+  json_old,
+  ruta,
+  nombre,
+  context,
+  query,
+}) => {
   require("../@!SET")({
     json,
     context,
+    query,
   });
 
   await ActualizarLOGIN(ruta, nombre, json_new, json_old, json);
@@ -18,8 +27,10 @@ module.exports = async ({ json, json_new, json_old, ruta, nombre, context }) => 
     "FECHA_MODIFICACION",
     "USUARIOBD",
     "FECHA_ULTIMO_LOGIN",
+    "EXPIRE_TOKEN",
+    "TOKEN",
   ].forEach((item) => {
-    delete json[item];
+    json[item] = null;
   });
 
   avisar_cambios(json, context);
@@ -29,12 +40,13 @@ module.exports = async ({ json, json_new, json_old, ruta, nombre, context }) => 
 
 function avisar_cambios(json, context) {
   if (!context.pack_app) {
-    console.log("avisar_cambios", "context.pack_app no existe");
     return;
   }
-  console.log("si hay pack_app");
-
-  if (Date.now() - tiempo_ultima_modificacion < tiempo_espera_notificar_cambios) {
+  usuarios_modificados.push(json);
+  if (
+    Date.now() - tiempo_ultima_modificacion <
+    tiempo_espera_notificar_cambios
+  ) {
     return;
   }
   tiempo_ultima_modificacion = Date.now();

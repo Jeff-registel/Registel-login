@@ -14,10 +14,14 @@ module.exports = (pack_app) => {
 
     if (EXEC) {
       try {
+        let usuario = URLParams.get("usuario");
+        if (usuario) {
+          usuario = JSON.parse(usuario);
+        }
         await memoria.EXEC(JSON.parse(EXEC), {
           context: {
             pack_app,
-            usuario: req.user,
+            usuario,
           },
         });
         return res.json({ status: "ok!" }).end();

@@ -1,7 +1,7 @@
 let config = require("./__config.json");
-let fs = require("../_fs")
+let fs = require("../_fs");
 
-function objeto(json, context) {
+function objeto(json, { context = {} }) {
   recorrer_arbol({
     [config.RAIZ]: json,
   });
@@ -13,15 +13,13 @@ function objeto(json, context) {
       if (nombre.endsWith(".json")) {
         let archivo_ruta = `${padres.join("/")}/${nombre}`;
         let SET = `${padres.join("/")}/@!SET.js`;
-        let json_old = fs.archivo.leer(
-          archivo_ruta
-        );
+        let json_old = fs.archivo.leer(archivo_ruta);
         if (!json_old) {
           json_old = {};
         }
         let json_combinado = {
           ...json_old,
-          ...json_new
+          ...json_new,
         };
         if (fs.existe(SET) && !nombre.startsWith("@")) {
           json_combinado = await require("../../../" + SET)({
@@ -31,9 +29,14 @@ function objeto(json, context) {
             ruta: archivo_ruta,
             nombre,
             query: json,
-            context
+            context,
           });
         }
+        Object.entries(json_combinado).forEach(([clave, valor]) => {
+          if (!valor) {
+            delete json_combinado[clave];
+          }
+        });
         fs.archivo.escribir({
           nombre: archivo_ruta,
           contenido: json_combinado,
