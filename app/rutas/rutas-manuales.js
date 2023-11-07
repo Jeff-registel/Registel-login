@@ -5,7 +5,7 @@ module.exports = (app_pack) => {
 
   app.get("/API/login-usuario/:usuario/:contrasena", async (req, res) => {
     res.json({
-      acceso: require("../../BD-registel-central/usuarios/@MACROS")({
+      acceso: require(`../../${memoria.config.RAIZ}/usuarios/@MACROS`)({
         instruccion: "auth",
         args: {
           login: req.params.usuario,

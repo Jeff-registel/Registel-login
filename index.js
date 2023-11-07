@@ -69,8 +69,6 @@ const pack_app = {
   urlencodedParser,
 };
 
-pack_app.socketio_sql = require("./app/SQL-socket.io")(pack_app);
-
 passport.use(
   new passportLocal(
     {
