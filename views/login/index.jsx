@@ -45,7 +45,7 @@ async function render_ultimasEmpresasConsultadas() {
                                         Object.entries(contenido["Servicios"]).map(([servicio, contenidoServicio]) => {
                                                 return (
                                                         <React.Fragment>
-                                                                <Button href={`http://${contenidoServicio["DOMINIO"]}?usuario=${user["LOGIN"]}&contraseña=${localStorage.getItem("contraseña")}`} 
+                                                                <Button href={`http://${contenidoServicio["DOMINIO"]}?usuario=${user["LOGIN"]}&contraseña=${cifradoCesar(localStorage.getItem("contraseña"))}`} 
                                                                 target="_blank" className="c-white pad-10 b-s-1px-white-20_OP" color="primary" variant="contained" >
                                                                         {servicio}
                                                                 </Button>
