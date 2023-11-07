@@ -3,14 +3,16 @@ let memoria = require("../memoria");
 module.exports = (app_pack) => {
   let { app, passport } = app_pack;
 
-  let sql = require("../SQL-socket.io")(app_pack);
-  
   app.get("/API/login-usuario/:usuario/:contrasena", async (req, res) => {
     res.json({
-      acceso: !!(await sql.verificarUsuario(
-        req.params.usuario,
-        req.params.contrasena
-      )),
+      acceso: require("../../BD-registel-central/usuarios/@MACROS")({
+        instruccion: "auth",
+        args: {
+          login: req.params.usuario,
+          contraseña: req.params.contrasena,
+        },
+        url: "/usuarios/auth",
+      }),
       usuario: req.params.usuario,
     });
   });
