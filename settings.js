@@ -22,4 +22,12 @@ if (!String.prototype.split) {
 	};
 }
 
+if (!Array.prototype.at) {
+	Array.prototype.at = function(index) {
+		const length = this.length;
+		index = index < 0 ? length + index : index;
+		return index >= 0 && index < length ? this[index] : undefined;
+	};
+}
+
 module.exports = true;
