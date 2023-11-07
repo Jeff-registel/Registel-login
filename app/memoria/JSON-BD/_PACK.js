@@ -27,7 +27,7 @@ function pack(json) {
 
       let ruta = `${padres.join("/")}${padres.length ? "/" : ""}${nombre}`;
 
-      if (nombre.endsWith(".json")) {
+      if (nombre.endsWith(".json") || nombre.endsWith(".js")) {
         if (fs.esArchivo(ruta) && valor == true) {
           let json_leido = fs.archivo.leer(ruta);
           arbol[nombre] = json_leido;

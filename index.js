@@ -5,28 +5,6 @@ require("./settings");
 
 let templatesString = require("./templates-string");
 
-var mysql = require("mysql");
-
-let SQL_config = require("./app/SQL-config");
-
-var conexion = mysql.createConnection(SQL_config);
-
-function execSql(statement) {
-  let p = new Promise(function (res, rej) {
-    try {
-      conexion.query(statement, function (err, result) {
-        if (err) {
-          rej(err);
-        } else {
-          res(result);
-        }
-      });
-    } catch (error) {
-      rej([]);
-    }
-  });
-  return p;
-}
 
 const http = require("http");
 const express = require("express");
@@ -63,7 +41,6 @@ app.use(require("morgan")("combined"));
 
 const pack_app = {
   io,
-  execSql,
   app,
   passport,
   urlencodedParser,

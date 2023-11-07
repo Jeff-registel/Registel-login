@@ -37,14 +37,14 @@ function Formulario() {
                                                 let usuario = document.querySelector("#usuario").value;
                                                 let contrasena = document.querySelector("#contrasena").value;
                                                 let respuestaAcceso = await (await fetch(`/API/login-usuario/${usuario}/${contrasena}`)).json();
-                                                if (!respuestaAcceso["acceso"]) {
+                                                if (!respuestaAcceso["auth"]) {
                                                         e.preventDefault();
                                                         let error = document.querySelector(".label-error");
                                                         error.style.display = "block";
                                                         error.innerHTML = "Contraseña incorrecta";
                                                         return;
                                                 }
-                                                localStorage.setItem("contraseña", contrasena);
+                                                localStorage.setItem("contraseña", cifradoCesar(contrasena));
                                                 document.querySelector("form").submit();
                                         }}>
                                                 Ingresar

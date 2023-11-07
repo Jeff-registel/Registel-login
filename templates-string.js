@@ -24,7 +24,7 @@ function redirección({ textoPrincipal }) {
                 </h3>
                 <script>
                         let div_segundos = document.getElementById("segundos");
-                        let segundos = 10;
+                        let segundos = 5;
                         div_segundos.innerHTML = segundos;
                 
                         let intervalo = setInterval(() => {

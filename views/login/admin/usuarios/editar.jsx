@@ -167,7 +167,7 @@ async function actualizaUsuario() {
                 }
         })}
         &usuario=${JSON.stringify({
-                LoGIN: user["LOGIN"],
+                LOGIN: user["LOGIN"],
                 PK_USUARIO: user["PK_USUARIO"],
         })}
         `)).json());
