@@ -14,7 +14,8 @@ const darkTheme = createTheme({
             main: '#1E90FF',
           },
           secondary: {
-            main: '#87CEFA',
+            main: '#363636',
+            color: '#FFFFFF',
           },
     },
 });

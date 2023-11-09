@@ -58,6 +58,19 @@
         padding: 20px !important;
 }
 
+.pad-30{
+        padding: 30px !important;
+}
+
+.pad-40{
+        padding: 40px !important;
+}
+
+.padw-40{
+        padding-left: 40px !important;
+        padding-right: 40px !important;
+}
+
 .w-100P{
         width: 100%;
 }

@@ -24,7 +24,7 @@ function cifradoCesar(frase, clave = 3) {
 
 function descifradoCesar(frase, clave = 3) {
     if (!frase) {
-        return "";
+        return;
     }
     let letra, respuesta = '';
     let cifrado = alfabetoCesar.slice(-clave);
