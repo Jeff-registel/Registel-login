@@ -2,7 +2,8 @@ let AutocompleteEmpresas = null;
 
 let usuarioPK = new URLSearchParams(window.location.search).get("usuario");
 
-let empresasLista = [];
+let empresasLista;
+let tipoDocumentoLista;
 
 render_usuario();
 
@@ -16,9 +17,8 @@ ReactDOM.createRoot(document.querySelector(".App")).render(
 
 async function render_usuario() {
         let usuarioBD = (await (await fetch(`/BD?queryURL2JSON=usuarios/${usuarioPK}.json`)).json());
-        empresasLista = (await (await fetch(`/BD?queryURL2JSON=diccionarios/empresas.json`)).json());
-        delete empresasLista["__atributos__"];
-        {
+        if (!empresasLista) {
+                empresasLista = (await (await fetch(`/BD?queryURL2JSON=diccionarios/empresas.json`)).json())["empresas"];
                 let empresasResumen = [];
                 let lugares = Object.keys(empresasLista);
                 lugares.forEach(lugar => {
@@ -34,6 +34,7 @@ async function render_usuario() {
                 });
                 empresasLista = empresasResumen;
         }
+        tipoDocumentoLista ??= (await (await fetch(`/BD?queryURL2JSON=diccionarios/tipo-documento.json`)).json())["tipo-documento"];
         ReactDOM.createRoot(document.querySelector(".usuario")).render(
                 <ThemeProvider theme={theme}>
                         <h1 style={{ margin: 0 }}>
@@ -45,8 +46,12 @@ async function render_usuario() {
                         <TextField className="APELLIDO" size="small" variant="outlined" defaultValue={usuarioBD["APELLIDO"]} label="Apellido" />
                         <br />
                         <br />
-                        <TextField className="CEDULA" size="small" variant="outlined" defaultValue={usuarioBD["CEDULA"]} label="Cédula" />
-                        &nbsp;&nbsp;
+                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <TipoDocumento />
+                                &nbsp;&nbsp;
+                                <TextField className="CEDULA" size="small" variant="outlined" defaultValue={usuarioBD["CEDULA"]} label="Número" />
+                        </div>
+                        <br />
                         <TextField className="TELEFONO" size="small" variant="outlined" defaultValue={usuarioBD["TELEFONO"]} label="Teléfono" />
                         <br />
                         <br />
@@ -94,7 +99,7 @@ async function render_usuario() {
         render_perfiles();
 
         async function render_perfiles() {
-                let tabla = (await (await fetch(`/BD?queryURL2JSON=diccionarios/perfiles-usuario.json`)).json()).perfiles;
+                let perfiles = (await (await fetch(`/BD?queryURL2JSON=diccionarios/perfiles-usuario.json`)).json())["perfiles"];
                 ReactDOM.createRoot(document.querySelector(".FK_PERFIL")).render(
                         <ThemeProvider theme={theme}>
                                 <FormControl size="small" style={{ width: 230 }}>
@@ -103,7 +108,7 @@ async function render_usuario() {
                                         </InputLabel>
                                         <Select className="FK_PERFIL_SELECT" defaultValue={usuarioBD["FK_PERFIL"]}  >
                                                 {
-                                                        tabla.map((perfil) => <MenuItem value={perfil["PK_PERFIL"]}>{perfil["NOMBRE_PERFIL"]}</MenuItem>)
+                                                        perfiles.map((perfil) => <MenuItem value={perfil["PK"]}>{perfil["NOMBRE"]}</MenuItem>)
                                                 }
                                         </Select>
                                 </FormControl>
@@ -112,6 +117,14 @@ async function render_usuario() {
         }
 }
 
+
+function TipoDocumento() {
+        return <Select className="TIPO_DOCUMENTO" defaultValue={tipoDocumentoLista.find((tipoDocumento) => tipoDocumento["PK"] == user["FK_TIPO_DOCUMENTO"])["PK"]}>
+                {
+                        tipoDocumentoLista.map((tipoDocumento) => <MenuItem value={tipoDocumento["PK"]}>{tipoDocumento["NOMBRE"]}</MenuItem>)
+                }
+        </Select>;
+}
 
 function Empresas({ seleccion }) {
         return <Autocomplete
@@ -141,7 +154,7 @@ function Empresas({ seleccion }) {
 
 socket.on("usuarios_modificados", (usuarios) => {
         usuarios.forEach(usuario => {
-                if (usuario["PK_USUARIO"] == usuarioPK) {
+                if (usuario["PK"] == usuarioPK) {
                         render_usuario();
                 }
         });
@@ -155,6 +168,7 @@ async function actualizaUsuario() {
                                 [`${usuarioPK}.json`]: {
                                         NOMBRE: document.querySelector(".NOMBRE").querySelector("input").value,
                                         APELLIDO: document.querySelector(".APELLIDO").querySelector("input").value,
+                                        FK_TIPO_DOCUMENTO: parseInt(document.querySelector(".TIPO_DOCUMENTO input").value),
                                         CEDULA: document.querySelector(".CEDULA").querySelector("input").value,
                                         TELEFONO: document.querySelector(".TELEFONO").querySelector("input").value,
                                         LOGIN: document.querySelector(".LOGIN").querySelector("input").value,
@@ -168,7 +182,7 @@ async function actualizaUsuario() {
         })}
         &usuario=${JSON.stringify({
                 LOGIN: user["LOGIN"],
-                PK_USUARIO: user["PK_USUARIO"],
+                PK: user["PK"],
         })}
         `)).json());
         switch (json.status) {

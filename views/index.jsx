@@ -29,7 +29,12 @@ function Formulario() {
                                 <TextField id="usuario" name="usuario" label="Usuario" fullWidth required />
                                 <br />
                                 <br />
-                                <TextField id="contrasena" name="contrasena" label="Contraseña" type="password" fullWidth required />
+                                <TextField id="contrasena" name="contrasena" label="Contraseña" type="password" fullWidth required onKeyUp={(evt) => {
+                                        if (evt.keyCode === 13) {
+                                                document.querySelector("form").submit();
+                                        }
+                                }} />
+
                                 <br />
                                 <br />
                                 <div className="ta-right">

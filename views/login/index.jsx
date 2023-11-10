@@ -1,6 +1,7 @@
 let info_perfiles;
 let tipo_agrupamiento;
 let ver_todos_usuarios = false;
+let empresas;
 
 addLink("/login/index.css");
 
@@ -68,9 +69,7 @@ function App() {
 ReactDOM.render(<App />, document.querySelector('.App'));
 
 async function render_ultimasEmpresasConsultadas() {
-        let empresas = (await (await fetch("/BD?queryURL2JSON=diccionarios/empresas.json")).json());
-
-        delete empresas["__atributos__"];
+        empresas ??= (await (await fetch("/BD?queryURL2JSON=diccionarios/empresas.json")).json())["empresas"];
 
         Object.entries(empresas).forEach(([lugar, contenido]) => {
                 Object.entries(contenido["Servicios"]).forEach(([servicio, contenidoServicio]) => {
@@ -157,7 +156,7 @@ async function render_todosLosUsuarios() {
                 if (user["FK_PERFIL"] == 1) {
                         return true;
                 }
-                if (e["PK_USUARIO"] == user["PK_USUARIO"]) {
+                if (e["PK"] == user["PK"]) {
                         return e["FK_PERFIL"] == user["FK_PERFIL"]
                 }
                 return e["FK_PERFIL"] > user["FK_PERFIL"];
@@ -276,12 +275,12 @@ async function render_todosLosUsuarios() {
                 }
                 return (
                         <Button
-                                //href={`/login/admin/usuarios/editar?usuario=${usuario["PK_USUARIO"]}&menu-izquierda=false`}
+                                //href={`/login/admin/usuarios/editar?usuario=${usuario["PK"]}&menu-izquierda=false`}
                                 onClick={() => {
                                         ventana_flotante["nueva-ventana"]({
                                                 titulo_texto: "Editar usuario",
                                                 html: `
-                                                        <iframe src="/login/admin/usuarios/editar?usuario=${usuario["PK_USUARIO"]}&menu-izquierda=false" class="w-100P h-100P border-0"></iframe>
+                                                        <iframe src="/login/admin/usuarios/editar?usuario=${usuario["PK"]}&menu-izquierda=false" class="w-100P h-100P border-0"></iframe>
                                                 `
                                         })
                                 }}
@@ -305,7 +304,7 @@ async function render_todosLosUsuarios() {
 }
 
 socket.on("usuarios_modificados", (usuarios) => {
-        let userN = usuarios.find(e => e["PK_USUARIO"] == user["PK_USUARIO"])
+        let userN = usuarios.find(e => e["PK"] == user["PK"])
         if (userN) {
                 user = userN;
                 render_ultimasEmpresasConsultadas();

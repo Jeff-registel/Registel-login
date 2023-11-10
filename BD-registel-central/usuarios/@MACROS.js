@@ -60,7 +60,7 @@ function ALIAS({ estilo, alias, url }) {
 function AUTH(query) {
   let auth = false;
 
-  let PK = query.args["PK_USUARIO"];
+  let PK = query.args["PK"];
   let PW = query.args["contraseña"] ?? "";
   PW = sha256(PW);
 

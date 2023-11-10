@@ -92,10 +92,10 @@ async function ActualizarLOGIN(ruta, nombre, json_new, json_old, json) {
     }
 
     if (!loginAlmacenado[json["LOGIN"]]) {
-      await UPDATE(json["LOGIN"], json["PK_USUARIO"]);
+      await UPDATE(json["LOGIN"], json["PK"]);
     } else if (json_new["LOGIN"]) {
       await UPDATE(json_old["LOGIN"]);
-      await UPDATE(json_new["LOGIN"], json["PK_USUARIO"]);
+      await UPDATE(json_new["LOGIN"], json["PK"]);
     }
   }
 }
