@@ -25,6 +25,7 @@ body{
 
 .colapsado-vista{
         display: block !important;
+        animation: fadeIn 0.25s ease-in-out;
 }
 
 .descolapsado-vista{
@@ -50,6 +51,7 @@ body:has(#estado-colpasamiento:checked){
 
         .descolapsado-vista{
                 display: block !important;
+                animation: fadeIn 0.25s ease-in-out;
         }
 }
 
@@ -66,9 +68,9 @@ body:has(#estado-colpasamiento:checked){
         align-items: center;
         justify-content: space-between;
         z-index: 99999;
+        transition: width 0.25s ease-in-out;
 
         &:has(#estado-colpasamiento:checked){
                 width: 300px;
-                transition: all 0.25s ease-in-out;
         }
 }

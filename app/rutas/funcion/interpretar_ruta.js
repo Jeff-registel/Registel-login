@@ -1,7 +1,7 @@
 const fs = require("fs");
 
 function interpretar_ruta(req, res, next) {
-  let URL = req.protocol + '://' + req.get('host') + req.originalUrl;
+  let URL = req.protocol + "://" + req.get("host") + req.originalUrl;
 
   let nodos_ruta = [];
   for (let i = 1; i < 100; i++) {
@@ -35,10 +35,27 @@ function interpretar_ruta(req, res, next) {
 
     if (nodos[0] == "login") {
       if (!req.user) {
-        return res.redirect("/");
+        let URLParametros = new URLSearchParams(URL.split("?")[1]);
+        console.log(URLParametros)
+        console.log(URLParametros.get("menu-izquierda"))
+        if (URLParametros.get("menu-izquierda") == "false") {
+          return res.send(`
+            <style>
+              body, html {
+                margin: 0;
+                padding: 0;
+              }
+            </style>
+            <div style="display: flex; justify-content: center; align-items: center; height: 100vh; width: 100vw;background-color: white;color: black;">
+              <h1>Debes iniciar sesión</h1>
+            </div>
+          `);
+        } else {
+          return res.redirect("/");
+        }
       }
       if (nodos[1] == "admin") {
-        if (![1,2].includes(req.user["FK_PERFIL"])) {
+        if (![1, 2].includes(req.user["FK_PERFIL"])) {
           return res.send("Necesitas permisos de administrador");
         }
       }
@@ -61,7 +78,7 @@ function interpretar_ruta(req, res, next) {
 
   return res.render("404.ejs", {
     info_pagina: {
-      subir_a_raiz: ""
+      subir_a_raiz: "",
     },
     user: req.user,
   });

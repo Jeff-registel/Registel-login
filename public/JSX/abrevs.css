@@ -1,3 +1,7 @@
+.tt-uppercase{
+        text-transform: uppercase;
+}
+
 .ta-right{
         text-align: right;
 }
@@ -22,8 +26,20 @@
         border: solid 1px darkred !important;
 }
 
+.b-s-2px-lime{
+        border: solid 2px lime !important;
+}
+
+.b-s-2px-red{
+        border: solid 2px red !important;
+}
+
 .c-white{
         color: white !important;
+}
+
+.c-black{
+        color: black !important;
 }
 
 .c-red{

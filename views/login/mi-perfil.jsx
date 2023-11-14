@@ -1,41 +1,69 @@
-function App() {
+async function App() {
+        let perfiles_usuario = (await (await fetch("/BD?queryURL2JSON=diccionarios/perfiles-usuario.json")).json())["perfiles"];
+        let tipo_documento = (await (await fetch("/BD?queryURL2JSON=diccionarios/tipo-documento.json")).json())["tipo-documento"];
+
+        let titulo = <h1>
+                {user["NOMBRE"]} {user["APELLIDO"]} ({user["LOGIN"]})
+        </h1>
+
+        let perfil = perfiles_usuario.find(info_perfil => info_perfil["PK"] == user["FK_PERFIL"])["NOMBRE"];
+
+        let empresasAcceso = user["EMPRESAS_ACCESO"].sort((empresaA, empresaB)=>{
+                if(empresaA["NOMBRE_SERVICIO"] < empresaB["NOMBRE_SERVICIO"]){
+                        return -1;
+                }
+                if(empresaA["NOMBRE_SERVICIO"] > empresaB["NOMBRE_SERVICIO"]){
+                        return 1;
+                }
+                return 0;
+        }).map((empresa, index, array) => {
+                return (
+                        <span>
+                                {empresa["NOMBRE_SERVICIO"]}
+                                {index < array.length - 1 ? ", " : ""}
+                        </span>
+                )
+        });
+
+        let nombre_tipo_documento = tipo_documento.find((tipo) => tipo["PK"] == user["FK_TIPO_DOCUMENTO"])["NOMBRE"];
+
         return (
                 <ThemeProvider theme={theme}>
                         <CssBaseline />
-                        <h1>
-                                {user["NOMBRE"]} {user["APELLIDO"]} ({user["LOGIN"]})
-                        </h1>
-                        <b>Tipo de perfil:</b> <span id="FK_PERFIL"></span>
+                        {titulo}
+                        <b>
+                                Tipo de perfil:
+                        </b>
+                        &nbsp;
+                        {perfil}
                         <br />
-                        <b>Empresa:</b> <span id="FK_EMPRESA"></span>
+                        <b>
+                                Empresas:
+                        </b>
+                        &nbsp;
+                        {empresasAcceso}
                         <br />
                         <br />
-                        <b><span id="FK_TIPO_DOCUMENTO"></span>:</b> {user["CEDULA"]}
+                        <b>
+                                {nombre_tipo_documento}:
+                        </b>
+                        &nbsp;
+                        {user["CEDULA"]}
                         <br />
                         <b>E-mail:</b> {user["EMAIL"]}
                         <br />
                         <b>Móvil:</b> {user["MOVIL"] ?? "-"}
                         <br />
-                        
                 </ThemeProvider>
         )
 }
 
-ReactDOM.render(<App />, document.querySelector(".App"));
+async function init() {
+        let renderApp = await App();
+        ReactDOM.render(
+                renderApp,
+                document.querySelector(".App")
+        );
+}
 
-socket.emit("consultar tabla completa", "tbl_perfil");
-socket.emit("consultar tabla completa", "tbl_empresa");
-socket.emit("consultar tabla completa", "tbl_tipo_documento");
-socket.on("tabla completa", ({tabla, nombre}) => {
-        switch (nombre) {
-                case "tbl_perfil":
-                        document.querySelector("#FK_PERFIL").innerHTML = tabla.find((fila) => fila["PK_PERFIL"] == user["FK_PERFIL"])["NOMBRE_PERFIL"];
-                        break;
-                case "tbl_empresa":
-                        document.querySelector("#FK_EMPRESA").innerHTML = tabla.find((fila) => fila["PK_EMPRESA"] == user["FK_EMPRESA"])["NOMBRE"];
-                        break;
-                case "tbl_tipo_documento":
-                        document.querySelector("#FK_TIPO_DOCUMENTO").innerHTML = tabla.find((fila) => fila["id"] == user["FK_TIPO_DOCUMENTO"])["tipo"];
-                        break;
-        }
-});
+init();

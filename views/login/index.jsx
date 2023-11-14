@@ -1,7 +1,7 @@
 let info_perfiles;
 let tipo_agrupamiento;
 let ver_todos_usuarios = false;
-let empresas;
+let usuarios;
 
 addLink("/login/index.css");
 
@@ -21,14 +21,18 @@ function App() {
                                                 </h1>
 
                                                 <FormControl size="small" style={{ width: 230 }}>
-                                                        <InputLabel style={{ backgroundColor: "#252525" }} >
+                                                        <InputLabel style={{ backgroundColor: theme == darkTheme ? "#252525" : "white" }} >
                                                                 Agrupamiento
                                                         </InputLabel>
                                                         <Select className="tipo-agrupamiento" onChange={() => {
-                                                                if (!document.querySelector(".tipo-agrupamiento input").value) {
-                                                                        ver_todos_usuarios = false;
-                                                                }
-                                                                render_todosLosUsuarios();
+                                                                setTimeout(() => {
+                                                                        tipo_agrupamiento = document.querySelector(".tipo-agrupamiento input").value;
+                                                                        console.log(tipo_agrupamiento);
+                                                                        if (!tipo_agrupamiento) {
+                                                                                ver_todos_usuarios = false;
+                                                                        }
+                                                                        render_todosLosUsuarios();
+                                                                }, 0);
                                                         }} >
                                                                 <MenuItem value="">(Ninguno)</MenuItem>
                                                                 <MenuItem value="Alfabetico">Alfabético</MenuItem>
@@ -68,8 +72,8 @@ function App() {
 
 ReactDOM.render(<App />, document.querySelector('.App'));
 
-async function render_ultimasEmpresasConsultadas() {
-        empresas ??= (await (await fetch("/BD?queryURL2JSON=diccionarios/empresas.json")).json())["empresas"];
+async function render_empresasAcceso() {
+        let empresas = (await (await fetch("/BD?queryURL2JSON=diccionarios/empresas.json")).json())["empresas"];
 
         Object.entries(empresas).forEach(([lugar, contenido]) => {
                 Object.entries(contenido["Servicios"]).forEach(([servicio, contenidoServicio]) => {
@@ -131,7 +135,7 @@ async function render_ultimasEmpresasConsultadas() {
 async function render_todosLosUsuarios() {
 
         let contador_usuarios = 0;
-        let usuarios = (await (await fetch("/BD?queryURL2JSON=usuarios/:i=todo")).json());
+        usuarios ??= (await (await fetch("/BD?queryURL2JSON=usuarios/:i=todo")).json());
 
         usuarios = usuarios.sort((a, b) => {
                 if (a["NOMBRE"].toLowerCase() > b["NOMBRE"].toLowerCase()) {
@@ -162,9 +166,6 @@ async function render_todosLosUsuarios() {
                 return e["FK_PERFIL"] > user["FK_PERFIL"];
         });
 
-        tipo_agrupamiento = document.querySelector(".tipo-agrupamiento input").value;
-
-
         let agrupador = {};
 
         if (agrupador) {
@@ -172,8 +173,8 @@ async function render_todosLosUsuarios() {
                         let llave = "";
                         switch (tipo_agrupamiento) {
                                 case "Perfil":
-                                        info_perfiles ??= (await (await fetch("/BD?queryURL2JSON=diccionarios/perfiles-usuario.json")).json());
-                                        llave = info_perfiles.perfiles.find(e => e["PK_PERFIL"] == usuario["FK_PERFIL"])["NOMBRE_PERFIL"];
+                                        info_perfiles ??= (await (await fetch("/BD?queryURL2JSON=diccionarios/perfiles-usuario.json")).json())["perfiles"];
+                                        llave = info_perfiles.find(info_perfil => info_perfil["PK"] == usuario["FK_PERFIL"])["NOMBRE"];
                                         break;
                                 case "Alfabetico":
                                         llave = usuario["NOMBRE"][0].toUpperCase();
@@ -287,8 +288,11 @@ async function render_todosLosUsuarios() {
                                 className={`
                                         ${filtro_buscar ? 'filtro-buscar' : ''}
                                         ${ocultar ? 'd-none' : ''}
-                                        ${usuario["ESTADO"] ? ' b-s-1px-darkgreen' : ' b-s-1px-darkred'}
-                                        usuario c-white m-5
+                                        ${theme == darkTheme ?
+                                                usuario["ESTADO"] ? 'b-s-1px-darkgreen' : ' b-s-1px-darkred' :
+                                                usuario["ESTADO"] ? 'b-s-2px-lime' : 'b-s-2px-red'
+                                        }
+                                        usuario ${colorTheme.fuente.clase} m-5
                                 `}>
                                 <div className="d-inline-block usuario-imagen pad-20">
                                         <Avatar style={{ backgroundColor: `hsl(${(12 * (usuario["NOMBRE"].charCodeAt(0) + usuario["APELLIDO"].charCodeAt(0))) % 360}, 100%, 30%)` }}>
@@ -303,14 +307,16 @@ async function render_todosLosUsuarios() {
         }
 }
 
-socket.on("usuarios_modificados", (usuarios) => {
-        let userN = usuarios.find(e => e["PK"] == user["PK"])
-        if (userN) {
-                user = userN;
-                render_ultimasEmpresasConsultadas();
+socket.on("usuarios_modificados", async (usuariosMod) => {
+        let selfUser = usuariosMod.find(e => e["PK"] == user["PK"]);
+        if (selfUser) {
+                let empresas_acceso_mod = (await (await fetch(`/BD?queryURL2JSON=usuarios/${user["PK"]}.json`)).json())["EMPRESAS_ACCESO"];
+                user["EMPRESAS_ACCESO"] = empresas_acceso_mod;
+                render_empresasAcceso();
         }
+        usuarios ??= (await (await fetch("/BD?queryURL2JSON=usuarios/:i=todo")).json());
         render_todosLosUsuarios();
 });
 
 render_todosLosUsuarios();
-render_ultimasEmpresasConsultadas();
+render_empresasAcceso();

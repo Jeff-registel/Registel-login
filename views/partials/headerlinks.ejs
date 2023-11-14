@@ -20,16 +20,12 @@
     <link rel="stylesheet" href="/JSX/menu-izquierda.css">
     <script src="/JSX/menu-izquierda.jsx" type="text/babel" defer></script>
   <% } %>
-  <style>
-      body {
-          background: #121212;
-      }
-  </style>
 <% } %>
 
 <script src="/img/jsx-svg/logos.jsx" type="text/babel"></script>
 
 <link rel="stylesheet" href="/main.css">
+<link rel="stylesheet" href="/ocultar-inicio.css" id="ocultar-inicio">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -48,5 +44,15 @@
 
   let user = <%- user ? JSON.stringify(user) : "undefined" %>;
   let info_pagina = <%- JSON.stringify(info_pagina) %>;
+
+  window.addEventListener("beforeunload", function (e) {
+    ocultar_efecto.innerHTML = `
+        body{
+            .menu-izquierda-contenedor, .App, .frame-float{ 
+              animation: fadeOut 0.25s ease-in-out;
+            }
+        }
+    `;
+  });
   
 </script>

@@ -5,6 +5,8 @@ let usuarioPK = new URLSearchParams(window.location.search).get("usuario");
 let empresasLista;
 let tipoDocumentoLista;
 
+let usuarioBD;
+
 render_usuario();
 
 ReactDOM.createRoot(document.querySelector(".App")).render(
@@ -16,7 +18,7 @@ ReactDOM.createRoot(document.querySelector(".App")).render(
 );
 
 async function render_usuario() {
-        let usuarioBD = (await (await fetch(`/BD?queryURL2JSON=usuarios/${usuarioPK}.json`)).json());
+        usuarioBD = (await (await fetch(`/BD?queryURL2JSON=usuarios/${usuarioPK}.json`)).json());
         if (!empresasLista) {
                 empresasLista = (await (await fetch(`/BD?queryURL2JSON=diccionarios/empresas.json`)).json())["empresas"];
                 let empresasResumen = [];
@@ -88,22 +90,26 @@ async function render_usuario() {
                         <br />
                         <br />
                         <Button variant="contained" color="primary" onClick={() => {
+                                document.querySelector(".actualizar-usuario").style.display = "none";
                                 actualizaUsuario();
-                        }} className="actualizar-usuario" startIcon={<i class="fa-solid fa-floppy-disk"></i>}>
+                        }} className="actualizar-usuario" startIcon={<i class="fa-solid fa-floppy-disk"></i>}
+                        style={{ display: "none" }}>
                                 Actualizar
                         </Button>
                 </ThemeProvider>
         );
 
 
-        render_perfiles();
+        await render_perfiles();
+
+        document.querySelector(".actualizar-usuario").style.display = "";
 
         async function render_perfiles() {
                 let perfiles = (await (await fetch(`/BD?queryURL2JSON=diccionarios/perfiles-usuario.json`)).json())["perfiles"];
                 ReactDOM.createRoot(document.querySelector(".FK_PERFIL")).render(
                         <ThemeProvider theme={theme}>
                                 <FormControl size="small" style={{ width: 230 }}>
-                                        <InputLabel style={{ backgroundColor: "#121212" }} >
+                                        <InputLabel style={{ backgroundColor: theme == darkTheme ? "#121212" : "white" }} >
                                                 Perfil
                                         </InputLabel>
                                         <Select className="FK_PERFIL_SELECT" defaultValue={usuarioBD["FK_PERFIL"]}  >
@@ -175,7 +181,7 @@ async function actualizaUsuario() {
                                         EMAIL: document.querySelector(".EMAIL").querySelector("input").value,
                                         FK_PERFIL: parseInt(document.querySelector(".FK_PERFIL_SELECT").querySelector("input").value),
                                         ESTADO: document.querySelector(".ESTADO").querySelector("input").checked,
-                                        EMPRESAS_ACCESO: AutocompleteEmpresas ?? [],
+                                        EMPRESAS_ACCESO: AutocompleteEmpresas ?? usuarioBD["EMPRESAS_ACCESO"] ?? [],
                                 }
                         }
                 }
@@ -187,10 +193,19 @@ async function actualizaUsuario() {
         `)).json());
         switch (json.status) {
                 case "ok!":
-                        document.body.style.backgroundColor = "#122512";
+                        swal.fire({
+                                title: "Usuario actualizado",
+                                icon: "success",
+                                confirmButtonText: "Ok",
+                                timer: 2000,
+                        });
                         break;
                 case "error!":
-                        document.body.style.backgroundColor = "#251212";
+                        swal.fire({
+                                title: "Error",
+                                icon: "error",
+                                confirmButtonText: "Ok",
+                        });
                         break;
         }
 }
