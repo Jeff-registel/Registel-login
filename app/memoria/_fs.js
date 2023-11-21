@@ -27,9 +27,8 @@ async function escribir({
     console.error("No se especificó el nombre del archivo")
     return;
   }
-  if (!contenido && contenido != "") {
-    console.error("No se especificó el contenido del archivo")
-    return;
+  if (!contenido) {
+    contenido = "";
   }
   if (typeof contenido == "object") {
     contenido = JSON.stringify(contenido);

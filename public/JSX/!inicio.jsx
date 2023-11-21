@@ -36,14 +36,11 @@ if (!localStorage.getItem("theme")) {
 
 let theme = localStorage.getItem("theme") == "dark" ? darkTheme : lightTheme;
 
-let styleBasic = document.createElement("style");
-styleBasic.innerHTML = `
-      body {
-          background: ${theme == darkTheme ? "#121212" : "#FFFFFF"};
-      }
-`;
-
-document.head.appendChild(styleBasic);
+crearEstilo({
+  body: {
+    background: `${theme == darkTheme ? "#121212" : "#FFFFFF"}`,
+  }
+})
 
 let colorTheme = {
   fuente: {

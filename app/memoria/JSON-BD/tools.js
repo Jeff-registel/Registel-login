@@ -28,6 +28,9 @@ function Array2Nodo(
   let cuerpo = {};
   let cabeza = cuerpo;
   let cabeza_nombre;
+  if(typeof array_ruta_nodo == "string"){
+    array_ruta_nodo = array_ruta_nodo.split("/");
+  }
   array_ruta_nodo
     .filter((e) => e != undefined)
     .forEach((nombre, indice, array) => {

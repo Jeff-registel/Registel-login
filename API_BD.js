@@ -4,66 +4,48 @@ const _fs = require("./app/memoria/_fs");
 module.exports = (pack_app) => {
   pack_app.app.get("/BD", async (req, res) => {
     let URL = req.protocol + "://" + req.get("host") + req.originalUrl;
-    let partes = URL.split("?");
-    if (!partes[1]) {
-      return res.json({}).end();
-    }
-    let URLParams = new URLSearchParams(partes[1]);
-    let EXEC = URLParams.get("queryJSON-EXEC");
-    let urlQueryURL2JSON = URLParams.get("queryURL2JSON");
-
-    if (EXEC) {
-      try {
-        let usuario = URLParams.get("usuario");
-        if (usuario) {
-          usuario = JSON.parse(usuario);
-        }
-        await memoria.EXEC(JSON.parse(EXEC), {
-          context: {
-            pack_app,
-            usuario,
-          },
-        });
-        return res.json({ status: "ok!" }).end();
-      } catch (error) {
-        return res.json({ status: "error", error }).end();
-      }
+    if (!URL.includes("?")) {
+      return res
+        .json({
+          error: "No se ha especificado una consulta",
+        })
+        .end();
     }
 
-    if (urlQueryURL2JSON) {
+    let json_query = new URLSearchParams(URL.substring(URL.indexOf("?"))).get(
+      "json-query"
+    );
+
+    if (json_query) {
       return QUERY2JSON();
     }
 
     function QUERY2JSON() {
-      let partesQuery = urlQueryURL2JSON.split("/");
+      let partesQuery = json_query.split("/");
       let cabeza = partesQuery.at(-1);
-      if (cabeza.startsWith(":")) {
-        let MACROS =
-          memoria.config.RAIZ +
-          "/" +
-          urlQueryURL2JSON.replace(cabeza, "@MACROS.js");
-        cabeza = cabeza.slice(1);
+      console.log(cabeza)
+      if (cabeza.startsWith("{")) {
+        let query = JSON.parse(cabeza);
+        let instruccion = Object.keys(query)[0];
+        let MACRO = `${memoria.config.RAIZ}/${json_query.replaceAll(
+          "/" + cabeza,
+          ""
+        )}/!SISTEMA/!${instruccion + ".js"}`;
 
-        if (_fs.existe(MACROS)) {
-          let params = cabeza
-            .split(";")
-            .filter((e) => e && e.includes("="))
-            .map((e) => {
-              let i = e.split("=");
-              let llave = i[0];
-              let valor = i[1];
-              return { [llave]: valor };
-            })
-            .reduce((a, b) => Object.assign(a, b), {});
-          let instruccion = params.i;
-          delete params.i;
+        if (_fs.existe(MACRO)) {
+          if (Object.keys(query).some((clave) => clave.startsWith("!"))) {
+            return res
+              .json({
+                error: "No se puede acceder a los atributos del sistema",
+              })
+              .end();
+          }
           return res
             .json(
-              require("./" + MACROS)({
+              require("./" + MACRO)({
+                URL,
                 instruccion,
-                args: params,
-                url: urlQueryURL2JSON,
-                query: cabeza,
+                query: query[instruccion],
                 context: {
                   pack_app,
                 },
@@ -71,7 +53,11 @@ module.exports = (pack_app) => {
             )
             .end();
         } else {
-          return res.json({}).end();
+          return res
+            .json({
+              error: "No se ha encontrado la instruccion",
+            })
+            .end();
         }
       }
       return res

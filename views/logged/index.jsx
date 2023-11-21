@@ -3,7 +3,7 @@ let tipo_agrupamiento;
 let ver_todos_usuarios = false;
 let usuarios;
 
-addLink("/login/index.css");
+addLink("/logged/index.css");
 
 function App() {
         return (
@@ -70,10 +70,8 @@ function App() {
         );
 }
 
-ReactDOM.render(<App />, document.querySelector('.App'));
-
 async function render_empresasAcceso() {
-        let empresas = (await (await fetch("/BD?queryURL2JSON=diccionarios/empresas.json")).json())["empresas"];
+        let empresas = (await (await fetch("/BD?json-query=diccionarios/empresas.json")).json())["empresas"];
 
         Object.entries(empresas).forEach(([lugar, contenido]) => {
                 Object.entries(contenido["Servicios"]).forEach(([servicio, contenidoServicio]) => {
@@ -135,7 +133,7 @@ async function render_empresasAcceso() {
 async function render_todosLosUsuarios() {
 
         let contador_usuarios = 0;
-        usuarios ??= (await (await fetch("/BD?queryURL2JSON=usuarios/:i=todo")).json());
+        usuarios ??= (await (await fetch(`/BD?json-query=usuarios/${JSON.stringify({TODO:{}})}`)).json());
 
         usuarios = usuarios.sort((a, b) => {
                 if (a["NOMBRE"].toLowerCase() > b["NOMBRE"].toLowerCase()) {
@@ -173,7 +171,7 @@ async function render_todosLosUsuarios() {
                         let llave = "";
                         switch (tipo_agrupamiento) {
                                 case "Perfil":
-                                        info_perfiles ??= (await (await fetch("/BD?queryURL2JSON=diccionarios/perfiles-usuario.json")).json())["perfiles"];
+                                        info_perfiles ??= (await (await fetch("/BD?json-query=diccionarios/perfiles-usuario.json")).json())["perfiles"];
                                         llave = info_perfiles.find(info_perfil => info_perfil["PK"] == usuario["FK_PERFIL"])["NOMBRE"];
                                         break;
                                 case "Alfabetico":
@@ -310,11 +308,11 @@ async function render_todosLosUsuarios() {
 socket.on("usuarios_modificados", async (usuariosMod) => {
         let selfUser = usuariosMod.find(e => e["PK"] == user["PK"]);
         if (selfUser) {
-                let empresas_acceso_mod = (await (await fetch(`/BD?queryURL2JSON=usuarios/${user["PK"]}.json`)).json())["EMPRESAS_ACCESO"];
+                let empresas_acceso_mod = (await (await fetch(`/BD?json-query=usuarios/${user["PK"]}/usuario.json`)).json())["EMPRESAS_ACCESO"];
                 user["EMPRESAS_ACCESO"] = empresas_acceso_mod;
                 render_empresasAcceso();
         }
-        usuarios ??= (await (await fetch("/BD?queryURL2JSON=usuarios/:i=todo")).json());
+        usuarios ??= (await (await fetch(`/BD?json-query=usuarios/${JSON.stringify({TODO:{}})}`)).json());
         render_todosLosUsuarios();
 });
 

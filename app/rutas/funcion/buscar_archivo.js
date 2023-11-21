@@ -18,7 +18,7 @@ function buscar_archivo(...nodos_de_ruta) {
   let retorno;
 
   ["views", "public"].forEach((carpeta_base) => {
-    ["", ".ejs", ".json"].forEach((extension) => {
+    ["", ".jsx", ".ejs", ".json"].forEach((extension) => {
       if (retorno) {
         return;
       }
@@ -34,6 +34,7 @@ function buscar_archivo(...nodos_de_ruta) {
         return {
           info_pagina: {
             ...argumentos,
+            ultimo_nodo_ruta,
             ruta,
             extension,
             subir_a_raiz,
@@ -43,12 +44,18 @@ function buscar_archivo(...nodos_de_ruta) {
 
       function caso_1_archivo_consultado() {
         ruta = `${nodos_de_ruta.join("/")}/${ultimo_nodo_ruta + extension}`;
+        JSXUnUser = `${nodos_de_ruta.join("/")}/${ultimo_nodo_ruta}!.jsx`;
+        rutaCSS = `${nodos_de_ruta.join("/")}/${ultimo_nodo_ruta + ".css"}`;
         ruta = herramienta.limpiar_ruta(ruta);
         if (ruta_existe(ruta, carpeta_base)) {
+          rutaCSS = ruta_existe(rutaCSS, carpeta_base);
+          JSXUnUser = ruta_existe(JSXUnUser, carpeta_base);
           return retornar({
             profundidad: nodos_de_ruta.length,
-            carpeta: nodos_de_ruta.join("/"),
+            carpeta: nodos_de_ruta.join("/") + "/",
             nombre: ultimo_nodo_ruta,
+            css: rutaCSS,
+            JSXUnUser,
           });
         }
       }

@@ -29,10 +29,7 @@ async function main() {
         delete usuario["EMPRESAS_ACCESO"];
       }
     } else {
-      let empresas =
-        require("../BD-registel-central/diccionarios/empresas.json")[
-          "empresas"
-        ];
+      let empresas = memoria.tools.Array2Nodo("diccionarios/empresas.json").cabeza["empresas"];
       let lugares = Object.keys(empresas);
       lugares.forEach((lugar) => {
         let servicios = empresas[lugar]["Servicios"];
@@ -54,7 +51,24 @@ async function main() {
     await memoria.EXEC({
       DOC: {
         usuarios: {
-          [`${usuario["PK"]}.json`]: usuario,
+          [usuario["PK"]]: {
+            "usuario.json": usuario,
+          },
+        },
+      },
+    });
+    await memoria.EXEC({
+      DOC: {
+        usuarios: {
+          "!SISTEMA": {
+            "ALIAS": {
+              "LOGIN": {
+                [usuario["LOGIN"] + ".json"]: {
+                  PK: usuario["PK"],
+                },
+              },
+            }
+          }
         },
       },
     });

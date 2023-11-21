@@ -1,7 +1,9 @@
 "use strict";
-require("./settings");
+var path = require("path");
 
-//require("./app/internal-structures")
+global.root = __dirname.split(path.sep).join("/");
+
+require("./polyfills");
 
 let templatesString = require("./templates-string");
 
@@ -53,19 +55,16 @@ passport.use(
       passwordField: "contrasena",
     },
     async (usuario, contraseña, done) => {
-      let login = require("./" + memoria.config.RAIZ + "/usuarios/@MACROS.js")({
-        instruccion: "auth",
-        args: {
+      let login = require("./" + memoria.config.RAIZ + "/usuarios/!SISTEMA/!AUTENTICAR")({
+        query: {
           login: usuario,
-          contraseña,
-        },
-        url: "/usuarios/alias",
+          contraseña
+        }
       });
-      let { auth, usuario: user } = login;
-      if (!auth) {
+      if (!login || login.error) {
         return done(null, false);
       }
-      return done(null, user);
+      return done(null, login);
     }
   )
 );
@@ -75,15 +74,13 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(async function (LOGIN, done) {
-  let user = require("./" + memoria.config.RAIZ + "/usuarios/@MACROS.js")({
-    instruccion: "alias",
-    args: {
+  let login = require("./" + memoria.config.RAIZ + "/usuarios/!SISTEMA/!CONSULTA")({
+    query: {
       login: LOGIN,
-    },
-    url: "/usuarios/alias",
+    }
   });
   if (user) {
-    done(null, user);
+    done(null, login);
   } else {
     done(null, false);
   }

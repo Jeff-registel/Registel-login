@@ -1,7 +1,7 @@
 let config = require("./__config.json");
 let fs = require("../_fs");
 
-function objeto(json, { context = {} }) {
+function objeto(json, { context = {} } = {}) {
   recorrer_arbol({
     [config.RAIZ]: json,
   });
@@ -13,6 +13,7 @@ function objeto(json, { context = {} }) {
       if (nombre.endsWith(".json")) {
         let archivo_ruta = `${padres.join("/")}/${nombre}`;
         let SET = `${padres.join("/")}/@!SET.js`;
+        
         let json_old = fs.archivo.leer(archivo_ruta);
         if (!json_old) {
           json_old = {};

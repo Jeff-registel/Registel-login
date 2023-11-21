@@ -20,9 +20,12 @@ function interpretar_ruta(req, res, next) {
   );
 
   if (!argumentos_ruta) {
-    return res.render("404.ejs", {
+    return res.render("@plantilla-general.ejs", {
       info_pagina: {
         subir_a_raiz: "",
+        carpeta: "/",
+        nombre: "404",
+        ultimo_nodo_ruta: "404",
       },
       user: req.user,
     });
@@ -30,42 +33,18 @@ function interpretar_ruta(req, res, next) {
 
   let { info_pagina } = argumentos_ruta;
 
-  if (info_pagina.extension == ".ejs") {
-    let nodos = info_pagina.carpeta.split("/").filter((n) => n);
-
-    if (nodos[0] == "login") {
-      if (!req.user) {
-        let URLParametros = new URLSearchParams(URL.split("?")[1]);
-        console.log(URLParametros)
-        console.log(URLParametros.get("menu-izquierda"))
-        if (URLParametros.get("menu-izquierda") == "false") {
-          return res.send(`
-            <style>
-              body, html {
-                margin: 0;
-                padding: 0;
-              }
-            </style>
-            <div style="display: flex; justify-content: center; align-items: center; height: 100vh; width: 100vw;background-color: white;color: black;">
-              <h1>Debes iniciar sesión</h1>
-            </div>
-          `);
-        } else {
-          return res.redirect("/");
-        }
+  if ([".ejs", ".jsx"].includes(info_pagina.extension)) {
+    return res.render(
+      info_pagina.extension == ".ejs"
+        ? info_pagina.ruta
+        : "@plantilla-general.ejs",
+      {
+        ...argumentos_ruta,
+        carpeta: nodos_ruta.join("/") + "/",
+        URL,
+        user: req.user,
       }
-      if (nodos[1] == "admin") {
-        if (![1, 2].includes(req.user["FK_PERFIL"])) {
-          return res.send("Necesitas permisos de administrador");
-        }
-      }
-    }
-
-    return res.render(info_pagina.ruta, {
-      ...argumentos_ruta,
-      URL,
-      user: req.user,
-    });
+    );
   } else {
     let { ruta } = info_pagina;
     if (fs.existsSync(ruta)) {
@@ -76,10 +55,9 @@ function interpretar_ruta(req, res, next) {
     }
   }
 
-  return res.render("404.ejs", {
-    info_pagina: {
-      subir_a_raiz: "",
-    },
+  return res.render("@plantilla-general.ejs", {
+    ...argumentos_ruta,
+    URL,
     user: req.user,
   });
 }
