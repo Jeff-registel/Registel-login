@@ -20,8 +20,13 @@ async function main() {
   for (let i = 0; i < usuarios.length; i++) {
     const usuario = usuarios[i];
     usuario["PK"] = usuario["PK_USUARIO"];
+    usuario["CONTRASEÑA"] = usuario["CONTRASENA"];
+    usuario["CRYPTO"] = "SHA256";
+    usuario["CONTRASENA"] = undefined;
     usuario["PK_USUARIO"] = undefined;
     usuario["PK_UNICA"] = undefined;
+    usuario["EXPIRE_TOKEN"] = undefined;
+    usuario["TOKEN"] = undefined;
     usuario["ESTADO"] = !!usuario["ESTADO"];
     if (usuario["EMPRESAS_ACCESO"]) {
       usuario["EMPRESAS_ACCESO"] = JSON.parse(usuario["EMPRESAS_ACCESO"]);

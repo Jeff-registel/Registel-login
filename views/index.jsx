@@ -1,5 +1,5 @@
 if (user) {
-        location.href = '/login/';
+        location.href = '/logged';
 }
 
 crearEstilo({
@@ -61,10 +61,9 @@ crearEstilo({
         }
 });
 
-const App = () => {
+function App() {
         return (
-                <ThemeProvider theme={theme}>
-                        <CssBaseline />
+                <AppSimple>
                         <div className="background-container">
                                 <div className="background">
                                 </div>
@@ -75,7 +74,7 @@ const App = () => {
                                         <Formulario />
                                 </Paper>
                         </div>
-                </ThemeProvider>
+                </AppSimple>
         );
 };
 
@@ -83,7 +82,10 @@ function Formulario() {
         return (
                 <ThemeProvider theme={theme}>
                         <form action="/login-verify" method="POST">
-                                <LogoConNombre className="silueta-blanca pad-10" w={300} h={100} />
+                                <LogoConNombre className={`
+                                        ${theme == darkTheme ? "silueta-blanca" : "silueta-negra"}
+                                        pad-10
+                                `} w={300} h={100} />
                                 <br />
                                 <br />
                                 <div className="label-error" style={{ display: "none" }}>
@@ -109,7 +111,7 @@ function Formulario() {
                                 <br />
                                 <div className="ta-right">
                                         <Button variant="contained" color="primary" onClick={async (e) => {
-                                                console.log((await (await fetch(`/BD?json-query=usuarios/${JSON.stringify({ TODO: {} })}`)).json()))
+                                                console.log((await (await fetch(`/BD?json-query=usuarios/${JSON.stringify({ TODO: { usuarios: true } })}`)).json()))
                                                 //document.querySelector("form").submit();
                                         }}>
                                                 Ingresar
@@ -121,7 +123,6 @@ function Formulario() {
 }
 
 socket.on("usuario-existe: respuesta", (existe) => {
-        console.log(existe);
         let error = document.querySelector(".label-error");
         if (!existe) {
                 error.style.display = "block";

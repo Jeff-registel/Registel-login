@@ -3,12 +3,25 @@ let tipo_agrupamiento;
 let ver_todos_usuarios = false;
 let usuarios;
 
+if (!user) {
+        window.location.href = "/";
+}
+
 addLink("/logged/index.css");
+
+crearEstilo({
+        ".usuario": {
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+        },
+
+        ".filtro-buscar": {
+                display: "none",
+        }
+});
 
 function App() {
         return (
-                <ThemeProvider theme={theme}>
-                        <CssBaseline />
+                <AppLogged>
                         <center>
                                 <Paper className="ultimas-empresas-consultadas d-inline-block w-90P ta-left pad-20">
                                 </Paper>
@@ -27,7 +40,6 @@ function App() {
                                                         <Select className="tipo-agrupamiento" onChange={() => {
                                                                 setTimeout(() => {
                                                                         tipo_agrupamiento = document.querySelector(".tipo-agrupamiento input").value;
-                                                                        console.log(tipo_agrupamiento);
                                                                         if (!tipo_agrupamiento) {
                                                                                 ver_todos_usuarios = false;
                                                                         }
@@ -66,7 +78,7 @@ function App() {
                                         </div>
                                 </Paper>
                         </center>
-                </ThemeProvider>
+                </AppLogged>
         );
 }
 
@@ -131,10 +143,8 @@ async function render_empresasAcceso() {
 }
 
 async function render_todosLosUsuarios() {
-
         let contador_usuarios = 0;
-        usuarios ??= (await (await fetch(`/BD?json-query=usuarios/${JSON.stringify({TODO:{}})}`)).json());
-
+        usuarios ??= (await (await fetch(`/BD?json-query=usuarios/${JSON.stringify({ TODO: { usuarios: true } })}`)).json());
         usuarios = usuarios.sort((a, b) => {
                 if (a["NOMBRE"].toLowerCase() > b["NOMBRE"].toLowerCase()) {
                         return 1;
@@ -274,12 +284,11 @@ async function render_todosLosUsuarios() {
                 }
                 return (
                         <Button
-                                //href={`/login/admin/usuarios/editar?usuario=${usuario["PK"]}&menu-izquierda=false`}
                                 onClick={() => {
                                         ventana_flotante["nueva-ventana"]({
                                                 titulo_texto: "Editar usuario",
                                                 html: `
-                                                        <iframe src="/login/admin/usuarios/editar?usuario=${usuario["PK"]}&menu-izquierda=false" class="w-100P h-100P border-0"></iframe>
+                                                        <iframe src="/logged/admin/usuarios/editar?usuario=${usuario["PK"]}" class="w-100P h-100P border-0"></iframe>
                                                 `
                                         })
                                 }}
@@ -312,7 +321,7 @@ socket.on("usuarios_modificados", async (usuariosMod) => {
                 user["EMPRESAS_ACCESO"] = empresas_acceso_mod;
                 render_empresasAcceso();
         }
-        usuarios ??= (await (await fetch(`/BD?json-query=usuarios/${JSON.stringify({TODO:{}})}`)).json());
+        usuarios ??= (await (await fetch(`/BD?json-query=usuarios/${JSON.stringify({ TODO: {} })}`)).json());
         render_todosLosUsuarios();
 });
 

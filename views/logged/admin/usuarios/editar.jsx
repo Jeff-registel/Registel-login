@@ -9,18 +9,29 @@ let usuarioBD;
 
 render_usuario();
 
-ReactDOM.createRoot(document.querySelector(".App")).render(
-        <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <div className="usuario d-inline-block pad-20 ta-center">
-                </div>
-        </ThemeProvider>
-);
+crearEstilo({
+        ".menu-fijo-abajo": {
+                position: "fixed !important",
+                backgroundColor: "white",
+                padding: 10,
+                bottom: 0,
+                width: "100%",
+        }
+});
+
+function App() {
+        return (
+                <AppSimple>
+                        <div className="usuario pad-20 ta-center">
+                        </div>
+                </AppSimple>
+        );
+}
 
 async function render_usuario() {
-        usuarioBD = (await (await fetch(`/BD?queryURL2JSON=usuarios/${usuarioPK}.json`)).json());
+        usuarioBD = (await (await fetch(`/BD?json-query=usuarios/${usuarioPK}/usuario.json`)).json());
         if (!empresasLista) {
-                empresasLista = (await (await fetch(`/BD?queryURL2JSON=diccionarios/empresas.json`)).json())["empresas"];
+                empresasLista = (await (await fetch(`/BD?json-query=diccionarios/empresas.json`)).json())["empresas"];
                 let empresasResumen = [];
                 let lugares = Object.keys(empresasLista);
                 lugares.forEach(lugar => {
@@ -36,7 +47,7 @@ async function render_usuario() {
                 });
                 empresasLista = empresasResumen;
         }
-        tipoDocumentoLista ??= (await (await fetch(`/BD?queryURL2JSON=diccionarios/tipo-documento.json`)).json())["tipo-documento"];
+        tipoDocumentoLista ??= (await (await fetch(`/BD?json-query=diccionarios/tipo-documento.json`)).json())["tipo-documento"];
         ReactDOM.createRoot(document.querySelector(".usuario")).render(
                 <ThemeProvider theme={theme}>
                         <h1 style={{ margin: 0 }}>
@@ -89,13 +100,16 @@ async function render_usuario() {
                         }
                         <br />
                         <br />
-                        <Button variant="contained" color="primary" onClick={() => {
-                                document.querySelector(".actualizar-usuario").style.display = "none";
-                                actualizaUsuario();
-                        }} className="actualizar-usuario" startIcon={<i class="fa-solid fa-floppy-disk"></i>}
-                        style={{ display: "none" }}>
-                                Actualizar
-                        </Button>
+                        <div className="menu-fijo-abajo">
+                                <Button variant="contained" color="primary" onClick={() => {
+                                        document.querySelector(".actualizar-usuario").style.display = "none";
+                                        actualizaUsuario();
+                                }} className="actualizar-usuario" startIcon={<i class="fa-solid fa-floppy-disk"></i>}
+                                        style={{ display: "none" }}>
+                                        Actualizar
+                                </Button>
+                        </div>
+
                 </ThemeProvider>
         );
 
@@ -105,7 +119,7 @@ async function render_usuario() {
         document.querySelector(".actualizar-usuario").style.display = "";
 
         async function render_perfiles() {
-                let perfiles = (await (await fetch(`/BD?queryURL2JSON=diccionarios/perfiles-usuario.json`)).json())["perfiles"];
+                let perfiles = (await (await fetch(`/BD?json-query=diccionarios/perfiles-usuario.json`)).json())["perfiles"];
                 ReactDOM.createRoot(document.querySelector(".FK_PERFIL")).render(
                         <ThemeProvider theme={theme}>
                                 <FormControl size="small" style={{ width: 230 }}>

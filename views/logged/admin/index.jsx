@@ -1,7 +1,6 @@
 function App() {
         return (
-                <ThemeProvider theme={theme}>
-                        <CssBaseline />
+                <AppLogged >
                         <div>
                                 <h1>
                                         Herramientas
@@ -20,8 +19,6 @@ function App() {
                                         Detener Servidor
                                 </Button>
                         </div>
-                </ThemeProvider >
+                </AppLogged >
         )
 }
-
-ReactDOM.render(<App />, document.querySelector(".App"));

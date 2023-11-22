@@ -48,3 +48,28 @@ let colorTheme = {
     codigo: theme == darkTheme ? "white" : "black",
   }
 }
+
+function AppLogged({ children }) {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <div className="app d-none">
+        {children}
+      </div>
+      <div className="menu-izquierda d-none">
+      <MenuIzquierda />
+      </div>
+    </ThemeProvider>
+  );
+}
+
+function AppSimple({ children }) {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <div className="app d-none">
+        {children}
+      </div>
+    </ThemeProvider>
+  );
+}

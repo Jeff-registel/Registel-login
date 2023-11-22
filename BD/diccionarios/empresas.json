@@ -137,16 +137,5 @@
                                 }
                         }
                 }
-        },
-        "__atributos__": {
-                "GET": {
-                        "FECHA": "2023-11-14T13:18:42.390Z",
-                        "CONTADOR": 759
-                },
-                "SET": {
-                        "FECHA_MODIFICACION": "2023-11-14T13:18:42.390Z",
-                        "CONTADOR": 759
-                },
-                "FECHA_CREACION": "2023-10-27T21:21:22.073Z"
         }
 }

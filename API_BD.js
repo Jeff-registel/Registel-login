@@ -23,7 +23,6 @@ module.exports = (pack_app) => {
     function QUERY2JSON() {
       let partesQuery = json_query.split("/");
       let cabeza = partesQuery.at(-1);
-      console.log(cabeza)
       if (cabeza.startsWith("{")) {
         let query = JSON.parse(cabeza);
         let instruccion = Object.keys(query)[0];

@@ -79,7 +79,7 @@ passport.deserializeUser(async function (LOGIN, done) {
       login: LOGIN,
     }
   });
-  if (user) {
+  if (login) {
     done(null, login);
   } else {
     done(null, false);

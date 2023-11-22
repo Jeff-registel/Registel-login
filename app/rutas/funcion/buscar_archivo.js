@@ -44,26 +44,22 @@ function buscar_archivo(...nodos_de_ruta) {
 
       function caso_1_archivo_consultado() {
         ruta = `${nodos_de_ruta.join("/")}/${ultimo_nodo_ruta + extension}`;
-        JSXUnUser = `${nodos_de_ruta.join("/")}/${ultimo_nodo_ruta}!.jsx`;
         rutaCSS = `${nodos_de_ruta.join("/")}/${ultimo_nodo_ruta + ".css"}`;
         ruta = herramienta.limpiar_ruta(ruta);
         if (ruta_existe(ruta, carpeta_base)) {
           rutaCSS = ruta_existe(rutaCSS, carpeta_base);
-          JSXUnUser = ruta_existe(JSXUnUser, carpeta_base);
           return retornar({
             profundidad: nodos_de_ruta.length,
             carpeta: nodos_de_ruta.join("/") + "/",
             nombre: ultimo_nodo_ruta,
             css: rutaCSS,
-            JSXUnUser,
           });
         }
       }
 
       function caso_2_carpeta_consultada() {
-        ruta = `${nodos_de_ruta.join("/")}/${
-          ultimo_nodo_ruta + "/index" + extension
-        }`;
+        ruta = `${nodos_de_ruta.join("/")}/${ultimo_nodo_ruta + "/index" + extension
+          }`;
         ruta = herramienta.limpiar_ruta(ruta);
         if (ruta_existe(ruta, carpeta_base)) {
           return retornar({

@@ -1,3 +1,5 @@
+const memoria = require("../../../app/memoria");
+
 module.exports = ({ query }) => {
         let { login } = query;
         if (!login) {
@@ -5,15 +7,22 @@ module.exports = ({ query }) => {
                         error: "No hay usuario",
                 };
         }
-        let { PK } = memoria.tools.Array2Nodo(`usuarios/!SISTEMAS/ALIAS/LOGIN/${login}.json`).cabeza;
+        let usuarioLOGIN = memoria.tools.Array2Nodo(`usuarios/!SISTEMA/ALIAS/LOGIN/${login}.json`).cabeza;
+        if (!usuarioLOGIN) {
+                return {
+                        error: "El usuario no existe: " + login,
+                };
+        }
+
+        let { PK } = usuarioLOGIN;
 
         if (!PK) {
                 return {
                         error: "El nombre de usuario no existe",
                 };
         }
-
-        let usuario = memoria.tools.Array2Nodo(`usuarios/${PK}/usuario.json`).cabeza;
+        let ruta = `usuarios/${PK}/usuario.json`;
+        let usuario = memoria.tools.Array2Nodo(ruta).cabeza;
 
         if (!usuario) {
                 return {
@@ -21,7 +30,10 @@ module.exports = ({ query }) => {
                 };
         }
 
-        usuario = require("./!GET")(usuario);
+        usuario = require("./!GET")({
+                json: usuario,
+                ruta,
+        });
 
         return usuario;
 }

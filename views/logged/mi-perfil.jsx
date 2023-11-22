@@ -1,6 +1,6 @@
 async function App() {
-        let perfiles_usuario = (await (await fetch("/BD?queryURL2JSON=diccionarios/perfiles-usuario.json")).json())["perfiles"];
-        let tipo_documento = (await (await fetch("/BD?queryURL2JSON=diccionarios/tipo-documento.json")).json())["tipo-documento"];
+        let perfiles_usuario = (await (await fetch("/BD?json-query=diccionarios/perfiles-usuario.json")).json())["perfiles"];
+        let tipo_documento = (await (await fetch("/BD?json-query=diccionarios/tipo-documento.json")).json())["tipo-documento"];
 
         let titulo = <h1>
                 {user["NOMBRE"]} {user["APELLIDO"]} ({user["LOGIN"]})
@@ -8,11 +8,11 @@ async function App() {
 
         let perfil = perfiles_usuario.find(info_perfil => info_perfil["PK"] == user["FK_PERFIL"])["NOMBRE"];
 
-        let empresasAcceso = user["EMPRESAS_ACCESO"].sort((empresaA, empresaB)=>{
-                if(empresaA["NOMBRE_SERVICIO"] < empresaB["NOMBRE_SERVICIO"]){
+        let empresasAcceso = user["EMPRESAS_ACCESO"].sort((empresaA, empresaB) => {
+                if (empresaA["NOMBRE_SERVICIO"] < empresaB["NOMBRE_SERVICIO"]) {
                         return -1;
                 }
-                if(empresaA["NOMBRE_SERVICIO"] > empresaB["NOMBRE_SERVICIO"]){
+                if (empresaA["NOMBRE_SERVICIO"] > empresaB["NOMBRE_SERVICIO"]) {
                         return 1;
                 }
                 return 0;
@@ -28,8 +28,7 @@ async function App() {
         let nombre_tipo_documento = tipo_documento.find((tipo) => tipo["PK"] == user["FK_TIPO_DOCUMENTO"])["NOMBRE"];
 
         return (
-                <ThemeProvider theme={theme}>
-                        <CssBaseline />
+                <AppLogged>
                         {titulo}
                         <b>
                                 Tipo de perfil:
@@ -54,16 +53,6 @@ async function App() {
                         <br />
                         <b>Móvil:</b> {user["MOVIL"] ?? "-"}
                         <br />
-                </ThemeProvider>
+                </AppLogged>
         )
 }
-
-async function init() {
-        let renderApp = await App();
-        ReactDOM.render(
-                renderApp,
-                document.querySelector(".App")
-        );
-}
-
-init();

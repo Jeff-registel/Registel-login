@@ -34,6 +34,16 @@ function interpretar_ruta(req, res, next) {
   let { info_pagina } = argumentos_ruta;
 
   if ([".ejs", ".jsx"].includes(info_pagina.extension)) {
+    let nodos = info_pagina.carpeta.split("/").filter((n) => n);
+    if (nodos[0] == "logged") {
+      let URLParametros = new URLSearchParams(URL.split("?")[1]);
+      if (!req.user) {
+        if (URLParametros.get("menu-izquierda") == "false") {
+          return res.redirect("/unlogged");
+        }
+        return res.redirect("/");
+      }
+    }
     return res.render(
       info_pagina.extension == ".ejs"
         ? info_pagina.ruta

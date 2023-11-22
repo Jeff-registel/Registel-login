@@ -1,6 +1,3 @@
-let contenedor_menu_izquierda = document.createElement("div");
-contenedor_menu_izquierda.classList.add("menu-izquierda-contenedor");
-
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
         width: 62,
         height: 34,
@@ -49,10 +46,10 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }));
 
 const MenuIzquierda = () => {
+        addLink("/JSX/menu-izquierda.css");
+        
         return (
                 <ThemeProvider theme={theme}>
-                        <CssBaseline />
-
                         <label className="menu-izquierda-desactivador" for="estado-colpasamiento" onClick={() => {
                                 setTimeout(() => {
                                         document.querySelector(".no-min-width").style.backgroundColor = document.getElementById("estado-colpasamiento").checked ? "tomato" : "";
@@ -81,12 +78,12 @@ const MenuIzquierda = () => {
                                 </div>
 
                                 <div>
-                                        <BotonOpcionHerramienta font_awesome="fa-solid fa-house" label="Principal" href="/login" />
-                                        <BotonOpcionHerramienta font_awesome="fa-regular fa-circle-user" label="Mi perfil" href="/login/mi-perfil" />
+                                        <BotonOpcionHerramienta font_awesome="fa-solid fa-house" label="Principal" href="/logged" />
+                                        <BotonOpcionHerramienta font_awesome="fa-regular fa-circle-user" label="Mi perfil" href="/logged/mi-perfil" />
                                         {
                                                 [1, 2].includes(user["FK_PERFIL"]) ?
                                                         <React.Fragment>
-                                                                <BotonOpcionHerramienta font_awesome="fa-solid fa-screwdriver-wrench" label="Herramientas" href="/login/admin/" />
+                                                                <BotonOpcionHerramienta font_awesome="fa-solid fa-screwdriver-wrench" label="Herramientas" href="/logged/admin/" />
                                                         </React.Fragment> :
                                                         ""
                                         }
@@ -136,6 +133,3 @@ function BotonOpcionHerramienta({ font_awesome, label, href }) {
                 </div>
         );
 }
-
-ReactDOM.render(<MenuIzquierda />, contenedor_menu_izquierda);
-document.body.appendChild(contenedor_menu_izquierda);

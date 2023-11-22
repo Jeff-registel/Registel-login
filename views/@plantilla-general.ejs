@@ -4,11 +4,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orbita</title>
+  <title>Registel</title>
 
   <%- include('@headerlinks') %>
 
-  <script src="<%- info_pagina.carpeta %><%- !info_pagina.carpeta.endsWith("/") ? "/" : "" %><%- info_pagina.nombre  %><%- !user && info_pagina.JSXUnUser ? "!" : "" %>.jsx" type="text/babel" defer></script>
+  <script src="<%- info_pagina.nombre  %>.jsx" type="text/babel" defer></script>
 
   <script src="/JSX/!fin.jsx" type="text/babel" defer></script>
 </head>
