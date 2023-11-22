@@ -3,6 +3,7 @@ const _fs = require("./app/memoria/_fs");
 
 module.exports = (pack_app) => {
   pack_app.app.get("/BD", async (req, res) => {
+    console.log("Corriendo API_BD");
     let URL = req.protocol + "://" + req.get("host") + req.originalUrl;
     if (!URL.includes("?")) {
       return res
@@ -16,16 +17,38 @@ module.exports = (pack_app) => {
       "json-query"
     );
 
+    console.log("json_query", json_query);
+
     if (json_query) {
-      return QUERY2JSON();
+      let q = QUERY2JSON();
+      return q;
     }
 
     function QUERY2JSON() {
-      let partesQuery = json_query.split("/");
-      let cabeza = partesQuery.at(-1);
+      let partesQuery;
+      let cabeza;
+
+      if (!json_query.includes("/{")) {
+        partesQuery = json_query.split("/");
+        cabeza = partesQuery.at(-1);
+      } else {
+        partesQuery = json_query.substring(0, json_query.indexOf("/{")).split("/");
+        cabeza = json_query.substring(json_query.indexOf("/{"));
+      }
+
+      console.log("partesQuery", partesQuery);
+      console.log("cabeza", cabeza);
+
       if (cabeza.startsWith("{")) {
         let query = JSON.parse(cabeza);
         let instruccion = Object.keys(query)[0];
+
+        console.log("instruccion", instruccion);
+        if (instruccion == "DOC") {
+          console.log(memoria.EXEC(query));
+          return res.json(memoria.EXEC(query)).end();
+        }
+
         let MACRO = `${memoria.config.RAIZ}/${json_query.replaceAll(
           "/" + cabeza,
           ""

@@ -16,13 +16,25 @@ crearEstilo({
                 padding: 10,
                 bottom: 0,
                 width: "100%",
-        }
+                borderTop: "1px solid #ccc",
+                textAlign: "right",
+                zIndex: 100,
+        },
+        "div.lh": {
+                display: "inline-flex",
+                flexWrap: "wrap",
+                alignItems: "center",
+                justifyContent: "space-evenly",
+                columnGap: "15px",
+                rowGap: "15px",
+                margin: "15px",
+        },
 });
 
 function App() {
         return (
                 <AppSimple>
-                        <div className="usuario pad-20 ta-center">
+                        <div className="usuario ta-center">
                         </div>
                 </AppSimple>
         );
@@ -54,27 +66,57 @@ async function render_usuario() {
                                 Edición de usuario
                         </h1>
                         <br />
-                        <TextField className="NOMBRE" size="small" variant="outlined" defaultValue={usuarioBD["NOMBRE"]} label="Nombre" />
-                        &nbsp;&nbsp;
-                        <TextField className="APELLIDO" size="small" variant="outlined" defaultValue={usuarioBD["APELLIDO"]} label="Apellido" />
-                        <br />
-                        <br />
-                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <hr />
+                        <h3>
+                                Identidad
+                        </h3>
+                        <div className="lh">
+                                <TextField className="NOMBRE" size="small" variant="outlined" defaultValue={usuarioBD["NOMBRE"]} label="Nombre" />
+                                <TextField className="APELLIDO" size="small" variant="outlined" defaultValue={usuarioBD["APELLIDO"]} label="Apellido" />
+                        </div>
+                        <div className="lh">
                                 <TipoDocumento />
-                                &nbsp;&nbsp;
                                 <TextField className="CEDULA" size="small" variant="outlined" defaultValue={usuarioBD["CEDULA"]} label="Número" />
                         </div>
-                        <br />
+                        <hr />
+                        <h3>
+                                Contacto
+                        </h3>
+                        <div className="lh">
                         <TextField className="TELEFONO" size="small" variant="outlined" defaultValue={usuarioBD["TELEFONO"]} label="Teléfono" />
-                        <br />
-                        <br />
-                        <TextField className="LOGIN" size="small" variant="outlined" defaultValue={usuarioBD["LOGIN"]} label="Login" />
-                        &nbsp;&nbsp;
-                        <TextField className="EMAIL" size="small" variant="outlined" defaultValue={usuarioBD["EMAIL"]} label="Email" />
-                        <br />
-                        <br />
-                        <div className="FK_PERFIL"></div>
-                        <br />
+                        <TextField className="MOVIL" size="small" variant="outlined" defaultValue={usuarioBD["MOVIL"]} label="Móvil" />
+                        <TextField className="DIRECCION" size="small" variant="outlined" defaultValue={usuarioBD["DIRECCION"]} label="Dirección" />
+                        </div>
+                        <hr />
+                        <h3>
+                                Usuario
+                        </h3>
+                        <div className="lh">
+                                <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
+                                        <InputLabel>Login</InputLabel>
+                                        <OutlinedInput
+                                                className="LOGIN"
+                                                size="small"
+                                                endAdornment={
+                                                        <InputAdornment position="end">
+                                                                <IconButton
+                                                                        aria-label="toggle password visibility"
+                                                                        edge="end"
+                                                                >
+                                                                        <i class="fa-solid fa-lock"></i>
+                                                                </IconButton>
+                                                        </InputAdornment>
+                                                }
+                                                defaultValue={usuarioBD["LOGIN"]}
+                                                inputProps={{
+                                                        readOnly: true,
+                                                        disabled: true,
+                                                }}
+                                        />
+                                </FormControl>
+                                <TextField className="EMAIL" size="small" variant="outlined" defaultValue={usuarioBD["EMAIL"]} label="Email" />
+                                <span className="FK_PERFIL d-inline-block" />
+                        </div>
                         <span className="ESTADO">
                                 <FormControlLabel control={
                                         <Switch defaultChecked={usuarioBD["ESTADO"] == 1} />
@@ -100,9 +142,13 @@ async function render_usuario() {
                         }
                         <br />
                         <br />
+                        <br />
+                        <br />
+                        <br />
+                        <br />
                         <div className="menu-fijo-abajo">
                                 <Button variant="contained" color="primary" onClick={() => {
-                                        document.querySelector(".actualizar-usuario").style.display = "none";
+                                        //document.querySelector(".actualizar-usuario").style.display = "none";
                                         actualizaUsuario();
                                 }} className="actualizar-usuario" startIcon={<i class="fa-solid fa-floppy-disk"></i>}
                                         style={{ display: "none" }}>
@@ -172,7 +218,7 @@ function Empresas({ seleccion }) {
                 )} />;
 }
 
-socket.on("usuarios_modificados", (usuarios) => {
+socket.on("global: usuarios modificados", (usuarios) => {
         usuarios.forEach(usuario => {
                 if (usuario["PK"] == usuarioPK) {
                         render_usuario();
@@ -182,44 +228,46 @@ socket.on("usuarios_modificados", (usuarios) => {
 
 
 async function actualizaUsuario() {
-        let json = (await (await fetch(`/BD?queryJSON-EXEC=${JSON.stringify({
+        console.log(AutocompleteEmpresas ?? usuarioBD["EMPRESAS_ACCESO"] ?? []);
+        let json = (await (await fetch(`/BD?json-query=${JSON.stringify({
                 DOC: {
                         usuarios: {
-                                [`${usuarioPK}.json`]: {
-                                        NOMBRE: document.querySelector(".NOMBRE").querySelector("input").value,
-                                        APELLIDO: document.querySelector(".APELLIDO").querySelector("input").value,
-                                        FK_TIPO_DOCUMENTO: parseInt(document.querySelector(".TIPO_DOCUMENTO input").value),
-                                        CEDULA: document.querySelector(".CEDULA").querySelector("input").value,
-                                        TELEFONO: document.querySelector(".TELEFONO").querySelector("input").value,
-                                        LOGIN: document.querySelector(".LOGIN").querySelector("input").value,
-                                        EMAIL: document.querySelector(".EMAIL").querySelector("input").value,
-                                        FK_PERFIL: parseInt(document.querySelector(".FK_PERFIL_SELECT").querySelector("input").value),
-                                        ESTADO: document.querySelector(".ESTADO").querySelector("input").checked,
-                                        EMPRESAS_ACCESO: AutocompleteEmpresas ?? usuarioBD["EMPRESAS_ACCESO"] ?? [],
+                                [usuarioPK]: {
+                                        "usuario.json": {
+                                                NOMBRE: document.querySelector(".NOMBRE").querySelector("input").value,
+                                                APELLIDO: document.querySelector(".APELLIDO").querySelector("input").value,
+                                                FK_TIPO_DOCUMENTO: parseInt(document.querySelector(".TIPO_DOCUMENTO input").value),
+                                                CEDULA: document.querySelector(".CEDULA").querySelector("input").value,
+                                                TELEFONO: document.querySelector(".TELEFONO").querySelector("input").value,
+                                                MOVIL: document.querySelector(".MOVIL").querySelector("input").value,
+                                                DIRECCION: document.querySelector(".DIRECCION").querySelector("input").value,
+                                                LOGIN: document.querySelector(".LOGIN").querySelector("input").value,
+                                                EMAIL: document.querySelector(".EMAIL").querySelector("input").value,
+                                                FK_PERFIL: parseInt(document.querySelector(".FK_PERFIL_SELECT").querySelector("input").value),
+                                                ESTADO: document.querySelector(".ESTADO").querySelector("input").checked,
+                                                EMPRESAS_ACCESO: AutocompleteEmpresas ?? usuarioBD["EMPRESAS_ACCESO"] ?? [],
+                                        }
                                 }
                         }
                 }
-        })}
-        &usuario=${JSON.stringify({
-                LOGIN: user["LOGIN"],
-                PK: user["PK"],
-        })}
-        `)).json());
-        switch (json.status) {
-                case "ok!":
-                        swal.fire({
-                                title: "Usuario actualizado",
-                                icon: "success",
-                                confirmButtonText: "Ok",
-                                timer: 2000,
-                        });
-                        break;
-                case "error!":
-                        swal.fire({
-                                title: "Error",
-                                icon: "error",
-                                confirmButtonText: "Ok",
-                        });
-                        break;
+        })}`)).json());
+
+        console.log(json);
+
+        if (json["ok"]) {
+                swal.fire({
+                        title: "Usuario actualizado",
+                        icon: "success",
+                        confirmButtonText: "Ok",
+                        timer: 2000,
+                });
+        }
+        if (json["error"]) {
+                swal.fire({
+                        title: "Error",
+                        text: json["error"],
+                        icon: "error",
+                        confirmButtonText: "Ok",
+                });
         }
 }

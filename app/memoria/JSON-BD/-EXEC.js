@@ -46,8 +46,7 @@ function ONE({ instruccion, json, context = {} }) {
     case "READ":
       return READ(json, { context });
     case "DOC":
-      DOC(json, { context });
-      break;
+      return DOC(json, { context });
     case "DELETE":
       DELETE(json, { context });
       break;

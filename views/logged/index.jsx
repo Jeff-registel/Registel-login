@@ -15,7 +15,7 @@ crearEstilo({
         },
 
         ".filtro-buscar": {
-                display: "none",
+                display: "none !important",
         }
 });
 
@@ -64,6 +64,7 @@ function App() {
                                                         />
                                                         &nbsp;
                                                         <Button variant="contained" color="secondary" onClick={() => {
+                                                                console.log("click");
                                                                 render_todosLosUsuarios();
                                                         }}>
                                                                 <i className="fa-solid fa-magnifying-glass"></i>
@@ -144,7 +145,7 @@ async function render_empresasAcceso() {
 
 async function render_todosLosUsuarios() {
         let contador_usuarios = 0;
-        usuarios ??= (await (await fetch(`/BD?json-query=usuarios/${JSON.stringify({ TODO: { usuarios: true } })}`)).json());
+        usuarios = (await (await fetch(`/BD?json-query=usuarios/${JSON.stringify({ TODO: { usuarios: true } })}`)).json());
         usuarios = usuarios.sort((a, b) => {
                 if (a["NOMBRE"].toLowerCase() > b["NOMBRE"].toLowerCase()) {
                         return 1;
@@ -284,6 +285,7 @@ async function render_todosLosUsuarios() {
                 }
                 return (
                         <Button
+                                /* href={`/logged/admin/usuarios/editar?usuario=${usuario["PK"]}`} */
                                 onClick={() => {
                                         ventana_flotante["nueva-ventana"]({
                                                 titulo_texto: "Editar usuario",
@@ -314,7 +316,7 @@ async function render_todosLosUsuarios() {
         }
 }
 
-socket.on("usuarios_modificados", async (usuariosMod) => {
+socket.on("global: usuarios modificados", async (usuariosMod) => {
         let selfUser = usuariosMod.find(e => e["PK"] == user["PK"]);
         if (selfUser) {
                 let empresas_acceso_mod = (await (await fetch(`/BD?json-query=usuarios/${user["PK"]}/usuario.json`)).json())["EMPRESAS_ACCESO"];

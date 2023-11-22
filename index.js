@@ -116,3 +116,5 @@ app.get("/stop-server", (req, res) => {
 });
 
 require("./app/rutas")(pack_app);
+
+module.exports = pack_app;

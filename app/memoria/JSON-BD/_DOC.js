@@ -2,9 +2,19 @@ let config = require("./__config.json");
 let fs = require("../_fs");
 
 function objeto(json, { context = {} } = {}) {
-  recorrer_arbol({
-    [config.RAIZ]: json,
-  });
+  try {
+    recorrer_arbol({
+      [config.RAIZ]: json,
+    });
+    return {
+      ok: "todo bien"
+    };
+  } catch (error) {
+    return {
+      error: "No se pudo ejecutar la instruccion"
+    };
+  }
+
 
   function recorrer_arbol(arbol, padres = []) {
     let retorno = {};
@@ -12,8 +22,18 @@ function objeto(json, { context = {} } = {}) {
     Object.entries(arbol).forEach(async ([nombre, json_new]) => {
       if (nombre.endsWith(".json")) {
         let archivo_ruta = `${padres.join("/")}/${nombre}`;
-        let SET = `${padres.join("/")}/@!SET.js`;
-        
+        let nodos = [...padres]
+        let SET;
+        while (nodos.pop()) {
+          SET = `${nodos.join("/")}/!SISTEMA/!SET.js`;
+          console.log(SET);
+          if (fs.existe(SET)) {
+            console.log("existe");
+            break;
+          }
+        }
+
+
         let json_old = fs.archivo.leer(archivo_ruta);
         if (!json_old) {
           json_old = {};
@@ -28,8 +48,8 @@ function objeto(json, { context = {} } = {}) {
           ...json_old,
           ...json_new,
         };
-        if (fs.existe(SET) && !nombre.startsWith("@")) {
-          json_combinado = await require("../../../" + SET)({
+        if (fs.existe(SET) && !nombre.startsWith("!")) {
+          json_combinado = await require(root + "/" + SET)({
             json: json_combinado,
             json_new,
             json_old,
@@ -53,7 +73,6 @@ function objeto(json, { context = {} } = {}) {
       }
       recorrer_arbol(json_new, [...padres, nombre]);
     });
-
     return retorno;
   }
 }
