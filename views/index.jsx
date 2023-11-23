@@ -110,10 +110,7 @@ function Formulario() {
                                 <br />
                                 <br />
                                 <div className="ta-right">
-                                        <Button variant="contained" color="primary" onClick={async (e) => {
-                                                console.log((await (await fetch(`/BD?json-query=usuarios/${JSON.stringify({ TODO: { usuarios: true } })}`)).json()))
-                                                //document.querySelector("form").submit();
-                                        }}>
+                                        <Button variant="contained" color="primary" type="submit">
                                                 Ingresar
                                         </Button>
                                 </div>
