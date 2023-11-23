@@ -51,7 +51,7 @@ const MenuIzquierda = () => {
         }
 
         addLink("/JSX/menu-izquierda.css");
-        
+
         return (
                 <ThemeProvider theme={theme}>
                         <label className="menu-izquierda-desactivador" for="estado-colpasamiento" onClick={() => {
@@ -82,15 +82,9 @@ const MenuIzquierda = () => {
                                 </div>
 
                                 <div>
+
                                         <BotonOpcionHerramienta font_awesome="fa-solid fa-house" label="Principal" href="/logged" />
                                         <BotonOpcionHerramienta font_awesome="fa-regular fa-circle-user" label="Mi perfil" href="/logged/mi-perfil" />
-                                        {
-                                                [1, 2].includes(user["FK_PERFIL"]) ?
-                                                        <React.Fragment>
-                                                                <BotonOpcionHerramienta font_awesome="fa-solid fa-screwdriver-wrench" label="Herramientas" href="/logged/admin/" />
-                                                        </React.Fragment> :
-                                                        ""
-                                        }
                                 </div>
 
                                 <div className="descolapsado-vista">
@@ -116,24 +110,26 @@ const MenuIzquierda = () => {
 
 function BotonOpcionHerramienta({ font_awesome, label, href }) {
         return (
-                <div className="seccion-boton-menu opcion-herramienta">
-                        <Button
-                                className="no-min-width w-100P c-white  white-space-nowrap"
-                                size="large"
-                                startIcon={<i class={
-                                        font_awesome +
-                                        " descolapsado-vista"
-                                }></i>} title={label}
-                                href={href}
-                        >
-                                <i class={
-                                        font_awesome +
-                                        " colapsado-vista"
-                                }></i>
-                                <span className="descolapsado-vista">
-                                        {label}
-                                </span>
-                        </Button>
-                </div>
+                <Tooltip title={label} placement="right" arrow style={{ zIndex: 1000 }}>
+                        <div className="seccion-boton-menu opcion-herramienta">
+                                <Button
+                                        className="no-min-width w-100P c-white  white-space-nowrap"
+                                        size="large"
+                                        startIcon={<i class={
+                                                font_awesome +
+                                                " descolapsado-vista"
+                                        }></i>}
+                                        href={href}
+                                >
+                                        <i class={
+                                                font_awesome +
+                                                " colapsado-vista"
+                                        }></i>
+                                        <span className="descolapsado-vista">
+                                                {label}
+                                        </span>
+                                </Button>
+                        </div>
+                </Tooltip>
         );
 }

@@ -23,11 +23,11 @@ function App() {
         return (
                 <AppLogged>
                         <center>
-                                <Paper className="ultimas-empresas-consultadas d-inline-block w-90P ta-left pad-20">
+                                <Paper className="ultimas-empresas-consultadas d-inline-block w-90P ta-left pad-20" elevation={3}>
                                 </Paper>
                                 <br />
                                 <br />
-                                <Paper className="contenedor-usuarios d-inline-block w-90P">
+                                <Paper className="contenedor-usuarios d-inline-block w-90P"elevation={3}>
                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }} className="pad-20">
                                                 <h1>
                                                         Usuarios
