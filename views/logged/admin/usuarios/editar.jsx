@@ -244,15 +244,13 @@ async function actualizaUsuario() {
                                                 LOGIN: document.querySelector(".LOGIN").querySelector("input").value,
                                                 EMAIL: document.querySelector(".EMAIL").querySelector("input").value,
                                                 FK_PERFIL: parseInt(document.querySelector(".FK_PERFIL_SELECT").querySelector("input").value),
-                                                ESTADO: document.querySelector(".ESTADO").querySelector("input").checked,
+                                                ESTADO: document.querySelector(".ESTADO input").checked,
                                                 EMPRESAS_ACCESO: AutocompleteEmpresas ?? usuarioBD["EMPRESAS_ACCESO"] ?? [],
                                         }
                                 }
                         }
                 }
         })}`)).json());
-
-        console.log(json);
 
         if (json["ok"]) {
                 swal.fire({

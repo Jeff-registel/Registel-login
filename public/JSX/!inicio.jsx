@@ -94,3 +94,19 @@ function AppRender({ children }) {
     </ThemeProvider>
   );
 }
+
+function generarVentanaFlotanteRapido({url, titulo}){
+    ventana_flotante["nueva-ventana"]({
+            titulo_texto: titulo,
+            html: `
+                    <iframe src="${url}" class="w-100P h-100P border-0"
+                            onLoad="
+                                    let urlNew = this.contentWindow.location;
+                                    if (!urlNew.href.endsWith('${url}') && !urlNew.href.endsWith('/unlogged')) {
+                                            this.contentWindow.location.href = '/unlogged';
+                                    }
+                            "
+                    ></iframe>
+            `
+    })
+}

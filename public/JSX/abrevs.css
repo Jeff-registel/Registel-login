@@ -93,9 +93,21 @@
         color: lime !important;
 }
 
+.c-dodgerblue   {
+        color: dodgerblue !important;
+}
+
+.c-pointer {
+        cursor: pointer !important;
+}
+
 .m-5,
 .m-5px {
         margin: 5px !important;
+}
+
+.m-10 {
+        margin: 10px !important;
 }
 
 .op-20P {

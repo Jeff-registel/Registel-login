@@ -3,6 +3,8 @@ let tipo_agrupamiento;
 let ver_todos_usuarios = false;
 let usuarios;
 
+let actualizarListaDeUsuarios = true;
+
 if (!user) {
         window.location.href = "/";
 }
@@ -27,7 +29,7 @@ function App() {
                                 </Paper>
                                 <br />
                                 <br />
-                                <Paper className="contenedor-usuarios d-inline-block w-90P"elevation={3}>
+                                <Paper className="contenedor-usuarios d-inline-block w-90P" elevation={3}>
                                         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }} className="pad-20">
                                                 <h1>
                                                         Usuarios
@@ -67,7 +69,7 @@ function App() {
                                                                 console.log("click");
                                                                 render_todosLosUsuarios();
                                                         }}>
-                                                                <i className="fa-solid fa-magnifying-glass"></i>
+                                                                <i className="fa-solid fa-magnifying-glass" />
                                                         </Button>
                                                 </Box>
                                         </div>
@@ -97,36 +99,38 @@ async function render_empresasAcceso() {
                 }
         });
 
-        let lugares = []
+        console.log(Object.values(empresas).flat().reduce((acc, cur) => {
+                acc = {
+                        ...acc,
+                        ...cur["Servicios"]
+                }
+                return acc;
+        }, {}));
 
-        Object.entries(empresas).forEach(([lugar, contenido], index, array) => {
-                lugares.push(
+        let empresasLista = Object.entries(Object.values(empresas).flat().reduce((acc, cur) => {
+                acc = {
+                        ...acc,
+                        ...cur["Servicios"]
+                }
+                return acc;
+        }, {})).sort(([servicioA, contenidoServicioA], [servicioB, contenidoServicioB]) => {
+                if (servicioA.toLowerCase() > servicioB.toLowerCase()) {
+                        return 1;
+                }
+                if (servicioA.toLowerCase() < servicioB.toLowerCase()) {
+                        return -1;
+                }
+                return 0;
+        }).map(([servicio, contenidoServicio], index, array) => {
+                return (
                         <React.Fragment>
-                                <h1>
-                                        {lugar}
-                                </h1>
-                                {
-                                        Object.entries(contenido["Servicios"]).map(([servicio, contenidoServicio]) => {
-                                                return (
-                                                        <React.Fragment>
-                                                                <Button href={`http://${contenidoServicio["DOMINIO"]}?usuario=${user["LOGIN"]}&contraseña=${cifradoCesar(localStorage.getItem("contraseña"))}`}
-                                                                        target="_blank" className="c-white pad-10 b-s-1px-white-20_OP" color="primary" variant="contained" >
-                                                                        {servicio}
-                                                                </Button>
-                                                                &nbsp;&nbsp;
-                                                        </React.Fragment>
-                                                )
-                                        })
-                                }
-                                {
-                                        index != array.length - 1 ?
-                                                <React.Fragment>
-                                                        <br /><br /><hr />
-                                                </React.Fragment>
-                                                : ""
-                                }
+                                <Button href={`http://${contenidoServicio["DOMINIO"]}?usuario=${user["LOGIN"]}&contraseña=${cifradoCesar(localStorage.getItem("contraseña"))}`}
+                                        target="_blank" className="c-white pad-10 b-s-1px-white-20_OP" color="primary" variant="contained" >
+                                        {servicio}
+                                </Button>
+                                &nbsp;&nbsp;
                         </React.Fragment>
-                );
+                )
         });
 
         ReactDOM.render(
@@ -135,7 +139,7 @@ async function render_empresasAcceso() {
                                 Empresas
                         </h1>
                         {
-                                lugares
+                                empresasLista
                         }
                 </React.Fragment>,
                 document.querySelector(".ultimas-empresas-consultadas")
@@ -145,7 +149,10 @@ async function render_empresasAcceso() {
 
 async function render_todosLosUsuarios() {
         let contador_usuarios = 0;
-        usuarios = (await (await fetch(`/BD?json-query=usuarios/${JSON.stringify({ TODO: { usuarios: true } })}`)).json());
+        if (actualizarListaDeUsuarios) {
+                usuarios = await JSONBD("usuarios/", { TODO: { usuarios: true } });
+                actualizarListaDeUsuarios = false;
+        }
         console.log(usuarios)
         usuarios = usuarios.sort((a, b) => {
                 if (a["NOMBRE"].toLowerCase() > b["NOMBRE"].toLowerCase()) {
@@ -183,7 +190,7 @@ async function render_todosLosUsuarios() {
                         let llave = "";
                         switch (tipo_agrupamiento) {
                                 case "Perfil":
-                                        info_perfiles ??= (await (await fetch("/BD?json-query=diccionarios/perfiles-usuario.json")).json())["perfiles"];
+                                        info_perfiles ??= (await JSONBD("diccionarios/perfiles-usuario.json"))["perfiles"];
                                         llave = info_perfiles.find(info_perfil => info_perfil["PK"] == usuario["FK_PERFIL"])["NOMBRE"];
                                         break;
                                 case "Alfabetico":
@@ -213,27 +220,15 @@ async function render_todosLosUsuarios() {
                                         document.querySelector(".ver-todos-usuarios").classList.add("d-none");
                                         document.querySelector(".ver-menos-usuarios").classList.remove("d-none");
                                         document.querySelectorAll(".usuario").forEach(e => e.classList.remove("d-none"));
-                                } }>
+                                }}>
                                         Ver todos
                                 </Button>
                                 <Button className="ver-menos-usuarios d-none" onClick={() => {
                                         ver_todos_usuarios = false;
                                         document.querySelector(".ver-todos-usuarios").classList.remove("d-none");
                                         document.querySelector(".ver-menos-usuarios").classList.add("d-none");
-                                        let contador_usuarios = 0;
-                                        document.querySelectorAll(".usuario").forEach((e) => {
-                                                if (contador_usuarios >= 12) {
-                                                        e.classList.add("d-none");
-                                                }
-                                                if (document.querySelector(".filtro-buscar")) {
-                                                        if (!e.classList.contains("filtro-buscar")) {
-                                                                contador_usuarios++;
-                                                        }
-                                                } else {
-                                                        contador_usuarios++;
-                                                }
-                                        });
-                                } }>
+                                        render_todosLosUsuarios();
+                                }}>
                                         Ver menos
                                 </Button>
                                 <br />
@@ -243,31 +238,33 @@ async function render_todosLosUsuarios() {
         }
 
         function BloqueDeUsuarios() {
-                return <ThemeProvider theme={lightTheme}>
-                        {Object.entries(agrupador).map(([llave, _usuarios], index, array) => {
-                                return (
-                                        <React.Fragment>
-                                                {llave
-                                                        ?
-                                                        <h1 className="ta-left padw-40">
-                                                                {llave}
-                                                        </h1>
-                                                        :
-                                                        ""}
-                                                {_usuarios.map((usuario) => {
-                                                        return <Usuario usuario={usuario} />;
-                                                })}
-                                                {index != array.length - 1 ?
-                                                        <React.Fragment>
-                                                                <br />
-                                                                <br />
-                                                                <hr />
-                                                        </React.Fragment>
-                                                        : ""}
-                                        </React.Fragment>
-                                );
-                        }) ?? ""}
-                </ThemeProvider>;
+                return (
+                        <div style={{ textAlign: "left" }}>
+                                {Object.entries(agrupador).map(([llave, _usuarios], index, array) => {
+                                        return (
+                                                <React.Fragment>
+                                                        {llave
+                                                                ?
+                                                                <h1 className="ta-left padw-40">
+                                                                        {llave}
+                                                                </h1>
+                                                                :
+                                                                ""}
+                                                        {_usuarios.map((usuario) => {
+                                                                return <Usuario usuario={usuario} />;
+                                                        })}
+                                                        {index != array.length - 1 ?
+                                                                <React.Fragment>
+                                                                        <br />
+                                                                        <br />
+                                                                        <hr />
+                                                                </React.Fragment>
+                                                                : ""}
+                                                </React.Fragment>
+                                        );
+                                }) ?? ""}
+                        </div>
+                )
         }
 
         function Usuario({ usuario }) {
@@ -316,30 +313,17 @@ async function render_todosLosUsuarios() {
                                         >
                                                 <Button
                                                         /* href={`/logged/admin/usuarios/editar?usuario=${usuario["PK"]}`} */
-                                                        onClick={() => {
-                                                                let url = `/logged/admin/usuarios/editar?usuario=${usuario["PK"]}&ventana-flotante=true`;
-                                                                ventana_flotante["nueva-ventana"]({
-                                                                        titulo_texto: "Editar usuario",
-                                                                        html: `
-                                                                                <iframe src="${url}" class="w-100P h-100P border-0"
-                                                                                        onLoad="
-                                                                                                let urlNew = this.contentWindow.location;
-                                                                                                if (!urlNew.href.endsWith('${url}') && !urlNew.href.endsWith('/unlogged')) {
-                                                                                                        this.contentWindow.location.href = '/unlogged';
-                                                                                                }
-                                                                                        "
-                                                                                ></iframe>
-                                                                        `
-                                                                })
-                                                        }}
+                                                        onClick={abrirVentanaFlotanteUsuario}
                                                         className={`
                                                         usuario 
                                                         ${colorTheme.fuente.clase}
                                                 `}>
                                                         <div className="d-inline-block usuario-imagen pad-10">
-                                                                <Avatar style={{ backgroundColor: `hsl(${(12 * (usuario["NOMBRE"].charCodeAt(0) + usuario["APELLIDO"].charCodeAt(0))) % 360}, 100%, 30%)` }}>
-                                                                        {usuario["NOMBRE"][0]}{usuario["APELLIDO"][0]}
-                                                                </Avatar>
+                                                                <ThemeProvider theme={lightTheme}>
+                                                                        <Avatar style={{ backgroundColor: `hsl(${(12 * (usuario["NOMBRE"].charCodeAt(0) + usuario["APELLIDO"].charCodeAt(0))) % 360}, 100%, 30%)` }}>
+                                                                                {usuario["NOMBRE"][0]}{usuario["APELLIDO"][0]}
+                                                                        </Avatar>
+                                                                </ThemeProvider>
                                                         </div>
                                                         <div
                                                                 className="usuario-nombre d-inline-block tt-normal"
@@ -349,27 +333,62 @@ async function render_todosLosUsuarios() {
                                                         </div>
                                                 </Button>
                                         </Tooltip>
-                                        <Tooltip
-                                                title="Editar en otra pestaña"
-                                                arrow
-                                                TransitionComponent={Zoom}
-                                                placement="right"
+                                        <ButtonGroup
+                                                orientation="vertical"
+                                                variant="contained"
+                                                color={
+                                                        theme == darkTheme ? "secondary" : "tertiary"
+                                                }
                                         >
-                                                <Button
-                                                        variant="contained"
-                                                        color={
-                                                                theme == darkTheme ? "secondary" : "tertiary"
-                                                        }
-                                                        href={`/logged/admin/usuarios/editar?usuario=${usuario["PK"]}`}
-                                                        target="_blank"
-                                                        style={{ padding: 15, minWidth: 0 }}
+                                                <Tooltip
+                                                        title="Editar aquí"
+                                                        arrow
+                                                        TransitionComponent={Zoom}
+                                                        placement="right"
                                                 >
-                                                        <i class="fa-solid fa-up-right-from-square"></i>
-                                                </Button>
-                                        </Tooltip>
+                                                        <Button
+                                                                target="_blank"
+                                                                style={{ padding: 15, minWidth: 0 }}
+                                                                onClick={abrirVentanaFlotanteUsuario}
+                                                        >
+                                                                <i class="fa-regular fa-window-restore" />
+                                                        </Button>
+                                                </Tooltip>
+                                                <Tooltip
+                                                        title="Editar en otra pestaña"
+                                                        arrow
+                                                        TransitionComponent={Zoom}
+                                                        placement="right"
+                                                >
+                                                        <Button
+                                                                href={`/logged/admin/usuarios/editar?usuario=${usuario["PK"]}`}
+                                                                target="_blank"
+                                                                style={{ padding: 15, minWidth: 0 }}
+                                                        >
+                                                                <i class="fa-solid fa-up-right-from-square" />
+                                                        </Button>
+                                                </Tooltip>
+                                        </ButtonGroup>
                                 </FormGroup>
                         </FormControl>
                 );
+
+                function abrirVentanaFlotanteUsuario() {
+                        let url = `/logged/admin/usuarios/editar?usuario=${usuario["PK"]}&ventana-flotante=true`;
+                        ventana_flotante["nueva-ventana"]({
+                                titulo_texto: "Editar usuario",
+                                html: `
+                                        <iframe src="${url}" class="w-100P h-100P border-0"
+                                                onLoad="
+                                                        let urlNew = this.contentWindow.location;
+                                                        if (!urlNew.href.endsWith('${url}') && !urlNew.href.endsWith('/unlogged')) {
+                                                                this.contentWindow.location.href = '/unlogged';
+                                                        }
+                                                "
+                                        ></iframe>
+                                `
+                        })
+                }
         }
 }
 
@@ -382,6 +401,7 @@ socket.on("global: usuarios modificados", async (usuariosMod) => {
         }
         usuarios ??= (await (await fetch(`/BD?json-query=usuarios/${JSON.stringify({ TODO: {} })}`)).json());
         render_todosLosUsuarios();
+        actualizarListaDeUsuarios = true;
 });
 
 render_todosLosUsuarios();

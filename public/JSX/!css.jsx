@@ -8,10 +8,5 @@ crearEstilo({ //Conjunto de capas que se van a usar en el sitio
         zIndex: 10,
         width: "95%",
         margin: "auto",
-
-        "& hr": {
-            opacity: 0.3,
-            width: "95%",
-        }
     },
 })

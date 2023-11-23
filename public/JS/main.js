@@ -90,3 +90,11 @@ function Iconos_fa_bs() {
         "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
     );
 }
+
+async function JSONBD(ruta, query) {
+    let json_query = `/BD?json-query=${ruta}${query ? JSON.stringify(query) : ""}`;
+    let retorno = (await (await fetch(json_query)).json());
+    console.log("json_query", json_query);
+    console.log("retorno", retorno);
+    return retorno;
+}
