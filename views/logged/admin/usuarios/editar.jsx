@@ -12,11 +12,11 @@ render_usuario();
 crearEstilo({
         ".menu-fijo-abajo": {
                 position: "fixed !important",
-                backgroundColor: "white",
                 padding: 10,
                 bottom: 0,
+                right: 0,
                 width: "100%",
-                borderTop: "1px solid #ccc",
+                borderTop: "1px solid rgba(128,128,128,.5)",
                 textAlign: "right",
                 zIndex: 100,
         },
@@ -33,10 +33,10 @@ crearEstilo({
 
 function App() {
         return (
-                <AppSimple>
+                <AppLogged>
                         <div className="usuario ta-center">
                         </div>
-                </AppSimple>
+                </AppLogged>
         );
 }
 
@@ -83,9 +83,9 @@ async function render_usuario() {
                                 Contacto
                         </h3>
                         <div className="lh">
-                        <TextField className="TELEFONO" size="small" variant="outlined" defaultValue={usuarioBD["TELEFONO"]} label="Teléfono" />
-                        <TextField className="MOVIL" size="small" variant="outlined" defaultValue={usuarioBD["MOVIL"]} label="Móvil" />
-                        <TextField className="DIRECCION" size="small" variant="outlined" defaultValue={usuarioBD["DIRECCION"]} label="Dirección" />
+                                <TextField className="TELEFONO" size="small" variant="outlined" defaultValue={usuarioBD["TELEFONO"]} label="Teléfono" />
+                                <TextField className="MOVIL" size="small" variant="outlined" defaultValue={usuarioBD["MOVIL"]} label="Móvil" />
+                                <TextField className="DIRECCION" size="small" variant="outlined" defaultValue={usuarioBD["DIRECCION"]} label="Dirección" />
                         </div>
                         <hr />
                         <h3>
@@ -146,7 +146,7 @@ async function render_usuario() {
                         <br />
                         <br />
                         <br />
-                        <div className="menu-fijo-abajo">
+                        <Paper className="menu-fijo-abajo">
                                 <Button variant="contained" color="primary" onClick={() => {
                                         //document.querySelector(".actualizar-usuario").style.display = "none";
                                         actualizaUsuario();
@@ -154,7 +154,7 @@ async function render_usuario() {
                                         style={{ display: "none" }}>
                                         Actualizar
                                 </Button>
-                        </div>
+                        </Paper>
 
                 </ThemeProvider>
         );

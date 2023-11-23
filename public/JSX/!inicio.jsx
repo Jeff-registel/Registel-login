@@ -2,6 +2,20 @@ addLink('/JSX/abrevs.css');
 
 Object.assign(window, window['MaterialUI']);
 
+let palette = {
+  primary: {
+    main: '#1E90FF',
+  },
+  secondary: {
+    main: '#363636',
+    color: '#FFFFFF',
+  },
+  tertiary: {
+    main: '#ccc',
+    color: '#363636',
+  },
+};
+
 const darkTheme = createTheme({
   typography: {
     button: {
@@ -10,23 +24,14 @@ const darkTheme = createTheme({
   },
   palette: {
     mode: 'dark',
-    primary: {
-      main: '#1E90FF',
-    },
-    secondary: {
-      main: '#363636',
-      color: '#FFFFFF',
-    },
+    ...palette
   },
 });
 
 const lightTheme = createTheme({
   palette: {
     mode: 'light',
-    secondary: {
-      main: '#363636',
-      color: '#FFFFFF',
-    },
+    ...palette
   },
 });
 
@@ -53,11 +58,17 @@ function AppLogged({ children }) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      <div className="menu superior d-none">
+        <MenuSuperior />
+      </div>
       <div className="app d-none">
         {children}
       </div>
+      <br />
+      <br />
+      <br />
       <div className="menu-izquierda d-none">
-      <MenuIzquierda />
+        <MenuIzquierda />
       </div>
     </ThemeProvider>
   );
@@ -68,6 +79,16 @@ function AppSimple({ children }) {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <div className="app d-none">
+        {children}
+      </div>
+    </ThemeProvider>
+  );
+}
+
+function AppRender({ children }) {
+  return (
+    <ThemeProvider theme={theme}>
+      <div className="render">
         {children}
       </div>
     </ThemeProvider>

@@ -28,19 +28,24 @@ module.exports = (pack_app) => {
       let partesQuery;
       let cabeza;
 
-      if (!json_query.includes("/{")) {
+      if (!json_query.includes("/{") && !json_query.startsWith("{")) {
         partesQuery = json_query.split("/");
         cabeza = partesQuery.at(-1);
       } else {
-        partesQuery = json_query.substring(0, json_query.indexOf("/{")).split("/");
+        partesQuery = json_query.substring(0, json_query.indexOf("/{"));
         cabeza = json_query.substring(json_query.indexOf("/{"));
       }
 
       console.log("partesQuery", partesQuery);
       console.log("cabeza", cabeza);
 
-      if (cabeza.startsWith("{")) {
-        let query = JSON.parse(cabeza);
+      if (cabeza.startsWith("/{") || cabeza.startsWith("{")) {
+        let query;
+        if (cabeza.startsWith("{")) {
+          query = JSON.parse(cabeza);
+        } else {
+          query = JSON.parse(cabeza.substring(1));
+        }
         let instruccion = Object.keys(query)[0];
 
         console.log("instruccion", instruccion);
@@ -50,9 +55,12 @@ module.exports = (pack_app) => {
         }
 
         let MACRO = `${memoria.config.RAIZ}/${json_query.replaceAll(
-          "/" + cabeza,
+          (cabeza.startsWith("/") ? "" : "/") + cabeza,
           ""
         )}/!SISTEMA/!${instruccion + ".js"}`;
+
+        console.log("MACRO", MACRO);
+        console.log("_fs.existe(MACRO)", _fs.existe(MACRO));
 
         if (_fs.existe(MACRO)) {
           if (Object.keys(query).some((clave) => clave.startsWith("!"))) {

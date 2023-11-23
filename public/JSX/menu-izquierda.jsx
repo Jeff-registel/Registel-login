@@ -46,6 +46,10 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }));
 
 const MenuIzquierda = () => {
+        if (search.get("ventana-flotante") == "true") {
+                return "";
+        }
+
         addLink("/JSX/menu-izquierda.css");
         
         return (
