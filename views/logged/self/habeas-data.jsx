@@ -20,19 +20,19 @@ async function App() {
                                 </h2>
                                 Solicitamos aceptar la política de tratamiento de datos personales y/o actualizar su información de perfil.
                                 <h2>
-                                        Datos personales
+                                        Identificación
                                 </h2>
-                                <TextField className="NOMBRE m-10" label="Nombre" value={user["NOMBRE"] ?? ""} required />
-                                <TextField className="APELLIDO m-10" label="Apellido" value={user["APELLIDO"] ?? ""} required />
+                                <TextField className="NOMBRE m-10" label="Nombre" defaultValue={user["NOMBRE"] ?? ""} required />
+                                <TextField className="APELLIDO m-10" label="Apellido" defaultValue={user["APELLIDO"] ?? ""} required />
                                 <TipoDocumento />
-                                <TextField className="CEDULA m-10" label="Número de documento" value={user["CEDULA"] ?? ""} required />
+                                <TextField className="CEDULA m-10" label="Número de documento" defaultValue={user["CEDULA"] ?? ""} required />
                                 <h2>
                                         Contacto
                                 </h2>
-                                <TextField className="EMAIL m-10" label="Email" value={user["EMAIL"] ?? ""} required />
-                                <TextField className="MOVIL m-10" label="Celular" value={user["MOVIL"] ?? ""} required />
-                                <TextField className="TELEFONO m-10" label="Teléfono" value={user["TELEFONO"] ?? ""} />
-                                <TextField className="DIRECCION m-10" label="Dirección" value={user["DIRECCION"] ?? ""} />
+                                <TextField className="EMAIL m-10" label="Email" defaultValue={user["EMAIL"] ?? ""} required />
+                                <TextField className="MOVIL m-10" label="Celular" defaultValue={user["MOVIL"] ?? ""} required />
+                                <TextField className="TELEFONO m-10" label="Teléfono" defaultValue={user["TELEFONO"] ?? ""} />
+                                <TextField className="DIRECCION m-10" label="Dirección" defaultValue={user["DIRECCION"] ?? ""} />
                                 <br /><br /><hr /><br />
                                 Sus datos personales han sido y están siendo tratados conforme con nuestra Política de Tratamiento
                                 de Datos Personales.
@@ -51,7 +51,13 @@ async function App() {
                                         })
                                 }} />
                                 <br /><br />
-                                <FormControlLabel control={<Switch id="aceptar" />} label="Política aceptada" />
+                                <Tooltip title={
+                                        user["HABEAS_DATA"] ?
+                                                "La política ya ha sido aceptada" :
+                                                "Debe aceptar la política para poder continuar"
+                                }>
+                                        <FormControlLabel control={<Switch id="HABEAS_DATA" defaultChecked={user["HABEAS_DATA"]} disabled={!!user["HABEAS_DATA"]} />} label="Política aceptada" />
+                                </Tooltip>
                                 <div className="ta-right">
                                         <Button variant="contained" color="primary" size="large" endIcon={<i class="fa-solid fa-save" />} onClick={Actualizar}>
                                                 Actualizar
@@ -77,8 +83,17 @@ async function App() {
                         CEDULA: document.querySelector(".CEDULA input").value,
                         EMAIL: document.querySelector(".EMAIL input").value,
                         MOVIL: document.querySelector(".MOVIL input").value,
-                        HABEAS_DATA: document.querySelector("#aceptar").checked,
+                        HABEAS_DATA: document.querySelector("#HABEAS_DATA").checked,
                 };
+
+                if (!datos["HABEAS_DATA"]) {
+                        return swal.fire({
+                                title: "Error",
+                                text: "Debe aceptar la política de tratamiento de datos personales",
+                                icon: "error",
+                                timer: 3000
+                        });
+                }
 
                 if (Object.values(datos).some((valor) => !valor)) {
                         return swal.fire({
@@ -107,12 +122,14 @@ async function App() {
                 console.log(json);
 
                 if (json["ok"]) {
-                        swal.fire({
+                        await swal.fire({
                                 title: "Usuario actualizado",
                                 icon: "success",
                                 confirmButtonText: "Ok",
                                 timer: 2000,
                         });
+
+                        window.location.reload();
                 }
                 if (json["error"]) {
                         swal.fire({

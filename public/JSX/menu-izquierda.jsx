@@ -84,7 +84,7 @@ const MenuIzquierda = () => {
                                 <div>
 
                                         <BotonOpcionHerramienta font_awesome="fa-solid fa-house" label="Principal" href="/logged" />
-                                        <BotonOpcionHerramienta font_awesome="fa-regular fa-circle-user" label="Mi perfil" href="/logged/mi-perfil" />
+                                        <BotonOpcionHerramienta font_awesome="fa-regular fa-circle-user" label="Mi perfil" href="/logged/self/habeas-data" />
                                 </div>
 
                                 <div className="descolapsado-vista">
@@ -100,7 +100,7 @@ const MenuIzquierda = () => {
                                         }} className="c-white tt-uppercase" />
                                 </div>
 
-                                <BotonOpcionHerramienta font_awesome="fa-solid fa-power-off" label="Cerrar sesión" href="/logout" />
+                                <BotonOpcionHerramienta font_awesome="fa-solid fa-power-off" label="Cerrar sesión" href="/logout" lock={false} />
 
                         </div>
 
@@ -108,18 +108,38 @@ const MenuIzquierda = () => {
         );
 };
 
-function BotonOpcionHerramienta({ font_awesome, label, href }) {
+function BotonOpcionHerramienta({ font_awesome, label, href, lock = !user["HABEAS_DATA"] }) {
         return (
-                <Tooltip title={label} placement="right" arrow style={{ zIndex: 1000 }}>
-                        <div className="seccion-boton-menu opcion-herramienta">
+                <Tooltip
+                        title={!lock ? label : <i class="fa-solid fa-lock"></i>}
+                        placement="right"
+                        arrow style={{
+                                zIndex: 1000,
+                        }}
+                        className={`
+                                ${lock ? "op-50P" : ""}
+                        `}
+                >
+                        <div
+                                className={`
+                                        seccion-boton-menu 
+                                        opcion-herramienta
+                                `}
+                        >
                                 <Button
-                                        className="no-min-width w-100P c-white  white-space-nowrap"
+                                        className={`
+                                                no-min-width 
+                                                w-100P 
+                                                c-white  
+                                                white-space-nowrap
+                                        `}
                                         size="large"
                                         startIcon={<i class={
                                                 font_awesome +
                                                 " descolapsado-vista"
                                         }></i>}
-                                        href={href}
+                                        href={!lock ? href : ""}
+                                        disabled={lock}
                                 >
                                         <i class={
                                                 font_awesome +

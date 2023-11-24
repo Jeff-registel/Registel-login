@@ -1,16 +1,20 @@
-let elementosOcultosIniciales 
+let elementosOcultosIniciales
 
-async function init() {
+async function init({ FadeIn = true } = {}) {
         ReactDOM.render(
                 await App(),
                 document.body
         );
 
-        let _entrada = ["animate__animated", "animate__fadeIn", "animate__faster"]
+        let _entrada = FadeIn ? ["animate__animated", "animate__fadeIn", "animate__faster"] : [];
 
         elementosOcultosIniciales = [".app", ".menu-izquierda", ".menu.superior"].map(element => {
                 return document.querySelector(element);
         });
+
+        if (document.querySelector(".menu.superior")) {
+                estadoNotificacion();
+        }
 
         elementosOcultosIniciales.forEach(element => {
                 if (element) {

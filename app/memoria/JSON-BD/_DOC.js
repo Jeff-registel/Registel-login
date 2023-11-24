@@ -38,16 +38,15 @@ function objeto(json, { context = {} } = {}) {
         if (!json_old) {
           json_old = {};
         }
-        Object.entries(json_new).forEach(([clave, valor]) => {
-          if (!valor) {
-            delete json_new[clave];
-            delete json_old[clave];
-          }
-        });
         let json_combinado = {
           ...json_old,
           ...json_new,
         };
+        Object.entries(json_new).forEach(([clave, valor]) => {
+          if (!valor) {
+            delete json_combinado[clave];
+          }
+        });
         if (fs.existe(SET) && !nombre.startsWith("!")) {
           json_combinado = await require(root + "/" + SET)({
             json: json_combinado,

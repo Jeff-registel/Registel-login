@@ -49,7 +49,7 @@ module.exports = (pack_app) => {
         let instruccion = Object.keys(query)[0];
 
         console.log("instruccion", instruccion);
-        if (instruccion == "DOC") {
+        if (instruccion == "DOC" || instruccion == "DELETE") {
           console.log(memoria.EXEC(query));
           return res.json(memoria.EXEC(query)).end();
         }

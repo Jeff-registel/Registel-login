@@ -68,18 +68,16 @@ Iconos_fa_bs();
 SweetAlert2();
 
 function SweetAlert2() {
-    setTimeout(() => {
-        addScript({
-            src: "https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js",
-        });
-        if (localStorage.getItem("theme") == "dark") {
-            addLink("https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark/dark.css");
-        } else {
-            addLink(
-                "https://cdn.jsdelivr.net/npm/@sweetalert2/theme-material-ui/material-ui.css"
-            );
-        }
-    }, 100);
+    addScript({
+        src: "https://cdn.jsdelivr.net/npm/sweetalert2@11.7.27/dist/sweetalert2.all.min.js",
+    });
+    if (localStorage.getItem("theme") == "dark") {
+        addLink("https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark/dark.css");
+    } else {
+        addLink(
+            "https://cdn.jsdelivr.net/npm/@sweetalert2/theme-material-ui/material-ui.css"
+        );
+    }
 }
 
 function Iconos_fa_bs() {
@@ -92,9 +90,16 @@ function Iconos_fa_bs() {
 }
 
 async function JSONBD(ruta, query) {
-    let json_query = `/BD?json-query=${ruta}${query ? JSON.stringify(query) : ""}`;
-    let retorno = (await (await fetch(json_query)).json());
-    console.log("json_query", json_query);
-    console.log("retorno", retorno);
-    return retorno;
+    try {
+        if (ruta.includes("\n")) {
+            ruta = ruta.split("\n").map((e) => e.trim()).join("");
+        }
+        console.log("ruta", ruta);
+        let json_query = `/BD?json-query=${ruta}${query ? JSON.stringify(query) : ""}`;
+        let retorno = (await (await fetch(json_query)).json());
+        console.log("json_query", json_query);
+        console.log("retorno", retorno);
+        return retorno;
+    } catch (error) {
+    }
 }

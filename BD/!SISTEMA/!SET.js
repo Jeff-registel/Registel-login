@@ -1,9 +1,9 @@
 module.exports = async ({ json, context = {}, query }) => {
-  ESTAMPAS_DE_TIEMPO({
+  /* ESTAMPAS_DE_TIEMPO({
     json,
     context,
     query,
-  });
+  }); */
   return json;
 };
 

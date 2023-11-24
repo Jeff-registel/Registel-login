@@ -9,4 +9,21 @@ crearEstilo({ //Conjunto de capas que se van a usar en el sitio
         width: "95%",
         margin: "auto",
     },
+
+    ".menu.superior": {
+        zIndex: 20,
+    },
+
+    ".menu-izquierda": {
+        zIndex: 100,
+    },
+
+    ".swal2-html-container":{
+        color: (theme == darkTheme ? "white" : "black") + " !important",
+        textAlign: "left !important",
+    },
+
+    ".swal2-confirm":{
+        backgroundColor: "dodgerblue !important",
+    },
 })

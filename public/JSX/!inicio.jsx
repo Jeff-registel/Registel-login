@@ -53,6 +53,11 @@ let colorTheme = {
     codigo: theme == darkTheme ? "white" : "black",
   }
 }
+if (user) {
+  if (!user["HABEAS_DATA"] && !window.location.href.endsWith("/self/habeas-data")) {
+    window.location.href = "/logged/self/habeas-data";
+  }
+}
 
 function AppLogged({ children }) {
   return (
@@ -61,6 +66,7 @@ function AppLogged({ children }) {
       <div className="menu superior d-none">
         <MenuSuperior />
       </div>
+      <br />
       <div className="app d-none">
         {children}
       </div>
@@ -85,6 +91,17 @@ function AppSimple({ children }) {
   );
 }
 
+function AppSimpleCentrada({ children }) {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+        <div className="app d-none">
+          {children}
+        </div>
+    </ThemeProvider>
+  );
+}
+
 function AppRender({ children }) {
   return (
     <ThemeProvider theme={theme}>
@@ -95,10 +112,10 @@ function AppRender({ children }) {
   );
 }
 
-function generarVentanaFlotanteRapido({url, titulo}){
-    ventana_flotante["nueva-ventana"]({
-            titulo_texto: titulo,
-            html: `
+function generarVentanaFlotanteRapido({ url, titulo }) {
+  ventana_flotante["nueva-ventana"]({
+    titulo_texto: titulo,
+    html: `
                     <iframe src="${url}" class="w-100P h-100P border-0"
                             onLoad="
                                     let urlNew = this.contentWindow.location;
@@ -108,5 +125,5 @@ function generarVentanaFlotanteRapido({url, titulo}){
                             "
                     ></iframe>
             `
-    })
+  })
 }

@@ -1,12 +1,9 @@
 "use strict";
-var path = require("path");
-
-global.root = __dirname.split(path.sep).join("/");
+global.root = __dirname.split(require("path").sep).join("/");
 
 require("./polyfills");
 
 let templatesString = require("./templates-string");
-
 
 const http = require("http");
 const express = require("express");
@@ -74,6 +71,7 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(async function (LOGIN, done) {
+  console.log("deserializeUser", LOGIN);
   let login = require("./" + memoria.config.RAIZ + "/usuarios/!SISTEMA/!CONSULTA")({
     query: {
       login: LOGIN,
@@ -116,5 +114,6 @@ app.get("/stop-server", (req, res) => {
 });
 
 require("./app/rutas")(pack_app);
+require("./socket.io.main")(pack_app);
 
 module.exports = pack_app;
