@@ -1,66 +1,74 @@
-.notificaciones {
-    position: relative;
-
-    .chk-notificaciones {
-        display: none;
-
-        &:checked~.panel-notificaciones {
-            display: block;
-        }
-
-        &:not(:checked)~.panel-notificaciones {
-            display: none;
+.menu.superior {
+    &:has(.chk-notificaciones:checked) {
+        .MuiPaper-root {
+            background-color: darkblue !important;
+            transition: all 0.5s ease-in-out;
         }
     }
 
-    .panel-notificaciones {
-        position: absolute;
-        top: 100%;
-        right: 0;
-        width: 300px;
-        height: 400px;
-        border-radius: 5px;
-        z-index: 1000;
-        overflow: auto;
-        background-color: rgb(0, 0, 60);
+    .notificaciones {
+        position: relative;
 
-        .contenedor {
-            .tarjeta {
-                display: flex;
-                align-items: center;
-                border: 1px solid rgba(0, 0, 0, 0.5);
-                padding: 10px;
-                overflow: hidden;
-                cursor: pointer;
+        .chk-notificaciones {
+            display: none;
 
-                &:hover {
-                    background-color: rgba(128, 128, 128, 0.1);
-                }
+            &:checked~.panel-notificaciones {
+                display: block;
+            }
 
-                .titulo,
-                .contenido {
-                    white-space: nowrap;
+            &:not(:checked)~.panel-notificaciones {
+                display: none;
+            }
+        }
+
+        .panel-notificaciones {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 400px;
+            height: 400px;
+            border-radius: 5px;
+            z-index: 1000;
+            overflow: auto;
+
+            .contenedor {
+                .tarjeta {
+                    display: flex;
+                    align-items: center;
+                    border: 1px solid rgba(0, 0, 0, 0.5);
+                    padding: 10px;
                     overflow: hidden;
-                    text-overflow: ellipsis;
-                    width: 200px;
-                }
+                    cursor: pointer;
 
-                .contenido {
-                    font-size: small;
-                }
-
-                .imagen {
-                    width: 40px;
-                    height: 40px;
-                    margin-right: 20px;
-
-                    & img {
-                        width: 40px;
-                        height: 40px;
+                    &:hover {
+                        background-color: rgba(128, 128, 128, 0.1);
                     }
 
-                    & i {
-                        font-size: 40px;
+                    .titulo,
+                    .contenido {
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        width: 300px;
+                    }
+
+                    .contenido {
+                        font-size: small;
+                    }
+
+                    .imagen {
+                        width: 40px;
+                        height: 40px;
+                        margin-right: 20px;
+
+                        & img {
+                            width: 40px;
+                            height: 40px;
+                        }
+
+                        & i {
+                            font-size: 40px;
+                        }
                     }
                 }
             }

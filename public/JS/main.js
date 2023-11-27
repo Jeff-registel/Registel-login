@@ -89,17 +89,72 @@ function Iconos_fa_bs() {
     );
 }
 
-async function JSONBD(ruta, query) {
-    try {
-        if (ruta.includes("\n")) {
-            ruta = ruta.split("\n").map((e) => e.trim()).join("");
-        }
-        console.log("ruta", ruta);
-        let json_query = `/BD?json-query=${ruta}${query ? JSON.stringify(query) : ""}`;
-        let retorno = (await (await fetch(json_query)).json());
-        console.log("json_query", json_query);
-        console.log("retorno", retorno);
-        return retorno;
-    } catch (error) {
+async function JSONBD({
+    ruta = "",
+    query,
+    extra = {},
+    async = false,
+    some,
+    every,
+    find,
+    filter,
+    map,
+    COL,
+    NCOL,
+} = {}) {
+    if (!ruta && !query) {
+        return {
+            error: "No se especificó ruta ni query",
+        };
     }
+    if (!ruta.endsWith(".json") && !query) {
+        return {
+            error: "Sólo se puede obtener archivos json",
+        };
+    }
+
+    if (ruta.endsWith(".json") && query) {
+        return {
+            error: "No se puede aplicar un query a un archivo json",
+        };
+    }
+
+    async function fetchAsync() {
+        let $ejecutor = user ? `&ejecutor=${JSON.stringify({ PK: user["PK"] })}` : "";
+        let $filter = filter ? `&filter=${JSON.stringify(filter + "")}` : "";
+        let $map = map ? `&map=${JSON.stringify(map + "")}` : "";
+        let $some = some ? `&some=${JSON.stringify(some + "")}` : "";
+        let $every = every ? `&every=${JSON.stringify(every + "")}` : "";
+        let $find = find ? `&find=${JSON.stringify(find + "")}` : "";
+        if (COL && !Array.isArray(COL)) {
+            return {
+                error: "COL debe ser un array",
+            };
+        }
+        if (NCOL && !Array.isArray(NCOL)) {
+            return {
+                error: "NCOL debe ser un array",
+            };
+        }
+        let $COL = COL
+            ? `&COL=${JSON.stringify(COL)}`
+            : "";
+        let $NCOL = NCOL
+            ? `&NCOL=${JSON.stringify(NCOL)}`
+            : "";
+        let URLQUERY = `/BD?json-query=${[ruta, query ? JSON.stringify(query) : ""].filter(Boolean).join("/")}${$ejecutor + $filter + $some + $every + $find + $COL + $NCOL + $map}`;
+        console.log("URLQUERY", URLQUERY);
+        let respuesta = await (await fetch(URLQUERY)).json();
+        console.log(respuesta, "async", async);
+        return respuesta;
+    }
+
+    if (async) {
+        return await fetchAsync();
+    }
+
+    return new Promise(async (resolve) => {
+        resolve(await fetchAsync());
+    });
 }
+

@@ -25,7 +25,7 @@ async function main() {
                         }
                 });
         }
-        await memoria.EXEC({
+        await JSONBD_EXEC({
                 DOC: {
                         diccionarios: {
                                 [`perfiles-usuario.json`]: {

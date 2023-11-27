@@ -14,8 +14,8 @@ const transporter = nodemailer.createTransport({
         }
 });
 
-module.exports = function (app_pack) {
-        let { io } = app_pack;
+module.exports = function () {
+        let { io } = APP_PACK;
 
         io.on('connection', function (socket) {
                 conexiones++;
@@ -61,9 +61,9 @@ module.exports = function (app_pack) {
                                 let fecha = new Date();
                                 let fechaString = fecha.getFullYear() + "-" + (fecha.getMonth() + 1).toString().padStart(2, "0") + "-" + fecha.getDate().toString().padStart(2, "0") + " " + fecha.getHours().toString().padStart(2, "0") + ":" + fecha.getMinutes().toString().padStart(2, "0") + ":" + fecha.getSeconds().toString().padStart(2, "0");
 
-                                memoria.EXEC({
+                                JSONBD_EXEC({
                                         DOC: {
-                                                "tokens-temporales": {
+                                                "tokens": {
                                                         [token+".json"]: {
                                                                 usuario: usuario["PK"],
                                                                 tipo: "recuperación de contraseña",
@@ -73,7 +73,7 @@ module.exports = function (app_pack) {
                                         }
                                 });
 
-                                require("./BD/usuarios/!SISTEMA/!NOTIFICAR")({
+                                JSONBD_MODULE("usuarios/!/NOTIFICAR")({
                                         usuario,
                                         notificacion: {
                                                 titulo: "Recuperación de contraseña",

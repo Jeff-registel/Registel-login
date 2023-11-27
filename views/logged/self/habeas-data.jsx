@@ -8,12 +8,14 @@ crearEstilo({
 let tipoDocumentoLista;
 
 async function App() {
-        tipoDocumentoLista ??= (await JSONBD("diccionarios/tipo-documento.json"))["tipo-documento"];
+        tipoDocumentoLista ??= (await JSONBD({
+                ruta: "diccionarios/tipo-documento.json"
+        }))["tipo-documento"];
         return (
                 <AppLogged>
                         <Paper elevation={3} className="pad-20">
                                 <h1 className="ta-center">
-                                        Hábeas Data <i class="fa-solid fa-file-lines" />
+                                        Hábeas Data
                                 </h1>
                                 <h2>
                                         Usuario: {user["LOGIN"] ?? ""}
@@ -109,12 +111,15 @@ async function App() {
                         DIRECCION: document.querySelector(".DIRECCION input").value,
                 });
 
-                let json = await JSONBD("", {
-                        DOC: {
-                                usuarios: {
-                                        [user["PK"]]: {
-                                                "usuario.json": datos
-                                        }
+                let json = await JSONBD({
+                        ruta: `usuarios`,
+                        query: {
+                                SET: {
+                                        aplicacion: {
+                                                PK: user["PK"]
+                                        },
+                                        archivo: "usuario.json",
+                                        valor: datos
                                 }
                         }
                 });

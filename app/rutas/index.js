@@ -15,10 +15,9 @@ for (let i = 1; i < config["nodos-soportados"]; i++) {
   mapa[`/:${nodos.join("/:")}`] = interpretar_ruta;
 }
 
-module.exports = function (app_pack) {
-  let { app } = app_pack;
-  
-  require("./rutas-manuales")(app_pack);
+module.exports = function () {
+  let { app } = APP_PACK;
+  require("./rutas-manuales")();
   
   Object.entries(mapa).forEach(([k, v]) => {
     app.get(k, v);

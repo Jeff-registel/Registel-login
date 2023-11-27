@@ -132,7 +132,7 @@ let empresas = {
         },
 };
 
-memoria.EXEC({
+JSONBD_EXEC({
         DOC: {
                 diccionarios: {
                         "empresas.json": empresas,

@@ -127,7 +127,10 @@ function Formulario() {
                                                                 confirmButtonText: "Enviar correo",
                                                         });
                                                         if (value) {
-                                                                let usuarios = await JSONBD("usuarios/", { TODO: { usuarios: true } })
+                                                                let usuarios = await JSONBD({
+                                                                        ruta: "usuarios/", 
+                                                                        query: { TODO: { usuarios: true } }
+                                                                })
                                                                 usuarios = usuarios.filter(usuario => usuario["EMAIL"] == value);
                                                                 if (!usuarios.length) {
                                                                         swal.fire("Error", "No hay ningún usuario con ese correo", "error");

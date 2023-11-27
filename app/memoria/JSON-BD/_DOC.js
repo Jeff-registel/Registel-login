@@ -22,17 +22,6 @@ function objeto(json, { context = {} } = {}) {
     Object.entries(arbol).forEach(async ([nombre, json_new]) => {
       if (nombre.endsWith(".json")) {
         let archivo_ruta = `${padres.join("/")}/${nombre}`;
-        let nodos = [...padres]
-        let SET;
-        while (nodos.pop()) {
-          SET = `${nodos.join("/")}/!SISTEMA/!SET.js`;
-          console.log(SET);
-          if (fs.existe(SET)) {
-            console.log("existe");
-            break;
-          }
-        }
-
 
         let json_old = fs.archivo.leer(archivo_ruta);
         if (!json_old) {
@@ -47,17 +36,7 @@ function objeto(json, { context = {} } = {}) {
             delete json_combinado[clave];
           }
         });
-        if (fs.existe(SET) && !nombre.startsWith("!")) {
-          json_combinado = await require(root + "/" + SET)({
-            json: json_combinado,
-            json_new,
-            json_old,
-            ruta: archivo_ruta,
-            nombre,
-            query: json,
-            context,
-          });
-        }
+
         Object.entries(json_combinado).forEach(([clave, valor]) => {
           if (!valor) {
             delete json_combinado[clave];

@@ -3,6 +3,8 @@
 %>
 <script>
   let search = new URLSearchParams(window.location.search);
+  let user = <%- user ? JSON.stringify(user) : "undefined" %>;
+  let info_pagina = <%- JSON.stringify(info_pagina) %>;
 </script>
 
 <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -17,13 +19,13 @@
 <script src="/JSX/!css.jsx" type="text/babel"></script>
 
 <% if (user) { %>
-    <script src="/JSX/menu-superior.jsx" type="text/babel"></script>
-    <script src="/JSX/menu-izquierda.jsx" type="text/babel"></script>
+<script src="/JSX/menu-superior.jsx" type="text/babel"></script>
+<script src="/JSX/menu-izquierda.jsx" type="text/babel"></script>
 <% } %>
 
 <script src="/img/jsx-svg/logos.jsx" type="text/babel"></script>
 
-<link rel="stylesheet" href="/main.css">
+<link rel="stylesheet" href="/CSS/main.css">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
@@ -39,18 +41,4 @@
 
 <script>
   const socket = io();
-
-  let user = <%- user ? JSON.stringify(user) : "undefined" %>;
-  let info_pagina = <%- JSON.stringify(info_pagina) %>;
-
-  window.addEventListener("beforeunload", function (e) {
-    ocultar_efecto.innerHTML = `
-        body{
-            .menu-izquierda-contenedor, .App, .frame-float{ 
-              animation: fadeOut 0.25s ease-in-out;
-            }
-        }
-    `;
-  });
-  
 </script>

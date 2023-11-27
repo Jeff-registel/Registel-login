@@ -29,7 +29,7 @@ async function main() {
     });
     Object.assign(tipo, n);
   }
-  await memoria.EXEC({
+  await JSONBD_EXEC({
     DOC: {
       diccionarios: {
         [`tipo-documento.json`]: {

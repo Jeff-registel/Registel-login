@@ -150,7 +150,10 @@ async function render_empresasAcceso() {
 async function render_todosLosUsuarios() {
         let contador_usuarios = 0;
         if (actualizarListaDeUsuarios) {
-                usuarios = await JSONBD("usuarios/", { TODO: { usuarios: true } });
+                usuarios = await JSONBD({
+                        ruta: "usuarios/", 
+                        query: { TODO: { usuarios: true } }
+                });
                 actualizarListaDeUsuarios = false;
         }
         console.log(usuarios)
@@ -190,7 +193,9 @@ async function render_todosLosUsuarios() {
                         let llave = "";
                         switch (tipo_agrupamiento) {
                                 case "Perfil":
-                                        info_perfiles ??= (await JSONBD("diccionarios/perfiles-usuario.json"))["perfiles"];
+                                        info_perfiles ??= (await JSONBD({
+                                                ruta: "diccionarios/perfiles-usuario.json"
+                                        }))["perfiles"];
                                         llave = info_perfiles.find(info_perfil => info_perfil["PK"] == usuario["FK_PERFIL"])["NOMBRE"];
                                         break;
                                 case "Alfabetico":

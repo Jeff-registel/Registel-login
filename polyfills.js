@@ -1,3 +1,9 @@
+if(!Date.SQL) {
+	Date.prototype.SQL = function () {
+		return this.getFullYear() + "-" + (this.getMonth() + 1).toString().padStart(2, "0") + "-" + this.getDate().toString().padStart(2, "0") + " " + this.getHours().toString().padStart(2, "0") + ":" + this.getMinutes().toString().padStart(2, "0") + ":" + this.getSeconds().toString().padStart(2, "0");
+	}
+}
+
 if (!String.prototype.replaceAll) {
 	String.prototype.replaceAll = function (str, newStr) {
 		if (Object.prototype.toString.call(str).toLowerCase() === '[object regexp]') {

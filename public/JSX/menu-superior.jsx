@@ -3,86 +3,109 @@ addLink("/JSX/menu-superior.css");
 let end;
 
 async function estadoNotificacion() {
-        let sin_leer = await JSONBD(`usuarios/${user["PK"]}/notificaciones/sin-leer.json`);
-        if (!sin_leer) {
-                return
-        }
-        document.querySelector(".notificaciones .sin-leer").style.display = sin_leer.estado ? "block" : "none";
+        let sin_leer = await JSONBD({
+                ruta: `usuarios/${user["PK"]}/notificaciones/sin-leer.json`
+        });
+        document.querySelector(".notificaciones .sin-leer").style.display = sin_leer && sin_leer.estado ? "block" : "none";
 }
 
 async function cargar15Notificaciones() {
         for (let i = 0; i < 15; i++) {
                 await cargarNotificacion();
         }
-        await JSONBD("", {
-                DOC: {
-                        "usuarios": {
-                                [user["PK"]]: {
-                                        "notificaciones": {
-                                                "sin-leer.json": {
-                                                        estado: false,
-                                                }
-                                        }
+        await JSONBD({
+                ruta: "usuarios",
+                query: {
+                        SET: {
+                                aplicacion: {
+                                        PK: user["PK"]
+                                },
+                                archivo: "notificaciones/sin-leer.json",
+                                valor: {
+                                        estado: false
                                 }
                         }
                 }
         });
-
         estadoNotificacion();
 }
 
 async function cargarNotificacion() {
         if (!end) {
-                end = await JSONBD(`usuarios/${user["PK"]}/notificaciones/end.json`);
+                end = await JSONBD({
+                        ruta: `usuarios/${user["PK"]}/notificaciones/end.json`
+                });
         } else {
-                if (!end.cursor_antecesor) {
+                if (!end.antecesor) {
                         return;
                 }
-                end = await JSONBD(`
-                                usuarios/
-                                        ${user["PK"]}/
-                                                notificaciones/
-                                                        ${end.cursor_antecesor.año}/${end.cursor_antecesor.mes}/${end.cursor_antecesor.dia}/
-                                                                ${end.cursor_antecesor.hora}-${end.cursor_antecesor.minuto}-${end.cursor_antecesor.segundo}-${end.cursor_antecesor.milisegundo}.json
-                        `);
+                end = await JSONBD({
+                        ruta: `usuarios/${user["PK"]}/notificaciones/${end.antecesor.file}.json`
+                });
         }
         let div = document.createElement("div");
         document.querySelector(".panel-notificaciones .contenedor").appendChild(div);
+        if (!end) {
+                document.querySelectorAll(".panel-notificaciones .contenedor .tarjeta").forEach((tarjeta) => tarjeta.remove());
+                document.querySelector(".panel-notificaciones .contenedor").appendChild(div);
+                return ReactDOM.render(
+                        <Tooltip title="No hay notificaciones" placement="left" style={{ cursor: "pointer", maxWidth: 300 }} TransitionComponent={Zoom}>
+                                <div className="tarjeta">
+                                        <div className="imagen">
+                                                <i class="fa-solid fa-face-smile-wink"></i>
+                                        </div>
+                                        <div>
+                                                <div className="titulo">
+                                                        <b>
+                                                                No hay notificaciones
+                                                        </b>
+                                                </div>
+                                        </div>
+                                </div>
+                        </Tooltip>
+                        ,
+                        div
+                );
+        }
 
-        let value = await JSONBD(`
-                usuarios/
-                        ${user["PK"]}/
-                                notificaciones/
-                                        ${end.cursor.año}/${end.cursor.mes}/${end.cursor.dia}/
-                                                ${end.cursor.hora}-${end.cursor.minuto}-${end.cursor.segundo}-${end.cursor.milisegundo}.json
-        `);
+
+        let value = await JSONBD({
+                ruta: `usuarios/${user["PK"]}/notificaciones/${end.cursor.file}.json`
+        });
         end = value;
         ReactDOM.render(
-                <div className="tarjeta" onClick={() => {
-                        if (value.notificacion.swal) {
-                                Swal.fire(value.notificacion.swal);
-                        }
-                }}>
-                        <div className="imagen">
-                                {
-                                        value.notificacion.imagen ?
-                                                <img src={value.notificacion.imagen} /> :
-                                                value.notificacion.icono ?
-                                                        <i className={value.notificacion.icono}></i> :
-                                                        <i className="fa-solid fa-bell"></i>
+                <Tooltip title={value.notificacion.mensaje} placement="left" style={{ cursor: "pointer", maxWidth: 300 }} TransitionComponent={Zoom}>
+                        <div className="tarjeta" onClick={() => {
+                                if (value.notificacion.swal) {
+                                        Swal.fire(value.notificacion.swal);
                                 }
+                        }}>
+                                <div className="imagen">
+                                        {
+                                                value.notificacion.imagen ?
+                                                        <img src={value.notificacion.imagen} /> :
+                                                        value.notificacion.icono ?
+                                                                <i className={value.notificacion.icono}></i> :
+                                                                <i className="fa-solid fa-bell"></i>
+                                        }
+                                </div>
+                                <div>
+                                        <div className="titulo">
+                                                <b>
+                                                        {value.notificacion.titulo}
+                                                </b>
+                                        </div>
+                                        <div className="contenido">
+                                                {value.notificacion.mensaje}
+                                        </div>
+                                </div>
                         </div>
                         <div>
-                                <div className="titulo">
-                                        <b>
-                                                {value.notificacion.titulo}
-                                        </b>
-                                </div>
-                                <div className="contenido">
-                                        {value.notificacion.mensaje}
-                                </div>
+                                {
+                                        value.notificacion.cursor?.time ?? ""
+                                }
                         </div>
-                </div>
+                </Tooltip>
                 ,
                 div
         );

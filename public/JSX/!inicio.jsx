@@ -1,4 +1,4 @@
-addLink('/JSX/abrevs.css');
+addLink('/CSS/abrevs.css');
 
 Object.assign(window, window['MaterialUI']);
 

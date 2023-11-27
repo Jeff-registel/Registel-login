@@ -14,13 +14,13 @@ function GENERAL(json, args = {}) {
     return MANY({
       instruccion,
       array: json,
-      context: args.context,
+      ...args,
     });
   } else {
     return ONE({
       instruccion,
       json,
-      context: args.context,
+      ...args,
     });
   }
 }

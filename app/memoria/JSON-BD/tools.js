@@ -40,18 +40,7 @@ function Array2Nodo(
           "/"
         );
         if (nombre.toString().endsWith(".json") && leer_json) {
-          cabeza[nombre] = fs.archivo.leer(ruta);
-          let GET = ruta.replace(nombre, "@!GET.js");
-          if (fs.existe(GET)) {
-            cabeza[nombre] = require("../../../" + GET)({
-              json: cabeza[nombre],
-              ruta,
-              nombre,
-              query: array,
-              seguro,
-              context,
-            });
-          }
+          cabeza[nombre] = fs.archivo.leer(ruta.replace("!/", "!SISTEMAS/"));
         }
       } else {
         cabeza[nombre] = {};

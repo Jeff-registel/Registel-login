@@ -38,7 +38,9 @@ function EsquemaError({ titulo, iconoTitulo, texto }) {
 async function App() {
         let parametro_token = new URLSearchParams(window.location.search).get("TOKEN");
         window.history.replaceState({}, document.title, window.location.href.replace(window.location.search, "").replace(window.location.hash, ""));
-        let token = await JSONBD(`tokens-temporales/${parametro_token}.json`);
+        let token = await JSONBD({
+                ruta: `tokens/${parametro_token}.json`
+        });
         if (!token) {
                 return (
                         <EsquemaError titulo="El token no es válido" iconoTitulo={<i class="fa-solid fa-link-slash" />} texto="El token no existe o ha sido eliminado" />
@@ -59,7 +61,9 @@ async function App() {
                 )
         }
 
-        let usuario = await JSONBD(`usuarios/${token["usuario"]}/usuario.json`);
+        let usuario = await JSONBD({
+                ruta: `usuarios/${token["usuario"]}/usuario.json`
+        });
 
         return (
                 <AppSimpleCentrada>
@@ -83,10 +87,12 @@ async function App() {
                                 <br />
                                 <div style={{ display: "flex", justifyContent: "space-between" }} >
                                         <Button variant="contained" color="error" onClick={async () => {
-                                                await JSONBD("", {
-                                                        DELETE: {
-                                                                "tokens-temporales": {
-                                                                        [parametro_token + ".json"]: true
+                                                await JSONBD({
+                                                        query: {
+                                                                DELETE: {
+                                                                        "tokens": {
+                                                                                [parametro_token + ".json"]: true
+                                                                        }
                                                                 }
                                                         }
                                                 });
@@ -105,13 +111,15 @@ async function App() {
                                                         swal.fire("Error", "La contraseña debe tener al menos 4 caracteres", "error");
                                                         return;
                                                 }
-                                                let json = await JSONBD("", {
-                                                        DOC: {
-                                                                usuarios: {
-                                                                        [token["usuario"]]: {
-                                                                                "usuario.json": {
-                                                                                        CONTRASEÑA: cifradoCesar(contraseña),
-                                                                                        CRYPTOPASS: "CESAR"
+                                                let json = await JSONBD({
+                                                        query: {
+                                                                DOC: {
+                                                                        usuarios: {
+                                                                                [token["usuario"]]: {
+                                                                                        "usuario.json": {
+                                                                                                CONTRASEÑA: cifradoCesar(contraseña),
+                                                                                                CRYPTOPASS: "CESAR"
+                                                                                        }
                                                                                 }
                                                                         }
                                                                 }
@@ -123,10 +131,12 @@ async function App() {
                                                 }
                                                 if (json["ok"]) {
                                                         await swal.fire("OK", "Contraseña cambiada", "success");
-                                                        await JSONBD("", {
-                                                                DELETE: {
-                                                                        "tokens-temporales": {
-                                                                                [parametro_token + ".json"]: true
+                                                        await JSONBD({
+                                                                query: {
+                                                                        DELETE: {
+                                                                                "tokens": {
+                                                                                        [parametro_token + ".json"]: true
+                                                                                }
                                                                         }
                                                                 }
                                                         });

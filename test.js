@@ -1,6 +1,6 @@
 global.root = __dirname.split(require("path").sep).join("/");
 
-let notificar = require("./BD/usuarios/!SISTEMA/!NOTIFICAR.js");
+let notificar = require("./BD/usuarios/!SISTEMAS/NOTIFICAR.js");
 
 notificar({
         usuario: {

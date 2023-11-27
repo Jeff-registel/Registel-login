@@ -53,7 +53,7 @@ async function main() {
         });
       });
     }
-    await memoria.EXEC({
+    await JSONBD_EXEC({
       DOC: {
         usuarios: {
           [usuario["PK"]]: {
@@ -62,7 +62,7 @@ async function main() {
         },
       },
     });
-    await memoria.EXEC({
+    await JSONBD_EXEC({
       DOC: {
         usuarios: {
           "!SISTEMA": {

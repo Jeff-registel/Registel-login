@@ -1,5 +1,14 @@
 "use strict";
 global.root = __dirname.split(require("path").sep).join("/");
+global.HTML_MINIFY = (html) => require('html-minifier').minify(html, {
+  collapseWhitespace: true,
+  removeComments: true,
+  removeRedundantAttributes: true,
+  removeScriptTypeAttributes: true,
+  removeStyleLinkTypeAttributes: true,
+  useShortDoctype: true,
+  removeAttributeQuotes: true,
+});
 
 require("./polyfills");
 
@@ -38,12 +47,14 @@ app.use(passport.session());
 
 app.use(require("morgan")("combined"));
 
-const pack_app = {
+global.APP_PACK = {
   io,
   app,
   passport,
   urlencodedParser,
 };
+
+require("./API_BD")();
 
 passport.use(
   new passportLocal(
@@ -52,7 +63,7 @@ passport.use(
       passwordField: "contrasena",
     },
     async (usuario, contraseña, done) => {
-      let login = require("./" + memoria.config.RAIZ + "/usuarios/!SISTEMA/!AUTENTICAR")({
+      let login = JSONBD_MODULE("usuarios/!/AUTENTICAR")({
         query: {
           login: usuario,
           contraseña
@@ -71,8 +82,7 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(async function (LOGIN, done) {
-  console.log("deserializeUser", LOGIN);
-  let login = require("./" + memoria.config.RAIZ + "/usuarios/!SISTEMA/!CONSULTA")({
+  let login = JSONBD_MODULE("usuarios/!/CONSULTA")({
     query: {
       login: LOGIN,
     }
@@ -88,7 +98,6 @@ server.listen(app.get("port"), () => {
   console.log("corriendo en el puerto:", app.get("port"));
 });
 
-require("./API_BD")(pack_app);
 
 app.get("/stop-server", (req, res) => {
   let user = req.user;
@@ -113,7 +122,5 @@ app.get("/stop-server", (req, res) => {
   }, 1000);
 });
 
-require("./app/rutas")(pack_app);
-require("./socket.io.main")(pack_app);
-
-module.exports = pack_app;
+require("./app/rutas")();
+require("./socket.io.main")();
