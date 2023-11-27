@@ -1,8 +1,10 @@
 .menu.superior {
+    .MuiPaper-root {
+        transition: all 0.5s ease-in-out;
+    }
     &:has(.chk-notificaciones:checked) {
         .MuiPaper-root {
-            background-color: darkblue !important;
-            transition: all 0.5s ease-in-out;
+            background-color: #121236 !important;
         }
     }
 
