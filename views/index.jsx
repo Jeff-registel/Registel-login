@@ -120,27 +120,23 @@ function Formulario() {
                                 >
                                         <Link
                                                 onClick={async () => {
-                                                        let { value } = await swal.fire({
+                                                        const { value } = await swal.fire({
                                                                 title: "Recuperar contraseña",
                                                                 input: "text",
                                                                 placeholder: "Usuario",
                                                                 confirmButtonText: "Enviar correo",
                                                         });
                                                         if (value) {
-                                                                let usuarios = await JSONBD({
-                                                                        ruta: "usuarios/", 
-                                                                        query: { TODO: { usuarios: true } }
+                                                                console.log(value)
+                                                                let usuario = await JSONBD({
+                                                                        ruta: "usuarios", 
+                                                                        query: { TODO: { usuarios: true } },
+                                                                        find: ((e) => e["EMAIL"] == value).toString().replace("value", `"${value}"`)
                                                                 })
-                                                                usuarios = usuarios.filter(usuario => usuario["EMAIL"] == value);
-                                                                if (!usuarios.length) {
+                                                                if (!usuario) {
                                                                         swal.fire("Error", "No hay ningún usuario con ese correo", "error");
                                                                         return;
                                                                 }
-                                                                if (usuarios.length > 1) {
-                                                                        swal.fire("Error", "Hay más de un usuario con ese correo", "error");
-                                                                        return;
-                                                                }
-                                                                let usuario = usuarios[0];
                                                                 socket.emit("Recuperar contraseña", usuario, window.location.href);
                                                         }
                                                 }}

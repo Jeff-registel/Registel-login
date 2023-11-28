@@ -73,11 +73,7 @@ function SweetAlert2() {
     });
     if (localStorage.getItem("theme") == "dark") {
         addLink("https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark/dark.css");
-    } else {
-        addLink(
-            "https://cdn.jsdelivr.net/npm/@sweetalert2/theme-material-ui/material-ui.css"
-        );
-    }
+    } 
 }
 
 function Iconos_fa_bs() {
@@ -89,10 +85,38 @@ function Iconos_fa_bs() {
     );
 }
 
+
+async function* notificacionesCursor() {
+    let cursor = await JSONBD({
+            ruta: `usuarios/${user["PK"]}/notificaciones/end.json`
+    });
+    while (true) {
+            if (!cursor.antecesor) {
+                    break;
+            }
+            cursor = await JSONBD({
+                    ruta: `usuarios/${user["PK"]}/notificaciones/${cursor.antecesor.file}.json`
+            });
+            yield cursor;
+    }
+}
+
+function AGO(time){
+    if (!time) {
+        return "-"
+    }
+    if(Date.now() - time < 1000 * 60 * 60 * 24){ // Menos de 24 horas
+        return moment(time).fromNow();
+    }
+    if (Date.now() - time < 1000 * 60 * 60 * 24 * 7) { // Menos de 7 días
+        return moment(time).format("dddd");
+    }
+    return moment(time).format("DD/MM/YYYY");
+}
+
 async function JSONBD({
     ruta = "",
     query,
-    extra = {},
     async = false,
     some,
     every,
@@ -118,7 +142,6 @@ async function JSONBD({
             error: "No se puede aplicar un query a un archivo json",
         };
     }
-
     async function fetchAsync() {
         let $ejecutor = user ? `&ejecutor=${JSON.stringify({ PK: user["PK"] })}` : "";
         let $filter = filter ? `&filter=${JSON.stringify(filter + "")}` : "";

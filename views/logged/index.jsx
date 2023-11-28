@@ -342,7 +342,7 @@ async function render_todosLosUsuarios() {
                                                 orientation="vertical"
                                                 variant="contained"
                                                 color={
-                                                        theme == darkTheme ? "secondary" : "tertiary"
+                                                        "secondary"
                                                 }
                                         >
                                                 <Tooltip

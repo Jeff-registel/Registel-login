@@ -1,3 +1,25 @@
+crearEstilo({
+  /* width */
+  "::-webkit-scrollbar": {
+    width: "15px"
+  },
+
+  /* Track */
+  "::-webkit-scrollbar-track": {
+    background: "#f1f1f1"
+  },
+
+  /* Handle */
+  "::-webkit-scrollbar-thumb": {
+    background: "#888"
+  },
+
+  /* Handle on hover */
+  "::-webkit-scrollbar-thumb:hover": {
+    background: "#555"
+  }
+});
+
 addLink('/CSS/abrevs.css');
 
 Object.assign(window, window['MaterialUI']);
@@ -7,12 +29,8 @@ let palette = {
     main: '#1E90FF',
   },
   secondary: {
-    main: '#363636',
+    main: localStorage.getItem("theme") == "dark" ? '#363640' : '#ccccff',
     color: '#FFFFFF',
-  },
-  tertiary: {
-    main: '#ccc',
-    color: '#363636',
   },
 };
 
@@ -24,6 +42,10 @@ const darkTheme = createTheme({
   },
   palette: {
     mode: 'dark',
+    background: {
+      default: '#121215',
+      paper: '#121218',
+    },
     ...palette
   },
 });
@@ -95,9 +117,9 @@ function AppSimpleCentrada({ children }) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-        <div className="app d-none">
-          {children}
-        </div>
+      <div className="app d-none">
+        {children}
+      </div>
     </ThemeProvider>
   );
 }
@@ -105,9 +127,7 @@ function AppSimpleCentrada({ children }) {
 function AppRender({ children }) {
   return (
     <ThemeProvider theme={theme}>
-      <div className="render">
-        {children}
-      </div>
+      {children}
     </ThemeProvider>
   );
 }

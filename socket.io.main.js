@@ -30,7 +30,10 @@ module.exports = function () {
 
                 socket.on("Recuperar contraseña", async (usuario, URL) => {
                         try {
-                                let token = Math.random().toString().replace("0.", "");
+                                let token = JSONBD_MODULE("tokens/!/CREAR")(usuario, "recuperación de contraseña");
+
+                                console.log("Token", token);
+
                                 await transporter.sendMail({
                                         from: '"Registel 🚍" <notificaciones.registel@gmail.com>',
                                         to: usuario["EMAIL"],
@@ -58,23 +61,7 @@ module.exports = function () {
                                         `
                                 });
 
-                                let fecha = new Date();
-                                let fechaString = fecha.getFullYear() + "-" + (fecha.getMonth() + 1).toString().padStart(2, "0") + "-" + fecha.getDate().toString().padStart(2, "0") + " " + fecha.getHours().toString().padStart(2, "0") + ":" + fecha.getMinutes().toString().padStart(2, "0") + ":" + fecha.getSeconds().toString().padStart(2, "0");
-
-                                JSONBD_EXEC({
-                                        DOC: {
-                                                "tokens": {
-                                                        [token+".json"]: {
-                                                                usuario: usuario["PK"],
-                                                                tipo: "recuperación de contraseña",
-                                                                fecha: fechaString
-                                                        }
-                                                }
-                                        }
-                                });
-
                                 JSONBD_MODULE("usuarios/!/NOTIFICAR")({
-                                        usuario,
                                         notificacion: {
                                                 titulo: "Recuperación de contraseña",
                                                 mensaje: "Se ha enviado un correo electrónico para recuperar la contraseña",
@@ -89,10 +76,16 @@ module.exports = function () {
                                                                 Se solicitó cambio de contraseña
                                                                 <br>
                                                                 <br>
-                                                                ${fechaString}
+                                                                ${new Date().SQL()}
                                                         `
                                                 }
-                                        }
+                                        },
+                                        query: {
+                                                aplicacion: usuario
+                                        },
+                                        ejecutor: {
+                                                PK: 0,
+                                        },
                                 });
 
                                 io.to(socket.id).emit("Recuperar contraseña: OK");

@@ -1,10 +1,20 @@
 let elementosOcultosIniciales
 
 async function init({ FadeIn = true } = {}) {
+        try {
+                setup();
+        } catch (error) {
+        }
+
         ReactDOM.render(
                 await App(),
                 document.body
         );
+
+        try {
+                onLoad();
+        } catch (error) {
+        }
 
         let _entrada = FadeIn ? ["animate__animated", "animate__fadeIn", "animate__faster"] : [];
 
@@ -35,6 +45,7 @@ async function init({ FadeIn = true } = {}) {
 init();
 
 window.addEventListener("beforeunload", function (e) {
+        document.querySelector(".panel-notificaciones").classList.add("d-none");
         let _salida = ["animate__animated", "animate__fadeOut", "animate__faster"]
         elementosOcultosIniciales.forEach(element => {
                 if (element) {

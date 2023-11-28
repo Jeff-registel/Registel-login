@@ -1,6 +1,6 @@
 addLink("/JSX/menu-superior.css");
 
-let end;
+let _notificaciones_;
 
 async function estadoNotificacion() {
         let sin_leer = await JSONBD({
@@ -10,9 +10,14 @@ async function estadoNotificacion() {
 }
 
 async function cargar15Notificaciones() {
+        document.querySelectorAll(".panel-notificaciones .contenedor .contenedor-notificacion").forEach((tarjeta) => tarjeta.remove());
+        if (_notificaciones_?.close) {
+        }
+        _notificaciones_ = notificacionesCursor();
         for (let i = 0; i < 15; i++) {
                 await cargarNotificacion();
         }
+        _notificaciones_ = undefined;
         await JSONBD({
                 ruta: "usuarios",
                 query: {
@@ -31,21 +36,12 @@ async function cargar15Notificaciones() {
 }
 
 async function cargarNotificacion() {
-        if (!end) {
-                end = await JSONBD({
-                        ruta: `usuarios/${user["PK"]}/notificaciones/end.json`
-                });
-        } else {
-                if (!end.antecesor) {
-                        return;
-                }
-                end = await JSONBD({
-                        ruta: `usuarios/${user["PK"]}/notificaciones/${end.antecesor.file}.json`
-                });
-        }
+        let notificacion = (await _notificaciones_.next()).value;
+        console.log(notificacion);
         let div = document.createElement("div");
+        div.className = "contenedor-notificacion";
         document.querySelector(".panel-notificaciones .contenedor").appendChild(div);
-        if (!end) {
+        if (!notificacion) {
                 document.querySelectorAll(".panel-notificaciones .contenedor .tarjeta").forEach((tarjeta) => tarjeta.remove());
                 document.querySelector(".panel-notificaciones .contenedor").appendChild(div);
                 return ReactDOM.render(
@@ -67,42 +63,41 @@ async function cargarNotificacion() {
                         div
                 );
         }
-
-
-        let value = await JSONBD({
-                ruta: `usuarios/${user["PK"]}/notificaciones/${end.cursor.file}.json`
-        });
-        end = value;
         ReactDOM.render(
-                <Tooltip title={value.notificacion.mensaje} placement="left" style={{ cursor: "pointer", maxWidth: 300 }} TransitionComponent={Zoom}>
+                <Tooltip title={notificacion.notificacion.mensaje} placement="left" style={{ cursor: "pointer", maxWidth: 300 }} TransitionComponent={Zoom}>
                         <div className="tarjeta" onClick={() => {
-                                if (value.notificacion.swal) {
-                                        Swal.fire(value.notificacion.swal);
+                                if (notificacion.notificacion.swal) {
+                                        Swal.fire(notificacion.notificacion.swal);
                                 }
                         }}>
                                 <div className="imagen">
                                         {
-                                                value.notificacion.imagen ?
-                                                        <img src={value.notificacion.imagen} /> :
-                                                        value.notificacion.icono ?
-                                                                <i className={value.notificacion.icono}></i> :
+                                                notificacion.notificacion.imagen ?
+                                                        <img src={notificacion.notificacion.imagen} /> :
+                                                        notificacion.notificacion.icono ?
+                                                                <i className={notificacion.notificacion.icono}></i> :
                                                                 <i className="fa-solid fa-bell"></i>
                                         }
                                 </div>
                                 <div>
                                         <div className="titulo">
                                                 <b>
-                                                        {value.notificacion.titulo}
+                                                        {notificacion.notificacion.titulo}
                                                 </b>
                                         </div>
                                         <div className="contenido">
-                                                {value.notificacion.mensaje}
+                                                {notificacion.notificacion.mensaje}
+                                        </div>
+                                        <div className="fecha ta-right op-50P">
+                                                <small>
+                                                        {AGO(notificacion.notificacion.creacion)}
+                                                </small>
                                         </div>
                                 </div>
                         </div>
                         <div>
                                 {
-                                        value.notificacion.cursor?.time ?? ""
+                                        notificacion.notificacion.cursor?.time ?? ""
                                 }
                         </div>
                 </Tooltip>
@@ -117,7 +112,7 @@ function MenuSuperior() {
         }
         return (
                 <AppRender>
-                        <Paper elevation={3} style={{ padding: 5, marginBottom: 15, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                        <Paper elevation={theme == darkTheme ? 24 : 3} style={{ padding: 5, marginBottom: 15, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                                 <LogoConNombre
                                         className={`
                                                 ${theme == darkTheme ? "silueta-blanca" : "silueta-negra"}
@@ -161,8 +156,13 @@ function MenuSuperior() {
                                                         className="sin-leer"
                                                 />
                                         </div>
-                                        <Paper elevation={3} className="panel-notificaciones">
+                                        <Paper elevation={8} className="panel-notificaciones .b-s-1px-neutro2" style={{ color: theme == darkTheme ? "white" : "slategray" }}>
                                                 <div className="contenedor" />
+                                                <a href="/logged/notificaciones">
+                                                        <Paper className="ver-todas" >
+                                                                Ver todas las notificaciones <i className="fa-solid fa-arrow-right"></i>
+                                                        </Paper>
+                                                </a>
                                         </Paper>
                                 </div>
                         </Paper>

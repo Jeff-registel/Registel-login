@@ -16,6 +16,8 @@ module.exports = ({ notificacion, query, ejecutor }) => {
         let dia = fecha.getDate();
         let time = fecha.getTime();
         let file = `${año}/${mes}/${dia}/${time}`;
+
+        notificacion.creacion = fecha.getTime();
         
         let cursor = {
                 año,

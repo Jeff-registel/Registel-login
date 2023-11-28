@@ -12,8 +12,8 @@ module.exports = () => {
   app.post(
     "/login-verify",
     passport.authenticate("local", {
-      successRedirect: "/",
-      failureRedirect: "/logged",
+      successRedirect: "/logged",
+      failureRedirect: "/",
     })
   );
 };

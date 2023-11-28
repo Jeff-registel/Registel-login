@@ -54,6 +54,11 @@ global.APP_PACK = {
   urlencodedParser,
 };
 
+global.MENSAJE_GLOBAL = (asunto, ...datos) => {
+  APP_PACK.io.emit(asunto, ...datos);
+};
+
+
 require("./API_BD")();
 
 passport.use(

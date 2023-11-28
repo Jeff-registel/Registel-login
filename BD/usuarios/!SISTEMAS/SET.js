@@ -2,6 +2,7 @@ let tiempo_ultima_modificacion = 0;
 let tiempo_espera_notificar_cambios = 3000;
 let usuarios_modificados = [];
 
+let NOTIFICAR = JSONBD_MODULE("usuarios/!/NOTIFICAR");
 
 module.exports = ({
   query,
@@ -10,7 +11,6 @@ module.exports = ({
 }) => {
 
   let { aplicacion, archivo } = query;
-  let PK = aplicacion["PK"];
 
   if (!aplicacion) {
     return {
@@ -20,16 +20,15 @@ module.exports = ({
 
   carpeta = [carpeta, aplicacion["PK"]].join("/");
 
-  let PRESET = JSONBD_MODULE("!/PRESET")({
+  let {
+    valor_antiguo,
+    nuevo_valor,
+  } = JSONBD_MODULE("!/PRESET")({
     query,
     carpeta,
   });
 
 
-  let {
-    valor_antiguo,
-    nuevo_valor,
-  } = PRESET;
 
   let fechaString = new Date().SQL();
 
@@ -43,13 +42,9 @@ module.exports = ({
     notificarCambio("MOVIL", "Número de celular");
     notificarCambio("TELEFONO", "Número de teléfono");
     notificarCambio("DIRECCION", "Dirección");
-    notificarCambioDeHabeasData(PK);
+    notificarCambioDeHabeasData();
 
     avisar_cambios(nuevo_valor);
-
-    return {
-      ok: "Se ha modificado el usuario"
-    }
   }
 
   JSONBD_UPDATE({
@@ -58,15 +53,14 @@ module.exports = ({
   });
 
   return {
-    error: "Todo bien!"
+    ok: "Todo bien!"
   }
 
-  function notificarCambioDeHabeasData(PK) {
+  function notificarCambioDeHabeasData() {
     if (nuevo_valor["HABEAS_DATA"] && !valor_antiguo["HABEAS_DATA"]) {
-      JSONBD_MODULE("usuarios/!/NOTIFICAR")({
-        aplicacion: {
-          PK,
-        },
+      NOTIFICAR({
+        ejecutor,
+        query,
         notificacion: {
           titulo: "Habeas Data",
           mensaje: "Se ha aceptado el habeas data",
@@ -76,14 +70,12 @@ module.exports = ({
       });
     }
   }
+
   function notificarCambio(Llave, Label) {
     if (nuevo_valor[Llave] != undefined && valor_antiguo[Llave] != undefined && nuevo_valor[Llave] != valor_antiguo[Llave]) {
-      require("./NOTIFICAR")({
+      NOTIFICAR({
         ejecutor,
         query,
-        usuario: {
-          PK,
-        },
         notificacion: {
           titulo: "Nombre de usuario",
           mensaje: `Se ha cambiado "${Label}" de usuario`,
@@ -123,7 +115,7 @@ function avisar_cambios(json) {
   }
   tiempo_ultima_modificacion = Date.now();
   setTimeout(() => {
-    APP_PACK.io.emit("global: usuarios modificados", usuarios_modificados);
+    MENSAJE_GLOBAL("global: usuarios modificados", usuarios_modificados);
     usuarios_modificados = [];
   }, tiempo_espera_notificar_cambios);
 }
