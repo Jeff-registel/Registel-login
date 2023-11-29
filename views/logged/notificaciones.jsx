@@ -45,11 +45,12 @@ crearEstilo({
         },
 });
 
-let _notificaciones_;
-let notificacionCursor;
+let _cursorNotificaciones_;
+let Arr20Notificaciones;
 
-function setup() {
-        _notificaciones_ = notificacionesCursor();
+async function setup() {
+        _cursorNotificaciones_ = notificacionesCursor(20);
+        Arr20Notificaciones = await _cursorNotificaciones_.next();
 }
 
 function App() {
@@ -77,32 +78,26 @@ function onLoad() {
 }
 
 async function cargar20Notificaciones() {
-        if (!notificacionCursor) {
-                notificacionCursor = await _notificaciones_.next()
-        }
-        if (notificacionCursor.done) {
+        if (Arr20Notificaciones.done) {
                 return;
         }
-        for (let i = 0; i < 20; i++) {
-                if (notificacionCursor.done) {
-                        break;
-                }
+        for (let notificacion of Arr20Notificaciones.value) {
                 let domnotif = document.createElement("div");
                 domnotif.className = "notificacion-elemento";
                 document.querySelector(".notificaciones-app").appendChild(domnotif);
                 ReactDOM.render(
-                        <Notificacion notificacion={(notificacionCursor).value} />,
+                        <Notificacion notificacion={notificacion} />,
                         domnotif
                 );
-                notificacionCursor = await _notificaciones_.next()
         }
 
-        if (notificacionCursor.done) {
+        Arr20Notificaciones = await _cursorNotificaciones_.next()
+
+        if (Arr20Notificaciones.done) {
                 document.querySelector(".boton-cargar-mas-notificaciones").classList.add("d-none");
         }
 
         function Notificacion({ notificacion }) {
-                console.log(notificacion);
                 if (!notificacion) {
                         return;
                 }

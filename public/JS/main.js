@@ -85,21 +85,34 @@ function Iconos_fa_bs() {
     );
 }
 
-
-async function* notificacionesCursor() {
+async function* notificacionesCursor(limite = 15) {
     let cursor = await JSONBD({
-        ruta: `usuarios/${user["PK"]}/notificaciones/end.json`
+        ruta: `usuarios`,
+        query: {
+            "NOTIFICACIONES-BLOQUE": {
+                aplicacion: {
+                    PK: user["PK"]
+                },
+                limite,
+            }
+        }
     });
     while (true) {
-        cursor = await JSONBD({
-            ruta: `usuarios/${user["PK"]}/notificaciones/${cursor.cursor.file}.json`
-        });
-        yield cursor;
-        if (!cursor.antecesor) {
+        if (!cursor.length) {
             break;
         }
+        yield cursor;
         cursor = await JSONBD({
-            ruta: `usuarios/${user["PK"]}/notificaciones/${cursor.antecesor.file}.json`
+            ruta: `usuarios`,
+            query: {
+                "NOTIFICACIONES-BLOQUE": {
+                    aplicacion: {
+                        PK: user["PK"]
+                    },
+                    limite,
+                    inicio: cursor.at(-1).cursor.file,
+                }
+            }
         });
     }
 }
@@ -108,8 +121,9 @@ function AGO(time) {
     if (!time) {
         return "-"
     }
-    if (Date.now() - time < 1000 * 60 * 60 * 24) { // Menos de 24 horas
-        return moment(time).fromNow();
+    if (Date.now() - time < 1000 * 60 * 60 * 24 * 3) { // Menos de 2 días
+        retorno = moment(time).fromNow();
+        return retorno == "hace un día" ? "ayer" : retorno;
     }
     if (Date.now() - time < 1000 * 60 * 60 * 24 * 7) { // Menos de 7 días
         return moment(time).format("dddd");
@@ -169,6 +183,7 @@ async function JSONBD({
             ? `&NCOL=${JSON.stringify(NCOL)}`
             : "";
         let URLQUERY = `/BD?json-query=${[ruta, query ? JSON.stringify(query) : ""].filter(Boolean).join("/")}${$ejecutor + $filter + $some + $every + $find + $COL + $NCOL + $map}`;
+        URLQUERY = URLQUERY.replaceAll("//", "/");
         console.log("URLQUERY", URLQUERY);
         let respuesta = await (await fetch(URLQUERY)).json();
         console.log(respuesta, "async", async);

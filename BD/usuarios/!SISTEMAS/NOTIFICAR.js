@@ -26,10 +26,6 @@ module.exports = ({ query, ejecutor }) => {
         notificacion.creacion = fecha.getTime();
 
         let cursor = {
-                año,
-                mes,
-                dia,
-                time,
                 file,
         }
 

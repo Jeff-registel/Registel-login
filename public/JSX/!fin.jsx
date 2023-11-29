@@ -2,7 +2,7 @@ let elementosOcultosIniciales
 
 async function init({ FadeIn = true } = {}) {
         try {
-                setup();
+                await setup();
         } catch (error) {
         }
 
@@ -12,7 +12,7 @@ async function init({ FadeIn = true } = {}) {
         );
 
         try {
-                onLoad();
+                await onLoad();
         } catch (error) {
         }
 

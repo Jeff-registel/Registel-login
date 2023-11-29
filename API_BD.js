@@ -8,7 +8,7 @@ global.JSONBD_LIST = (carpeta) => _fs.carpeta.listar(`${JSONBD_PATH(carpeta)}`);
 global.JSONBD_MODULE = (modulo) => require(`${JSONBD_PATH(modulo)}.js`);
 global.JSONBD_EXEC = memoria.EXEC;
 global.JSONBD_UPDATE = query => JSONBD_MODULE("!/UPDATE")({ query });
-global.JSONBD_DELETE = (ruta)=> JSONBD_MODULE("!/DELETE")({ query: { ruta } });
+global.JSONBD_DELETE = (ruta) => JSONBD_MODULE("!/DELETE")({ query: { ruta } });
 global.JSONBD_WRITE = JSONBD_MODULE("!/WRITE");
 global.JSONBD_UPDATE_BD = JSONBD_MODULE("!/UPDATE_BD");
 global.JSONBD_GET = (ruta) => {
@@ -168,7 +168,7 @@ module.exports = () => {
         } else {
           return res
             .json({
-              error: "No se ha encontrado la instruccion",
+              error: "No se ha encontrado la instruccion " + instruccion + " " + MACRO,
             })
             .end();
         }

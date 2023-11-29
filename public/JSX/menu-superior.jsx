@@ -1,7 +1,5 @@
 addLink("/JSX/menu-superior.css");
 
-let _notificaciones_;
-
 async function estadoNotificacion() {
         let sin_leer = await JSONBD({
                 ruta: `usuarios/${user["PK"]}/notificaciones/sin-leer.json`
@@ -11,102 +9,79 @@ async function estadoNotificacion() {
 
 async function cargar15Notificaciones() {
         document.querySelectorAll(".panel-notificaciones .contenedor .contenedor-notificacion").forEach((tarjeta) => tarjeta.remove());
-        if (_notificaciones_?.close) {
-                _notificaciones_.close();
-        }
-        _notificaciones_ = notificacionesCursor();
-        for (let i = 0; i < 15; i++) {
-                await cargarNotificacion();
-        }
-        _notificaciones_ = undefined;
-        await JSONBD({
-                ruta: "usuarios",
-                query: {
-                        SET: {
-                                aplicacion: {
-                                        PK: user["PK"]
-                                },
-                                archivo: "notificaciones/sin-leer.json",
-                                valor: {
-                                        estado: false
-                                }
-                        }
-                }
-        });
+        await renderizarNotificaciones((await notificacionesCursor().next()).value);
         estadoNotificacion();
 }
 
-async function cargarNotificacion() {
-        let notificacion = (await _notificaciones_.next()).value;
-        if (!notificacion) {
-                return
-        }
-        let div = document.createElement("div");
-        div.className = "contenedor-notificacion";
-        document.querySelector(".panel-notificaciones .contenedor").appendChild(div);
-        if (!notificacion && !document.querySelector(".panel-notificaciones .contenedor .tarjeta")) {
-                document.querySelectorAll(".panel-notificaciones .contenedor .tarjeta").forEach((tarjeta) => tarjeta.remove());
+async function renderizarNotificaciones(_notificaciones_) {
+        for (let notificacion of _notificaciones_) {
+                let div = document.createElement("div");
+                div.className = "contenedor-notificacion";
                 document.querySelector(".panel-notificaciones .contenedor").appendChild(div);
-                return ReactDOM.render(
-                        <Tooltip title="No hay notificaciones" placement="left" style={{ cursor: "pointer", maxWidth: 300 }} TransitionComponent={Zoom}>
-                                <div className="tarjeta">
+                if (!notificacion && !document.querySelector(".panel-notificaciones .contenedor .tarjeta")) {
+                        document.querySelectorAll(".panel-notificaciones .contenedor .tarjeta").forEach((tarjeta) => tarjeta.remove());
+                        document.querySelector(".panel-notificaciones .contenedor").appendChild(div);
+                        return ReactDOM.render(
+                                <Tooltip title="No hay notificaciones" placement="left" style={{ cursor: "pointer", maxWidth: 300 }} TransitionComponent={Zoom}>
+                                        <div className="tarjeta">
+                                                <div className="imagen">
+                                                        <i class="fa-solid fa-face-smile-wink"></i>
+                                                </div>
+                                                <div>
+                                                        <div className="titulo">
+                                                                <b>
+                                                                        No hay notificaciones
+                                                                </b>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </Tooltip>
+                                ,
+                                div
+                        );
+                }
+                ReactDOM.render(
+                        <Tooltip title={notificacion.notificacion.mensaje} placement="left" style={{ cursor: "pointer", maxWidth: 300 }} TransitionComponent={Zoom}>
+                                <div className="tarjeta" onClick={() => {
+                                        if (notificacion.notificacion.swal) {
+                                                Swal.fire(notificacion.notificacion.swal);
+                                        }
+                                }}>
                                         <div className="imagen">
-                                                <i class="fa-solid fa-face-smile-wink"></i>
+                                                {
+                                                        notificacion.notificacion.imagen ?
+                                                                <img src={notificacion.notificacion.imagen} /> :
+                                                                notificacion.notificacion.icono ?
+                                                                        <i className={notificacion.notificacion.icono}></i> :
+                                                                        <i className="fa-solid fa-bell"></i>
+                                                }
                                         </div>
                                         <div>
                                                 <div className="titulo">
                                                         <b>
-                                                                No hay notificaciones
+                                                                {notificacion.notificacion.titulo}
                                                         </b>
                                                 </div>
+                                                <div className="contenido">
+                                                        {notificacion.notificacion.mensaje}
+                                                </div>
+                                                <div className="fecha ta-right op-50P">
+                                                        <small>
+                                                                {AGO(notificacion.notificacion.creacion)}
+                                                        </small>
+                                                </div>
                                         </div>
+                                </div>
+                                <div>
+                                        {
+                                                notificacion.notificacion.cursor?.time ?? ""
+                                        }
                                 </div>
                         </Tooltip>
                         ,
                         div
                 );
         }
-        ReactDOM.render(
-                <Tooltip title={notificacion.notificacion.mensaje} placement="left" style={{ cursor: "pointer", maxWidth: 300 }} TransitionComponent={Zoom}>
-                        <div className="tarjeta" onClick={() => {
-                                if (notificacion.notificacion.swal) {
-                                        Swal.fire(notificacion.notificacion.swal);
-                                }
-                        }}>
-                                <div className="imagen">
-                                        {
-                                                notificacion.notificacion.imagen ?
-                                                        <img src={notificacion.notificacion.imagen} /> :
-                                                        notificacion.notificacion.icono ?
-                                                                <i className={notificacion.notificacion.icono}></i> :
-                                                                <i className="fa-solid fa-bell"></i>
-                                        }
-                                </div>
-                                <div>
-                                        <div className="titulo">
-                                                <b>
-                                                        {notificacion.notificacion.titulo}
-                                                </b>
-                                        </div>
-                                        <div className="contenido">
-                                                {notificacion.notificacion.mensaje}
-                                        </div>
-                                        <div className="fecha ta-right op-50P">
-                                                <small>
-                                                        {AGO(notificacion.notificacion.creacion)}
-                                                </small>
-                                        </div>
-                                </div>
-                        </div>
-                        <div>
-                                {
-                                        notificacion.notificacion.cursor?.time ?? ""
-                                }
-                        </div>
-                </Tooltip>
-                ,
-                div
-        );
 }
 
 function MenuSuperior() {
