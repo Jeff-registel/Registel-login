@@ -3,7 +3,11 @@ Se encarga de actualizar campos en el archivo.
 
 Es mas lento que WRITE.js
 */
-module.exports = ({ ruta, valor }) => {
+module.exports = ({ query }) => {
+  let { ruta, valor } = query;
+
+  console.log("UPDATE", query);
+
   if (!ruta.endsWith(".json")) {
     return {
       error: "El archivo debe ser .json",

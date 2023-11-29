@@ -73,7 +73,7 @@ function SweetAlert2() {
     });
     if (localStorage.getItem("theme") == "dark") {
         addLink("https://cdn.jsdelivr.net/npm/@sweetalert2/theme-dark/dark.css");
-    } 
+    }
 }
 
 function Iconos_fa_bs() {
@@ -88,24 +88,27 @@ function Iconos_fa_bs() {
 
 async function* notificacionesCursor() {
     let cursor = await JSONBD({
-            ruta: `usuarios/${user["PK"]}/notificaciones/end.json`
+        ruta: `usuarios/${user["PK"]}/notificaciones/end.json`
     });
     while (true) {
-            if (!cursor.antecesor) {
-                    break;
-            }
-            cursor = await JSONBD({
-                    ruta: `usuarios/${user["PK"]}/notificaciones/${cursor.antecesor.file}.json`
-            });
-            yield cursor;
+        cursor = await JSONBD({
+            ruta: `usuarios/${user["PK"]}/notificaciones/${cursor.cursor.file}.json`
+        });
+        yield cursor;
+        if (!cursor.antecesor) {
+            break;
+        }
+        cursor = await JSONBD({
+            ruta: `usuarios/${user["PK"]}/notificaciones/${cursor.antecesor.file}.json`
+        });
     }
 }
 
-function AGO(time){
+function AGO(time) {
     if (!time) {
         return "-"
     }
-    if(Date.now() - time < 1000 * 60 * 60 * 24){ // Menos de 24 horas
+    if (Date.now() - time < 1000 * 60 * 60 * 24) { // Menos de 24 horas
         return moment(time).fromNow();
     }
     if (Date.now() - time < 1000 * 60 * 60 * 24 * 7) { // Menos de 7 días
@@ -181,3 +184,32 @@ async function JSONBD({
     });
 }
 
+function noEsperar() {
+    let carga = document.querySelector(".carga-espera")
+    let clases = ["animate__animated", "animate__fadeOut", "animate__faster"]
+    clases.forEach((e) => carga.classList.add(e))
+    setTimeout(() => {
+        console.log("hola")
+        carga.style.PointerEvent = "none"
+        carga.classList.remove(...clases)
+        carga.classList.add("d-none")
+    }, 500)
+}
+
+function esperar() {
+    let carga = document.querySelector(".carga-espera")
+    carga.style.PointerEvent = "auto"
+    carga.classList.remove("d-none")
+    let clases = ["animate__animated", "animate__fadeIn", "animate__faster"]
+    clases.forEach((e) => carga.classList.add(e))
+    setTimeout(() => {
+        clases.forEach((e) => carga.classList.remove(e))
+    }, 500)
+}
+
+
+async function efectoEsperar(f) {
+    esperar()
+    await f()
+    noEsperar()
+}

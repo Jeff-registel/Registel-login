@@ -83,15 +83,11 @@ passport.use(
 );
 
 passport.serializeUser(function (user, done) {
-  done(null, user["LOGIN"]);
+  done(null, user["PK"]);
 });
 
-passport.deserializeUser(async function (LOGIN, done) {
-  let login = JSONBD_MODULE("usuarios/!/CONSULTA")({
-    query: {
-      login: LOGIN,
-    }
-  });
+passport.deserializeUser(async function (PK, done) {
+  let login = JSONBD_GET(`usuarios/${PK}/usuario.json`);
   if (login) {
     done(null, login);
   } else {

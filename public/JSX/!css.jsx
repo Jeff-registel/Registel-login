@@ -18,12 +18,16 @@ crearEstilo({ //Conjunto de capas que se van a usar en el sitio
         zIndex: 100,
     },
 
-    ".swal2-html-container":{
+    ".carga-espera": {
+        zIndex: 1000,
+    },
+
+    ".swal2-html-container": {
         color: (theme == darkTheme ? "white" : "black") + " !important",
         textAlign: "left !important",
     },
 
-    ".swal2-confirm":{
+    ".swal2-confirm": {
         backgroundColor: "dodgerblue !important",
     },
 })

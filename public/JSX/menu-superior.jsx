@@ -12,6 +12,7 @@ async function estadoNotificacion() {
 async function cargar15Notificaciones() {
         document.querySelectorAll(".panel-notificaciones .contenedor .contenedor-notificacion").forEach((tarjeta) => tarjeta.remove());
         if (_notificaciones_?.close) {
+                _notificaciones_.close();
         }
         _notificaciones_ = notificacionesCursor();
         for (let i = 0; i < 15; i++) {
@@ -37,11 +38,13 @@ async function cargar15Notificaciones() {
 
 async function cargarNotificacion() {
         let notificacion = (await _notificaciones_.next()).value;
-        console.log(notificacion);
+        if (!notificacion) {
+                return
+        }
         let div = document.createElement("div");
         div.className = "contenedor-notificacion";
         document.querySelector(".panel-notificaciones .contenedor").appendChild(div);
-        if (!notificacion) {
+        if (!notificacion && !document.querySelector(".panel-notificaciones .contenedor .tarjeta")) {
                 document.querySelectorAll(".panel-notificaciones .contenedor .tarjeta").forEach((tarjeta) => tarjeta.remove());
                 document.querySelector(".panel-notificaciones .contenedor").appendChild(div);
                 return ReactDOM.render(

@@ -1,5 +1,11 @@
-module.exports = ({ notificacion, query, ejecutor }) => {
-        let { aplicacion } = query;
+module.exports = ({ query, ejecutor }) => {
+        let { aplicacion, notificacion } = query;
+
+        if (!aplicacion || !aplicacion["PK"] || aplicacion["PK"] < 1) {
+                return {
+                        error: "No se ha especificado un usuario para modificar",
+                }
+        }
 
         let datosAGuardar = {
                 notificacion,
@@ -18,7 +24,7 @@ module.exports = ({ notificacion, query, ejecutor }) => {
         let file = `${año}/${mes}/${dia}/${time}`;
 
         notificacion.creacion = fecha.getTime();
-        
+
         let cursor = {
                 año,
                 mes,
@@ -84,4 +90,7 @@ module.exports = ({ notificacion, query, ejecutor }) => {
                         estado: true
                 }
         })
+        return {
+                ok: "Se ha guardado la notificación"
+        }
 };

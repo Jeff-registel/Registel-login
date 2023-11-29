@@ -12,7 +12,7 @@ module.exports = ({
 
   let { aplicacion, archivo } = query;
 
-  if (!aplicacion) {
+  if (!aplicacion || aplicacion["PK"] < 1) {
     return {
       error: "No se ha especificado un usuario para modificar",
     }
@@ -28,12 +28,33 @@ module.exports = ({
     carpeta,
   });
 
-
-
-  let fechaString = new Date().SQL();
-
   if (archivo == "usuario.json") {
 
+    //Casos especiales de cambio de datos
+    if (hayCambio("LOGIN")) {
+      let login = JSONBD_MODULE("usuarios/!/TODO")({
+        query: {
+          findLogin: nuevo_valor["LOGIN"],
+        },
+      });
+      if (login) {
+        return {
+          error: "El login de usuario ya existe",
+        }
+      }
+    }
+    if (hayCambio("EMAIL")) {
+      let email = JSONBD_MODULE("usuarios/!/TODO")({
+        query: {
+          findEmail: nuevo_valor["EMAIL"],
+        },
+      });
+      if (email) {
+        return {
+          error: "El correo electrónico de usuario ya existe",
+        }
+      }
+    }
     notificarCambio("NOMBRE", "Nombre");
     notificarCambio("APELLIDO", "Apellido");
     notificarCambio("FK_TIPO_DOCUMENTO", "Tipo de documento");
@@ -60,46 +81,56 @@ module.exports = ({
     if (nuevo_valor["HABEAS_DATA"] && !valor_antiguo["HABEAS_DATA"]) {
       NOTIFICAR({
         ejecutor,
-        query,
-        notificacion: {
-          titulo: "Habeas Data",
-          mensaje: "Se ha aceptado el habeas data",
-          tipo: "info",
-          icono: "fas fa-user-shield",
-        }
+        query: {
+          ...query,
+          notificacion: {
+            titulo: "Habeas Data",
+            mensaje: "Se ha aceptado el habeas data",
+            tipo: "info",
+            icono: "fas fa-user-shield",
+          },
+        },
       });
     }
   }
 
+  function hayCambio(Llave) {
+    return nuevo_valor[Llave] != undefined && valor_antiguo[Llave] != undefined && nuevo_valor[Llave] != valor_antiguo[Llave];
+  }
+
   function notificarCambio(Llave, Label) {
-    if (nuevo_valor[Llave] != undefined && valor_antiguo[Llave] != undefined && nuevo_valor[Llave] != valor_antiguo[Llave]) {
+    let fechaString = new Date().SQL();
+
+    if (hayCambio(Llave)) {
       NOTIFICAR({
         ejecutor,
-        query,
-        notificacion: {
-          titulo: "Nombre de usuario",
-          mensaje: `Se ha cambiado "${Label}" de usuario`,
-          tipo: "info",
-          icono: "fas fa-user-edit",
-          swal: {
-            title: `${Label} de usuario`,
-            parametros: {
-              inicial: valor_antiguo[Llave],
-              final: nuevo_valor[Llave],
-              fecha: fechaString,
-              modificador: ejecutor,
-            },
-            html: HTML_MINIFY(`
-              ha cambiado de <b>${valor_antiguo[Llave]}</b> a <b>${nuevo_valor[Llave]}</b>
-              <br><br>
-              ${fechaString}
-              <br><br>
-              <div class="ta-right">
-              Por: ${JSONBD_GET(`usuarios/${ejecutor["PK"]}/usuario.json`)["LOGIN"]}
-              </div>
-            `)
-          }
-        }
+        query: {
+          ...query,
+          notificacion: {
+            titulo: "Nombre de usuario",
+            mensaje: `Se ha cambiado "${Label}" de usuario`,
+            tipo: "info",
+            icono: "fas fa-user-edit",
+            swal: {
+              title: `${Label} de usuario`,
+              parametros: {
+                inicial: valor_antiguo[Llave],
+                final: nuevo_valor[Llave],
+                fecha: fechaString,
+                modificador: ejecutor,
+              },
+              html: HTML_MINIFY(`
+                ha cambiado de <b>${valor_antiguo[Llave]}</b> a <b>${nuevo_valor[Llave]}</b>
+                <br><br>
+                ${fechaString}
+                <br><br>
+                <div class="ta-right">
+                Por: ${JSONBD_GET(`usuarios/${ejecutor["PK"]}/usuario.json`)["LOGIN"]}
+                </div>
+              `)
+            }
+          },
+        },
       });
     }
   }

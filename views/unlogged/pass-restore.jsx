@@ -36,14 +36,14 @@ function EsquemaError({ titulo, iconoTitulo, texto }) {
 }
 
 async function App() {
-        let parametro_token = new URLSearchParams(window.location.search).get("TOKEN");
+        let parametro_token = new URLSearchParams(window.location.search).get("token");
         window.history.replaceState({}, document.title, window.location.href.replace(window.location.search, "").replace(window.location.hash, ""));
         let token = await JSONBD({
                 ruta: `tokens/${parametro_token}.json`
         });
         if (!token) {
                 return (
-                        <EsquemaError titulo="El token no es válido" iconoTitulo={<i class="fa-solid fa-link-slash" />} texto="El token no existe o ha sido eliminado" />
+                        <EsquemaError titulo="El token no es válido" iconoTitulo={<i class="fa-solid fa-link-slash" />} texto="El token no existe o ha expirado" />
                 )
         }
         if (token["tipo"] != "recuperación de contraseña") {
@@ -52,18 +52,15 @@ async function App() {
                 )
         }
 
-        let fecha = new Date();
-        let fechaToken = new Date(token["fecha"]);
+        let usuario = await JSONBD({
+                ruta: `usuarios/${token["datos"]["PK"]}/usuario.json`
+        });
 
-        if (fecha - fechaToken > 1000 * 60 * 30) {
+        if (!usuario) {
                 return (
-                        <EsquemaError titulo="El token ha expirado" iconoTitulo={<i class="fa-solid fa-hourglass-end" />} texto="Tiempo límite 30 minutos" />
+                        <EsquemaError titulo="El usuario no existe" iconoTitulo={<i class="fa-solid fa-user-slash" />} texto="El usuario no existe o ha sido eliminado" />
                 )
         }
-
-        let usuario = await JSONBD({
-                ruta: `usuarios/${token["usuario"]}/usuario.json`
-        });
 
         return (
                 <AppSimpleCentrada>
@@ -72,7 +69,7 @@ async function App() {
                                         ${theme == darkTheme ? "silueta-blanca" : "silueta-negra"}
                                         pad-10
                                 `} w={300} h={100} />
-                                <h1>Recuperar contraseña</h1>
+                                <h1>Reestablecer contraseña</h1>
                                 <h3>
                                         usuario: {usuario["LOGIN"]}
                                 </h3>
@@ -90,9 +87,7 @@ async function App() {
                                                 await JSONBD({
                                                         query: {
                                                                 DELETE: {
-                                                                        "tokens": {
-                                                                                [parametro_token + ".json"]: true
-                                                                        }
+                                                                        ruta: `tokens/${parametro_token}.json`
                                                                 }
                                                         }
                                                 });
@@ -112,16 +107,11 @@ async function App() {
                                                         return;
                                                 }
                                                 let json = await JSONBD({
+                                                        ruta: `usuarios`,
                                                         query: {
-                                                                DOC: {
-                                                                        usuarios: {
-                                                                                [token["usuario"]]: {
-                                                                                        "usuario.json": {
-                                                                                                CONTRASEÑA: cifradoCesar(contraseña),
-                                                                                                CRYPTOPASS: "CESAR"
-                                                                                        }
-                                                                                }
-                                                                        }
+                                                                "CAMBIAR-CONTRASEÑA-CON-TOKEN": {
+                                                                        "token-code": parametro_token,
+                                                                        contraseña,
                                                                 }
                                                         }
                                                 });
@@ -131,15 +121,6 @@ async function App() {
                                                 }
                                                 if (json["ok"]) {
                                                         await swal.fire("OK", "Contraseña cambiada", "success");
-                                                        await JSONBD({
-                                                                query: {
-                                                                        DELETE: {
-                                                                                "tokens": {
-                                                                                        [parametro_token + ".json"]: true
-                                                                                }
-                                                                        }
-                                                                }
-                                                        });
                                                         window.location.href = "/";
                                                         return;
                                                 }
@@ -148,6 +129,6 @@ async function App() {
                                         </Button>
                                 </div>
                         </Paper>
-                </AppSimpleCentrada>
+                </AppSimpleCentrada >
         )
 }

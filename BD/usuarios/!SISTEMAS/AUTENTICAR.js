@@ -10,29 +10,38 @@ module.exports = ({ query }) => {
             error: "Faltan datos para la autenticacion",
         };
     }
-    let LOGIN = JSONBD_GET(`usuarios/!/ALIAS/LOGIN/${login}.json`);
-    if (!LOGIN) {
-        return {
-            error: "El nombre de usuario no existe",
-        };
-    }
-    let ruta = `usuarios/${LOGIN.PK}/usuario.json`;
-    let usuario = JSONBD_GET(ruta);
+    let usuario = JSONBD_MODULE("!/GET")({
+        ruta: `usuarios/${JSONBD_MODULE("usuarios/!/TODO")({
+            query: {
+                findLogin: login,
+            },
+        })["PK"]}/usuario.json`,
+    });
+    
     if (!usuario) {
         return {
             error: "No se ha encontrado el usuario",
         };
     }
+
     let { CONTRASEÑA, CRYPTOPASS } = usuario;
+
+    console.log("usuario", usuario);
 
     switch (CRYPTOPASS) {
         case "CESAR":
-            contraseña = cifradoCesar(contraseña);
+            contraseña = JSONBD_MODULE("!/CESAR")({
+                query: {
+                    text: contraseña,
+                },
+            });
             break;
         default:
             contraseña = sha256(contraseña);
             break;
     }
+
+    console.log("CONTRASEÑA", CONTRASEÑA);
 
     if (CONTRASEÑA != contraseña) {
         return {

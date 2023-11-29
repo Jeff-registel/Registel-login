@@ -229,28 +229,31 @@ socket.on("global: usuarios modificados", (usuarios) => {
 
 async function actualizaUsuario() {
         console.log(AutocompleteEmpresas ?? usuarioBD["EMPRESAS_ACCESO"] ?? []);
-        let json = (await (await fetch(`/BD?json-query=${JSON.stringify({
-                DOC: {
-                        usuarios: {
-                                [usuarioPK]: {
-                                        "usuario.json": {
-                                                NOMBRE: document.querySelector(".NOMBRE").querySelector("input").value,
-                                                APELLIDO: document.querySelector(".APELLIDO").querySelector("input").value,
-                                                FK_TIPO_DOCUMENTO: parseInt(document.querySelector(".TIPO_DOCUMENTO input").value),
-                                                CEDULA: document.querySelector(".CEDULA").querySelector("input").value,
-                                                TELEFONO: document.querySelector(".TELEFONO").querySelector("input").value,
-                                                MOVIL: document.querySelector(".MOVIL").querySelector("input").value,
-                                                DIRECCION: document.querySelector(".DIRECCION").querySelector("input").value,
-                                                LOGIN: document.querySelector(".LOGIN").querySelector("input").value,
-                                                EMAIL: document.querySelector(".EMAIL").querySelector("input").value,
-                                                FK_PERFIL: parseInt(document.querySelector(".FK_PERFIL_SELECT").querySelector("input").value),
-                                                ESTADO: document.querySelector(".ESTADO input").checked,
-                                                EMPRESAS_ACCESO: AutocompleteEmpresas ?? usuarioBD["EMPRESAS_ACCESO"] ?? [],
-                                        }
+        let json = await JSONBD({
+                ruta: "usuarios",
+                query: {
+                        SET: {
+                                aplicacion: {
+                                        PK: usuarioPK,
+                                },
+                                archivo: "usuario.json",
+                                valor: {
+                                        NOMBRE: document.querySelector(".NOMBRE").querySelector("input").value,
+                                        APELLIDO: document.querySelector(".APELLIDO").querySelector("input").value,
+                                        FK_TIPO_DOCUMENTO: parseInt(document.querySelector(".TIPO_DOCUMENTO input").value),
+                                        CEDULA: document.querySelector(".CEDULA").querySelector("input").value,
+                                        TELEFONO: document.querySelector(".TELEFONO").querySelector("input").value,
+                                        MOVIL: document.querySelector(".MOVIL").querySelector("input").value,
+                                        DIRECCION: document.querySelector(".DIRECCION").querySelector("input").value,
+                                        LOGIN: document.querySelector(".LOGIN").querySelector("input").value,
+                                        EMAIL: document.querySelector(".EMAIL").querySelector("input").value,
+                                        FK_PERFIL: parseInt(document.querySelector(".FK_PERFIL_SELECT").querySelector("input").value),
+                                        ESTADO: document.querySelector(".ESTADO input").checked,
+                                        EMPRESAS_ACCESO: AutocompleteEmpresas ?? usuarioBD["EMPRESAS_ACCESO"] ?? [],
                                 }
                         }
                 }
-        })}`)).json());
+        });
 
         if (json["ok"]) {
                 swal.fire({

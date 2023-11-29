@@ -98,6 +98,7 @@ function AppLogged({ children }) {
       <div className="menu-izquierda d-none">
         <MenuIzquierda />
       </div>
+      <DOMESPERA />
     </ThemeProvider>
   );
 }
@@ -109,8 +110,20 @@ function AppSimple({ children }) {
       <div className="app d-none">
         {children}
       </div>
+      <DOMESPERA />
     </ThemeProvider>
   );
+}
+
+function DOMESPERA() {
+  return <Backdrop
+    open
+    className="carga-espera d-none"
+    style={{ color: '#fff' }}
+    onClick={noEsperar}
+  >
+    <CircularProgress color="inherit" />
+  </Backdrop>
 }
 
 function AppSimpleCentrada({ children }) {
@@ -120,6 +133,7 @@ function AppSimpleCentrada({ children }) {
       <div className="app d-none">
         {children}
       </div>
+      <DOMESPERA />
     </ThemeProvider>
   );
 }
@@ -136,14 +150,14 @@ function generarVentanaFlotanteRapido({ url, titulo }) {
   ventana_flotante["nueva-ventana"]({
     titulo_texto: titulo,
     html: `
-                    <iframe src="${url}" class="w-100P h-100P border-0"
-                            onLoad="
-                                    let urlNew = this.contentWindow.location;
-                                    if (!urlNew.href.endsWith('${url}') && !urlNew.href.endsWith('/unlogged')) {
-                                            this.contentWindow.location.href = '/unlogged';
-                                    }
-                            "
-                    ></iframe>
-            `
+        <iframe src="${url}" class="w-100P h-100P border-0"
+                onLoad="
+                        let urlNew = this.contentWindow.location;
+                        if (!urlNew.href.endsWith('${url}') && !urlNew.href.endsWith('/unlogged')) {
+                                this.contentWindow.location.href = '/unlogged';
+                        }
+                "
+        ></iframe>
+    `
   })
 }

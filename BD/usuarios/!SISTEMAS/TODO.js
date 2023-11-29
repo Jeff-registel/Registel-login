@@ -1,7 +1,17 @@
 let GET_USUARIO = JSONBD_MODULE(`usuarios/!/GET`);
 
-module.exports = ({ query, find, some, carpeta }) => {
-        let { usuarios, pks } = query;
+module.exports = ({ query, find, some, carpeta = "usuarios" }) => {
+        let { usuarios, pks, findEmail, findLogin } = query;
+        console.log("query", query);
+        console.log("findEmail", findEmail);
+        if (findEmail) {
+                find = (usuario) => usuario["EMAIL"] == findEmail;
+                usuarios = true;
+        }
+        if (findLogin) {
+                find = (usuario) => usuario["LOGIN"] == findLogin;
+                usuarios = true;
+        }
         let retorno = {};
         retorno["pks"] = JSONBD_LIST("usuarios").map(usuario => usuario.name).filter(usuario => !usuario.startsWith("!"));
         if (usuarios) {

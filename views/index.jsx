@@ -88,14 +88,8 @@ function Formulario() {
                                 `} w={300} h={100} />
                                 <br />
                                 <br />
-                                <div className="label-error" style={{ display: "none" }}>
-                                </div>
                                 <br />
                                 <TextField id="usuario" name="usuario" label="Usuario"
-                                        onChange={() => {
-                                                let usuario = document.querySelector("#usuario").value;
-                                                socket.emit("usuario-existe", usuario);
-                                        }}
                                         required
                                         fullWidth
                                 />
@@ -103,6 +97,18 @@ function Formulario() {
                                 <br />
                                 <TextField id="contrasena" name="contrasena" label="Contraseña" type="password" fullWidth required onKeyUp={(evt) => {
                                         if (evt.keyCode === 13) {
+                                                let auth = JSONBD({
+                                                        ruta: "usuarios",
+                                                        query: {
+                                                                "AUTENTICAR": {
+                                                                        login: document.querySelector("#usuario").value,
+                                                                        contraseña: document.querySelector("#contrasena").value,
+                                                                }
+                                                        }
+                                                });
+                                                if (auth["error"]) {
+                                                        return swal.fire("Error", auth["error"], "error");
+                                                }
                                                 document.querySelector("form").submit();
                                         }
                                 }} />
@@ -122,22 +128,30 @@ function Formulario() {
                                                 onClick={async () => {
                                                         const { value } = await swal.fire({
                                                                 title: "Recuperar contraseña",
+                                                                text: "Ingrese su correo electrónico para enviarle un link de recuperación",
                                                                 input: "text",
-                                                                placeholder: "Usuario",
+                                                                placeholder: "Correo de recuperación",
                                                                 confirmButtonText: "Enviar correo",
                                                         });
                                                         if (value) {
-                                                                console.log(value)
-                                                                let usuario = await JSONBD({
-                                                                        ruta: "usuarios", 
-                                                                        query: { TODO: { usuarios: true } },
-                                                                        find: ((e) => e["EMAIL"] == value).toString().replace("value", `"${value}"`)
-                                                                })
-                                                                if (!usuario) {
-                                                                        swal.fire("Error", "No hay ningún usuario con ese correo", "error");
-                                                                        return;
-                                                                }
-                                                                socket.emit("Recuperar contraseña", usuario, window.location.href);
+                                                                efectoEsperar(async () => {
+                                                                        let json = await JSONBD({
+                                                                                ruta: "usuarios",
+                                                                                query: {
+                                                                                        "CAMBIO-CONTRASEÑA-TOKENMAIL": {
+                                                                                                EMAIL: value,
+                                                                                                URL: window.location.origin
+                                                                                        }
+                                                                                }
+                                                                        });
+                                                                        console.log(json)
+                                                                        if (json["error"]) {
+                                                                                swal.fire("Error", json["error"], "error");
+                                                                        }
+                                                                        if (json["ok"]) {
+                                                                                swal.fire("Correo enviado", "Se ha enviado un correo con un link para cambio de contraseña (Revisar spam)", "success");
+                                                                        }
+                                                                });
                                                         }
                                                 }}
                                                 style={{
@@ -156,21 +170,3 @@ function Formulario() {
                 </ThemeProvider >
         );
 }
-
-socket.on("Recuperar contraseña: ERROR", () => {
-        swal.fire("Error", "No se pudo enviar el correo", "error");
-});
-
-socket.on("Recuperar contraseña: OK", () => {
-        swal.fire("Correo enviado", "Se ha enviado un correo con la contraseña", "success");
-});
-
-socket.on("usuario-existe: respuesta", (existe) => {
-        let error = document.querySelector(".label-error");
-        if (!existe) {
-                error.style.display = "block";
-                error.innerHTML = "Usuario no existe";
-        } else {
-                error.style.display = "none";
-        }
-});

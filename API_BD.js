@@ -3,11 +3,12 @@ const JSONBD = require("./app/memoria/JSON-BD");
 const _fs = require("./app/memoria/_fs");
 
 global.JSONBD_ROOT = memoria.config.RAIZ;
-global.JSONBD_PATH = (carpeta, desdeRaiz = true) => [desdeRaiz ? root : "", JSONBD_ROOT, carpeta.replace("!/", "!SISTEMAS/")].filter(Boolean).join("/").replaceAll("//", "/");
+global.JSONBD_PATH = (archivo, desdeRaiz = true) => [desdeRaiz ? root : "", JSONBD_ROOT, archivo.replace("!/", "!SISTEMAS/")].filter(Boolean).join("/").replaceAll("//", "/");
 global.JSONBD_LIST = (carpeta) => _fs.carpeta.listar(`${JSONBD_PATH(carpeta)}`);
 global.JSONBD_MODULE = (modulo) => require(`${JSONBD_PATH(modulo)}.js`);
 global.JSONBD_EXEC = memoria.EXEC;
-global.JSONBD_UPDATE = JSONBD_MODULE("!/UPDATE");
+global.JSONBD_UPDATE = query => JSONBD_MODULE("!/UPDATE")({ query });
+global.JSONBD_DELETE = (ruta)=> JSONBD_MODULE("!/DELETE")({ query: { ruta } });
 global.JSONBD_WRITE = JSONBD_MODULE("!/WRITE");
 global.JSONBD_UPDATE_BD = JSONBD_MODULE("!/UPDATE_BD");
 global.JSONBD_GET = (ruta) => {
@@ -84,10 +85,10 @@ module.exports = () => {
       .reduce((a, b) => ({ ...a, ...b }), {});
 
     if (json_query) {
-      return QUERY2JSON();
+      return await QUERY2JSON();
     }
 
-    function QUERY2JSON() {
+    async function QUERY2JSON() {
       let partesQuery;
       let cabeza;
 
@@ -125,11 +126,11 @@ module.exports = () => {
         MACRO = MACRO.replaceAll("//", "/");
 
         if (_fs.existe(MACRO)) {
-          let retorno = require(MACRO)({
+          let retorno = await require(MACRO)({
             URL,
             instruccion,
             query: query[instruccion],
-            ejecutor,
+            ejecutor: ejecutor,
             cabeza,
             find, //puede reducir complejidad en algunos casos
             some, //puede reducir complejidad en algunos casos

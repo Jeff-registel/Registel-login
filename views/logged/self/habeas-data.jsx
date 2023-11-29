@@ -61,7 +61,7 @@ async function App() {
                                         <FormControlLabel control={<Switch id="HABEAS_DATA" defaultChecked={user["HABEAS_DATA"]} disabled={!!user["HABEAS_DATA"]} />} label="Política aceptada" />
                                 </Tooltip>
                                 <div className="ta-right">
-                                        <Button variant="contained" color="primary" size="large" endIcon={<i class="fa-solid fa-save" />} onClick={Actualizar}>
+                                        <Button variant="contained" color="primary" size="large" endIcon={<i class="fa-solid fa-save" />} onClick={() => efectoEsperar(Actualizar)}>
                                                 Actualizar
                                         </Button>
                                 </div>
@@ -123,8 +123,6 @@ async function App() {
                                 }
                         }
                 });
-
-                console.log(json);
 
                 if (json["ok"]) {
                         await swal.fire({
