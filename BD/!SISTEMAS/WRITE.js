@@ -6,7 +6,7 @@ Es mas rapido que UPDATE.js
 
 const _fs = require(root + "/app/memoria/_fs");
 
-module.exports = ({ ruta, valor }) => {
+module.exports = async ({ ruta, valor }) => {
   if (!ruta.endsWith(".json")) {
     return {
       error: "El archivo debe ser .json",
@@ -19,10 +19,10 @@ module.exports = ({ ruta, valor }) => {
   }
   console.log("WRITE", ruta, valor);
 
-  _fs.archivo.escribir({
+  console.log(await _fs.archivo.escribir({
     nombre: JSONBD_PATH(ruta),
     contenido: valor,
-  });
+  }));
   return {
     ok: "Se ha actualizado el archivo",
   };
