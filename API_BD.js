@@ -21,6 +21,7 @@ global.JSONBD_GET = (ruta) => {
   if (Array.isArray(ruta)) {
     ruta = ruta.join("/");
   }
+  console.log("JSONBD_GET", ruta, "JSONBD_EXIST", JSONBD_EXIST({ ruta }));
   if (JSONBD_EXIST({ruta})) {
     return memoria.tools.Array2Nodo(ruta).cabeza;
   }
