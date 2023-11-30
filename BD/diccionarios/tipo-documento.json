@@ -1,1 +1,0 @@
-{"tipo-documento":[{"PK":1,"NOMBRE":"Cedula de ciudadanía","ABREV":"CC"},{"PK":2,"NOMBRE":"Cedula de extranjería","ABREV":"CE"},{"PK":3,"NOMBRE":"Pasaporte","ABREV":"P"}],"__atributos__":{"SET":{"FECHA_MODIFICACION":"2023-11-14T13:18:07.910Z","CONTADOR":214},"FECHA_CREACION":"2023-11-10T08:56:11.636Z","GET":{"FECHA":"2023-11-14T13:18:07.910Z","CONTADOR":212}}}
