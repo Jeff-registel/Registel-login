@@ -11,14 +11,14 @@ module.exports = ({ ruta, valor }) => {
     return {
       error: "El archivo debe ser .json",
     };
-  }
+  } 
   if (typeof valor != "object") {
     return {
       error: "El valor a escribir debe ser un objeto",
     };
   }
   console.log("WRITE", ruta, valor);
-  
+
   _fs.archivo.escribir({
     nombre: JSONBD_PATH(ruta),
     contenido: valor,
