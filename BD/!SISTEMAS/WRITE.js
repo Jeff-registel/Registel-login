@@ -17,6 +17,8 @@ module.exports = ({ ruta, valor }) => {
       error: "El valor a escribir debe ser un objeto",
     };
   }
+  console.log("WRITE", ruta, valor);
+  
   _fs.archivo.escribir({
     nombre: JSONBD_PATH(ruta),
     contenido: valor,
