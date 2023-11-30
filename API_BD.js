@@ -3,7 +3,9 @@ const JSONBD = require("./app/memoria/JSON-BD");
 const _fs = require("./app/memoria/_fs");
 
 global.JSONBD_ROOT = memoria.config.RAIZ;
-global.JSONBD_PATH = (archivo, desdeRaiz = true) => [desdeRaiz ? root : "", JSONBD_ROOT, archivo.replace("!/", "!SISTEMAS/")].filter(Boolean).join("/").replaceAll("//", "/");
+global.JSONBD_PATH = (archivo, desdeRaiz = true) => {
+  return [desdeRaiz ? root : "", JSONBD_ROOT, archivo.replace("!/", "!SISTEMAS/")].filter(Boolean).join("/").replaceAll("//", "/");
+};
 global.JSONBD_LIST = (carpeta) => _fs.carpeta.listar(`${JSONBD_PATH(carpeta)}`);
 global.JSONBD_MODULE = (modulo) => require(`${JSONBD_PATH(modulo)}.js`);
 global.JSONBD_EXEC = memoria.EXEC;

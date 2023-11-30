@@ -24,9 +24,7 @@ module.exports = function ({ creador, tipo, datos }) {
                 return jsonwrite;
         }
         setTimeout(() => {
-                JSONBD_DELETE({
-                        ruta: `tokens/${token}.json`
-                });
+                JSONBD_DELETE(`tokens/${token}.json`);
                 console.log("Eliminando token, timeout", token);
         }, CONFIG(tipo).expira);
         return token;

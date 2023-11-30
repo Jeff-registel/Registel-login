@@ -6,9 +6,7 @@ module.exports = () => {
                 if (archivo) {
                         if (new Date().getTime() >  (archivo["time"] + JSONBD_MODULE("tokens/!/CONFIG")(archivo["tipo"]).expira)) {
                                 console.log("Eliminando token, expirado", token);
-                                JSONBD_DELETE({
-                                        ruta: `tokens/${token}`
-                                });
+                                JSONBD_DELETE(`tokens/${token}`);
                         }
                 }
         });
