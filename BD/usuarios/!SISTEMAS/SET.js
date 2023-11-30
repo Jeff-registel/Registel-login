@@ -29,7 +29,6 @@ module.exports = ({
   });
 
   if (archivo == "usuario.json") {
-
     //Casos especiales de cambio de datos
     if (hayCambio("LOGIN")) {
       let login = JSONBD_MODULE("usuarios/!/TODO")({

@@ -10,6 +10,7 @@ global.JSONBD_EXEC = memoria.EXEC;
 global.JSONBD_UPDATE = query => JSONBD_MODULE("!/UPDATE")({ query });
 global.JSONBD_DELETE = (ruta) => JSONBD_MODULE("!/DELETE")({ query: { ruta } });
 global.JSONBD_WRITE = JSONBD_MODULE("!/WRITE");
+global.JSONBD_EXIST = JSONBD_MODULE("!/EXIST");
 global.JSONBD_UPDATE_BD = JSONBD_MODULE("!/UPDATE_BD");
 global.JSONBD_GET = (ruta) => {
   if (!ruta) {
@@ -20,10 +21,10 @@ global.JSONBD_GET = (ruta) => {
   if (Array.isArray(ruta)) {
     ruta = ruta.join("/");
   }
-  if (_fs.existe(JSONBD_PATH(ruta))) {
+  if (JSONBD_EXIST(ruta)) {
     return memoria.tools.Array2Nodo(ruta).cabeza;
   }
-  return false
+  return false //Archivo no existe
 };
 
 {
