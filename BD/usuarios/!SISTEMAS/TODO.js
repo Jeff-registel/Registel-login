@@ -17,10 +17,13 @@ module.exports = ({ query, find, carpeta = "usuarios" }) => {
   if (usuarios) {
     let loadObj = (PK) => {
       ruta = `${PK}/usuario.json`;
-      return GET_USUARIO(ruta);
+      return GET_USUARIO({ruta});
     };
     if (find) { //Reducción de complejidad
-      retorno["pks"].find((PK) => find(loadObj(PK))); //Busca el PK del usuario
+      let busqueda = retorno["pks"].find((PK) => find(loadObj(PK))); //Busca el PK del usuario
+      if (!busqueda) {
+        return false;
+      }
       return GET_USUARIO({
         ruta,
       });

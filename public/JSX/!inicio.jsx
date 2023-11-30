@@ -153,7 +153,8 @@ function generarVentanaFlotanteRapido({ url, titulo }) {
         <iframe src="${url}" class="w-100P h-100P border-0"
                 onLoad="
                         let urlNew = this.contentWindow.location;
-                        if (!urlNew.href.endsWith('${url}') && !urlNew.href.endsWith('/unlogged')) {
+                        console.log(urlNew.href);
+                        if (!urlNew.href.includes('${url}') && !urlNew.href.includes('/unlogged')) {
                                 this.contentWindow.location.href = '/unlogged';
                         }
                 "

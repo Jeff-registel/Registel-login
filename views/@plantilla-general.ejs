@@ -8,7 +8,17 @@
 
   <%- include('@headerlinks') %>
 
-  <script src="<%- info_pagina.nombre  %>.jsx" type="text/babel" defer></script>
+
+  <script src="<%-  
+      [
+          "/", 
+          info_pagina.carpeta.replace( info_pagina.nombre, "" ) , 
+          info_pagina.nombre.replace( info_pagina.carpeta, "" ) 
+      ].filter(Boolean)
+      .join("/")
+      .replaceAll("///", "/")
+      .replaceAll("//", "/")  
+  %>.jsx" type="text/babel" defer></script>
 
   <script src="/JSX/!fin.jsx" type="text/babel" defer></script>
 </head>

@@ -79,9 +79,32 @@ function App() {
 };
 
 function Formulario() {
+        let Error = async () => {
+                let auth = await JSONBD({
+                        ruta: "usuarios",
+                        query: {
+                                "AUTENTICAR": {
+                                        login: document.querySelector("#usuario").value,
+                                        contraseña: document.querySelector("#contrasena").value,
+                                }
+                        }
+                });
+                if (auth["error"]) {
+                        return auth["error"];
+                }
+        }
         return (
                 <ThemeProvider theme={theme}>
-                        <form action="/login-verify" method="POST">
+                        <form action="/login-verify" method="POST"
+                                onSubmit={async (evt) => {
+                                        evt.preventDefault();
+                                        let error = await Error();
+                                        if (error) {
+                                                return swal.fire("Error", error, "error");
+                                        }
+                                        evt.target.submit();
+                                }}
+                        >
                                 <LogoConNombre className={`
                                         ${theme == darkTheme ? "silueta-blanca" : "silueta-negra"}
                                         pad-10
@@ -95,23 +118,7 @@ function Formulario() {
                                 />
                                 <br />
                                 <br />
-                                <TextField id="contrasena" name="contrasena" label="Contraseña" type="password" fullWidth required onKeyUp={(evt) => {
-                                        if (evt.keyCode === 13) {
-                                                let auth = JSONBD({
-                                                        ruta: "usuarios",
-                                                        query: {
-                                                                "AUTENTICAR": {
-                                                                        login: document.querySelector("#usuario").value,
-                                                                        contraseña: document.querySelector("#contrasena").value,
-                                                                }
-                                                        }
-                                                });
-                                                if (auth["error"]) {
-                                                        return swal.fire("Error", auth["error"], "error");
-                                                }
-                                                document.querySelector("form").submit();
-                                        }
-                                }} />
+                                <TextField id="contrasena" name="contrasena" label="Contraseña" type="password" fullWidth required />
 
                                 <br />
                                 <br />

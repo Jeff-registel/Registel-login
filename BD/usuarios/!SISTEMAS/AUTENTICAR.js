@@ -13,9 +13,10 @@ module.exports = ({ query }) => {
       findLogin: login,
     },
   });
+  console.log(usuarioLogin);
   if (!usuarioLogin) {
     return {
-      error: "El login de usuario no se ha encontrado " + login,
+      error: "El login de usuario no se ha encontrado: '" + login + "'",
     };
   }
   let usuario = JSONBD_MODULE("!/GET")({

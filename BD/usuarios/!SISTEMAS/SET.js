@@ -50,7 +50,7 @@ module.exports = ({
       });
       if (email) {
         return {
-          error: "El correo electrónico de usuario ya existe",
+          error: "El correo electrónico ya está asociado a otro usuario",
         }
       }
     }
@@ -106,7 +106,7 @@ module.exports = ({
         query: {
           ...query,
           notificacion: {
-            titulo: "Nombre de usuario",
+            titulo: Label + " de usuario",
             mensaje: `Se ha cambiado "${Label}" de usuario`,
             tipo: "info",
             icono: "fas fa-user-edit",

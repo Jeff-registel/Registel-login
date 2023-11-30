@@ -20,6 +20,13 @@ function interpretar_ruta(req, res, next) {
   );
 
   if (!argumentos_ruta) {
+    console.log("No se encontró la ruta:", URL)
+    console.log({
+      subir_a_raiz: "",
+      carpeta: "/",
+      nombre: "404",
+      ultimo_nodo_ruta: "404",
+    })
     return res.render("@plantilla-general.ejs", {
       info_pagina: {
         subir_a_raiz: "",

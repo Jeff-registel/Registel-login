@@ -135,6 +135,10 @@ function MenuSuperior() {
                                                 />
                                         </div>
                                         <Paper elevation={8} className="panel-notificaciones .b-s-1px-neutro2" style={{ color: theme == darkTheme ? "white" : "slategray" }}>
+                                                <h3 className="pad-10">
+                                                        Notificaciones
+                                                </h3>
+                                                <hr />
                                                 <div className="contenedor" />
                                                 <a href="/logged/notificaciones">
                                                         <Paper className="ver-todas" >

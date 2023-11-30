@@ -380,18 +380,9 @@ async function render_todosLosUsuarios() {
 
                 function abrirVentanaFlotanteUsuario() {
                         let url = `/logged/admin/usuarios/editar?usuario=${usuario["PK"]}&ventana-flotante=true`;
-                        ventana_flotante["nueva-ventana"]({
-                                titulo_texto: "Editar usuario",
-                                html: `
-                                        <iframe src="${url}" class="w-100P h-100P border-0"
-                                                onLoad="
-                                                        let urlNew = this.contentWindow.location;
-                                                        if (!urlNew.href.endsWith('${url}') && !urlNew.href.endsWith('/unlogged')) {
-                                                                this.contentWindow.location.href = '/unlogged';
-                                                        }
-                                                "
-                                        ></iframe>
-                                `
+                        generarVentanaFlotanteRapido({
+                                url,
+                                titulo: "Editar usuario"
                         })
                 }
         }
