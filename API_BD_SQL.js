@@ -96,7 +96,7 @@ global.SQL = {
 SQL.USE("regislogin");
 
 module.exports = () => {
-        APP_PACK.app.get("/BD", async (req, res) => {
+        APP_PACK.app.get("/API", async (req, res) => {
                 let URL = req.protocol + "://" + req.get("host") + req.originalUrl;
                 if (!URL.includes("?")) {
                         return res
