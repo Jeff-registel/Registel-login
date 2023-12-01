@@ -1,5 +1,3 @@
-let memoria = require("../memoria");
-
 module.exports = () => {
   let { app, passport } = APP_PACK;
 

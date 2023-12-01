@@ -22,7 +22,6 @@ const passportLocal = require("passport-local").Strategy;
 const socketio = require("socket.io");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
-const memoria = require("./app/memoria");
 const urlencodedParser = bodyParser.urlencoded({ extended: false });
 const app = express();
 const server = http.createServer(app);
@@ -59,7 +58,8 @@ global.MENSAJE_GLOBAL = (asunto, ...datos) => {
 };
 
 
-require("./API_BD")();
+//require("./API_BD")();
+require("./API_BD_SQL")();
 
 passport.use(
   new passportLocal(
@@ -68,12 +68,7 @@ passport.use(
       passwordField: "contrasena",
     },
     async (usuario, contraseña, done) => {
-      let login = JSONBD_MODULE("usuarios/!/AUTENTICAR")({
-        query: {
-          login: usuario,
-          contraseña
-        }
-      });
+      let login = SQL.EXEC(`SELECT * FROM tbl_usuario WHERE LOGIN = '${usuario}' AND CONTRASENA = SHA2('${contraseña}', 256)`);
       if (!login || login.error) {
         return done(null, false);
       }
@@ -87,7 +82,7 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(async function (PK, done) {
-  let login = JSONBD_GET(`usuarios/${PK}/usuario.json`);
+  let login = SQL.EXEC(`SELECT * FROM tbl_usuario WHERE PK_USUARIO = ${PK}`);
   if (login) {
     done(null, login);
   } else {
