@@ -1,6 +1,4 @@
-<center>
 # Carpeta Pública (SOLO LECTURA)
-</center>
 
 La carpeta pública en esta API no requiere tokens de acceso para acceder a sus funciones. Esto significa que cualquier usuario puede utilizar los archivos y macros en esta carpeta sin necesidad de autenticación.
 
