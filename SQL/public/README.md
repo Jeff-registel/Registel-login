@@ -11,7 +11,6 @@ Si tienes alguna pregunta o necesitas más información, no dudes en contactarno
 ¡Disfruta utilizando la carpeta pública!
 
 -----
-
 # autenticar
 
 Este módulo exporta una función que autentica a un usuario en base a su nombre de usuario y contraseña.

@@ -111,8 +111,8 @@ async function App() {
                         DIRECCION: document.querySelector(".DIRECCION input").value,
                 });
 
-                let json = await JSONBD({
-                        ruta: `usuarios`,
+                let json = await MACRO({
+                        macro: `usuarios`,
                         query: {
                                 SET: {
                                         aplicacion: {

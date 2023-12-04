@@ -33,6 +33,9 @@ global.SQL = {
                                                 error: err
                                         });
                                 }
+                                if (result.length == 1) {
+                                        result = result[0];
+                                }
                                 resolve(result)
                         });
                 });
@@ -43,6 +46,14 @@ global.SQL = {
                 });
         },
         SAVE: async ({ table, data }) => {
+                if (!table.startsWith("tbl_")) {
+                        table = "tbl_" + table;
+                }
+                await SQL.EXEC(`
+                        CREATE TABLE IF NOT EXISTS ${tabla} (
+                                PK INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT
+                        )
+                `);
                 if (data["error"]) {
                         console.log(data);
                         return data;
@@ -52,7 +63,7 @@ global.SQL = {
                                 delete data[key];
                         }
                 }
-                let ahora = new Date().getTime().toString();
+                let ahora = new Date();
                 data["TIME_CREACION"] = ahora;
                 data["TIME_ACTUALIZACION"] = ahora;
                 let coincide = (await SQL.EXEC(`SELECT * FROM ${table} WHERE PK = ${data["PK"] ?? -1}`)).length > 0;
@@ -64,7 +75,7 @@ global.SQL = {
                 for (let column_data of columns_data) {
                         if (!columns_table.includes(column_data)) {
                                 if (["TIME_CREACION", "TIME_ACTUALIZACION"].includes(column_data)) {
-                                        await SQL.EXEC(`ALTER TABLE ${table} ADD ${column_data} BIGINT`);
+                                        await SQL.EXEC(`ALTER TABLE ${table} ADD ${column_data} DATE`);
                                 } else if (column_data.startsWith("FK_")) {
                                         await SQL.EXEC(`ALTER TABLE ${table} ADD ${column_data} INT`);
                                 } else {
@@ -95,7 +106,10 @@ global.SQL = {
 
 SQL.USE("regislogin");
 
-module.exports = () => {
+module.exports = (test = false) => {
+        if (test) {
+                return;
+        }
         APP_PACK.app.get("/API", async (req, res) => {
                 let URL = req.protocol + "://" + req.get("host") + req.originalUrl;
                 if (!URL.includes("?")) {

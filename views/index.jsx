@@ -80,13 +80,11 @@ function App() {
 
 function Formulario() {
         let Error = async () => {
-                let auth = await JSONBD({
-                        ruta: "usuarios",
-                        query: {
-                                "AUTENTICAR": {
+                let auth = await MACRO({
+                        macro: "public/usuario/autenticar",
+                        parametros: {
                                         login: document.querySelector("#usuario").value,
                                         contraseña: document.querySelector("#contrasena").value,
-                                }
                         }
                 });
                 if (auth["error"]) {

@@ -131,72 +131,27 @@ function AGO(time) {
     return moment(time).format("DD/MM/YYYY");
 }
 
-async function JSONBD({
-    ruta = "",
-    query,
-    async = false,
-    some,
-    every,
-    find,
-    filter,
-    map,
-    COL,
-    NCOL,
+async function MACRO({
+    macro = "",
+    parametros,
 } = {}) {
-    if (!ruta && !query) {
+    if (!macro || !parametros) {
         return {
-            error: "No se especificó ruta ni query",
-        };
-    }
-    if (!ruta.endsWith(".json") && !query) {
-        return {
-            error: "Sólo se puede obtener archivos json",
+            error: "faltan parametros para la macro",
         };
     }
 
-    if (ruta.endsWith(".json") && query) {
-        return {
-            error: "No se puede aplicar un query a un archivo json",
-        };
-    }
+    return await fetchAsync();
+
     async function fetchAsync() {
-        let $ejecutor = user ? `&ejecutor=${JSON.stringify({ PK: user["PK"] })}` : "";
-        let $filter = filter ? `&filter=${JSON.stringify(filter + "")}` : "";
-        let $map = map ? `&map=${JSON.stringify(map + "")}` : "";
-        let $some = some ? `&some=${JSON.stringify(some + "")}` : "";
-        let $every = every ? `&every=${JSON.stringify(every + "")}` : "";
-        let $find = find ? `&find=${JSON.stringify(find + "")}` : "";
-        if (COL && !Array.isArray(COL)) {
-            return {
-                error: "COL debe ser un array",
-            };
-        }
-        if (NCOL && !Array.isArray(NCOL)) {
-            return {
-                error: "NCOL debe ser un array",
-            };
-        }
-        let $COL = COL
-            ? `&COL=${JSON.stringify(COL)}`
-            : "";
-        let $NCOL = NCOL
-            ? `&NCOL=${JSON.stringify(NCOL)}`
-            : "";
-        let URLQUERY = `/BD?json-query=${[ruta, query ? JSON.stringify(query) : ""].filter(Boolean).join("/")}${$ejecutor + $filter + $some + $every + $find + $COL + $NCOL + $map}`;
-        URLQUERY = URLQUERY.replaceAll("//", "/");
-        console.log("URLQUERY", URLQUERY);
-        let respuesta = await (await fetch(URLQUERY)).json();
-        console.log(respuesta, "async", async);
+        let $ejecutor = user ? `&ejecutor=${user["PK"]}` : "";
+        let URL_MACRO = `/API?macro=${[macro, parametros ? JSON.stringify(parametros) : ""].filter(Boolean).join("/")}${$ejecutor}`;
+        URL_MACRO = URL_MACRO.replaceAll("//", "/");
+        console.log("MACRO", URL_MACRO);
+        let respuesta = await (await fetch(URL_MACRO)).json();
+        console.log(respuesta);
         return respuesta;
     }
-
-    if (async) {
-        return await fetchAsync();
-    }
-
-    return new Promise(async (resolve) => {
-        resolve(await fetchAsync());
-    });
 }
 
 function noEsperar() {
