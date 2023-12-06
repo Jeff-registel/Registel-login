@@ -9,105 +9,98 @@ var con = mySQL.createConnection({
 });
 
 global.SQL = {
-  EXEC: async (sql) => {
-    if (sql.includes(";\n")) {
-      let queries = sql.split(";\n");
-      let result = [];
-      for (let query of queries) {
-        if (query.trim() != "") {
-          result.push(await SQL.EXEC(query));
+        EXEC: async (sql) => {
+                if (sql.includes(";\n")) {
+                        let queries = sql.split(";\n");
+                        let result = [];
+                        for (let query of queries) {
+                                if (query.trim() != "") {
+                                        result.push(await SQL.EXEC(query));
+                                }
+                        }
+                        return result;
+                }
+                if (!sql.endsWith(";")) {
+                        sql += ";";
+                }
+                return await new Promise((resolve, reject) => {
+                        con.query(sql, function (err, result, fields) {
+                                if (err) {
+                                        console.log(sql);
+                                        console.log(err);
+                                        return resolve({
+                                                error: err
+                                        });
+                                }
+                                if (result.length == 1) {
+                                        result = result[0];
+                                }
+                                resolve(result)
+                        });
+                });
+        },
+        GET_COLUMNS: async (table) => {
+                return (await SQL.EXEC(`DESCRIBE ${table}`)).map((column) => {
+                        return column.Field;
+                });
+        },
+        SAVE: async ({ table, data }) => {
+                if (!table.startsWith("tbl_")) {
+                        table = "tbl_" + table;
+                }
+                await SQL.EXEC(`
+                        CREATE TABLE IF NOT EXISTS ${tabla} (
+                                PK INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT
+                        )
+                `);
+                if (data["error"]) {
+                        console.log(data);
+                        return data;
+                }
+                for (let key in data) {
+                        if (!data[key] || data[key] == "null") {
+                                delete data[key];
+                        }
+                }
+                let ahora = new Date();
+                data["TIME_CREACION"] = ahora;
+                data["TIME_ACTUALIZACION"] = ahora;
+                let coincide = (await SQL.EXEC(`SELECT * FROM ${table} WHERE PK = ${data["PK"] ?? -1}`)).length > 0;
+                if (coincide) {
+                        delete data["TIME_CREACION"];
+                }
+                let columns_table = (await SQL.GET_COLUMNS(table)) ?? [];
+                let columns_data = Object.keys(data);
+                for (let column_data of columns_data) {
+                        if (!columns_table.includes(column_data)) {
+                                if (["TIME_CREACION", "TIME_ACTUALIZACION"].includes(column_data)) {
+                                        await SQL.EXEC(`ALTER TABLE ${table} ADD ${column_data} DATE`);
+                                } else if (column_data.startsWith("FK_")) {
+                                        await SQL.EXEC(`ALTER TABLE ${table} ADD ${column_data} INT`);
+                                } else {
+                                        await SQL.EXEC(`ALTER TABLE ${table} ADD ${column_data} TEXT`);
+                                }
+                        }
+                }
+                if (coincide) {
+                        return await SQL.EXEC(`
+                                UPDATE ${table}
+                                SET ${columns_data.map((column) => {
+                                return `${column} = '${data[column] ?? ""}'`;
+                        }).join(", ")}
+                                WHERE PK = ${data["PK"]}
+                        `);
+                } else {
+                        return await SQL.EXEC(`
+                                INSERT INTO ${table} (${columns_data.join(", ")})
+                                VALUES (${columns_data.map((column) => {
+                                return `'${data[column]}'`;
+                        }).join(", ")})`);
+                }
+        },
+        USE: async (database) => {
+                return await SQL.EXEC(`USE ${database}`);
         }
-      }
-      return result;
-    }
-    if (!sql.endsWith(";")) {
-      sql += ";";
-    }
-    return await new Promise((resolve) => {
-      con.query(sql, function (err, result) {
-        if (err) {
-          console.log(sql);
-          console.log(err);
-          return resolve({
-            error: err,
-          });
-        }
-        resolve(result);
-      });
-    });
-  },
-  GET_COLUMNS: async (table) => {
-    return (await SQL.EXEC(`DESCRIBE ${table}`)).map((column) => {
-      return column.Field;
-    });
-  },
-  SAVE: async ({ table, data }) => {
-    if (data["error"]) {
-      console.log(data);
-      return data;
-    }
-    let tablasExistentes = (await SQL.EXEC(`SHOW TABLES`)).map((tabla) => {
-      return tabla[Object.keys(tabla)[0]];
-    });
-    if (!table.startsWith("tbl_")) {
-      table = "tbl_" + table;
-    }
-    if (!tablasExistentes.includes(table)) {
-      await SQL.EXEC(
-        `CREATE TABLE ${table} (PK INT NOT NULL AUTO_INCREMENT, PRIMARY KEY (PK))`
-      );
-    }
-    for (let key in data) {
-      if (!data[key] || data[key] == "null") {
-        delete data[key];
-      }
-    }
-    let ahora = new Date().getTime().toString();
-    data["TIME_CREACION"] = ahora;
-    data["TIME_ACTUALIZACION"] = ahora;
-    let coincide =
-      (await SQL.EXEC(`SELECT * FROM ${table} WHERE PK = ${data["PK"] ?? -1}`))
-        .length > 0;
-    if (coincide) {
-      delete data["TIME_CREACION"];
-    }
-    let columns_table = (await SQL.GET_COLUMNS(table)) ?? [];
-    let columns_data = Object.keys(data);
-    for (let column_data of columns_data) {
-      if (!columns_table.includes(column_data)) {
-        if (["TIME_CREACION", "TIME_ACTUALIZACION"].includes(column_data)) {
-          await SQL.EXEC(`ALTER TABLE ${table} ADD ${column_data} BIGINT`);
-        } else if (column_data.startsWith("FK_")) {
-          await SQL.EXEC(`ALTER TABLE ${table} ADD ${column_data} INT`);
-        } else {
-          await SQL.EXEC(`ALTER TABLE ${table} ADD ${column_data} TEXT`);
-        }
-      }
-    }
-    if (coincide) {
-      return await SQL.EXEC(`
-                UPDATE ${table}
-                SET ${columns_data
-                  .map((column) => {
-                    return `${column} = '${data[column] ?? ""}'`;
-                  })
-                  .join(", ")}
-                WHERE PK = ${data["PK"]}
-        `);
-    } else {
-      return await SQL.EXEC(`
-        INSERT INTO ${table} (${columns_data.join(", ")})
-        VALUES (${columns_data
-          .map((column) => {
-            return `'${data[column]}'`;
-          })
-          .join(", ")})
-        `);
-    }
-  },
-  USE: async (database) => {
-    return await SQL.EXEC(`USE ${database}`);
-  },
 };
 
 SQL.USE("regislogin");
@@ -122,6 +115,19 @@ module.exports = () => {
         })
         .end();
     }
+module.exports = (test = false) => {
+        if (test) {
+                return;
+        }
+        APP_PACK.app.get("/API", async (req, res) => {
+                let URL = req.protocol + "://" + req.get("host") + req.originalUrl;
+                if (!URL.includes("?")) {
+                        return res
+                                .json({
+                                        error: "No se ha especificado una consulta",
+                                })
+                                .end();
+                }
 
     let URLParams = new URLSearchParams(URL.substring(URL.indexOf("?")));
 
