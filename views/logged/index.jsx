@@ -150,9 +150,8 @@ async function render_empresasAcceso() {
 async function render_todosLosUsuarios() {
         let contador_usuarios = 0;
         if (actualizarListaDeUsuarios) {
-                usuarios = await JSONBD({
-                        ruta: "usuarios/", 
-                        query: { TODO: { usuarios: true } }
+                usuarios = await MACRO({
+                        macro: "authreq/usuarios/todos", 
                 });
                 actualizarListaDeUsuarios = false;
         }

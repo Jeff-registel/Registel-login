@@ -91,26 +91,22 @@ global.SQL = {
     }
     if (coincide) {
       return await SQL.EXEC(`
-                                UPDATE ${table}
-                                SET ${columns_data
-                                  .map((column) => {
-                                    return `${column} = '${
-                                      data[column] ?? ""
-                                    }'`;
-                                  })
-                                  .join(", ")}
-                                WHERE PK = ${data["PK"]}
-                        `);
+              UPDATE ${table}
+              SET ${columns_data
+                .map((column) => {
+                  return `${column} = '${data[column] ?? ""}'`;
+                })
+                .join(", ")}
+              WHERE PK = ${data["PK"]}
+      `);
     } else {
       return await SQL.EXEC(`
-                                INSERT INTO ${table} (${columns_data.join(
-        ", "
-      )})
-                                VALUES (${columns_data
-                                  .map((column) => {
-                                    return `'${data[column]}'`;
-                                  })
-                                  .join(", ")})`);
+        INSERT INTO ${table} (${columns_data.join(", ")})
+        VALUES (${columns_data
+          .map((column) => {
+            return `'${data[column]}'`;
+          })
+          .join(", ")})`);
     }
   },
   USE: async (database, BD = SLocal) => {
@@ -228,10 +224,10 @@ async function CLONAR({ modRow, tabla, BD }) {
       return true;
     });
     await SQL.EXEC(`
-                CREATE TABLE IF NOT EXISTS tbl_usuario (
-                        PK INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT
-                )
-        `);
+            CREATE TABLE IF NOT EXISTS tbl_usuario (
+                    PK INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT
+            )
+    `);
     for (let usuario of todos_los_usuarios) {
       general(usuario);
       usuario["DOCUMENTO"] = usuario["CEDULA"];
@@ -241,6 +237,7 @@ async function CLONAR({ modRow, tabla, BD }) {
       delete usuario["TOKEN"];
       delete usuario["EXPIRE_TOKEN"];
       delete usuario["PK"];
+      delete usuario["CODIGO_EMPRESA"]
       await SQL.SAVE({
         table: "tbl_usuario",
         data: usuario,
@@ -269,10 +266,10 @@ async function CLONAR({ modRow, tabla, BD }) {
   async function tratamientoDeEmpresasInicial() {
     console.log(
       await SQL.EXEC(`
-                        CREATE TABLE IF NOT EXISTS tbl_empresa (
-                                PK INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT
-                        )
-                `)
+        CREATE TABLE IF NOT EXISTS tbl_empresa (
+                PK INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT
+        )
+      `)
     );
     for (let [nombre, id] of Object.entries({
       autobuses: 2,

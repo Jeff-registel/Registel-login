@@ -1,9 +1,12 @@
 addLink("/JSX/menu-superior.css");
 
 async function estadoNotificacion() {
-        let sin_leer = await JSONBD({
-                ruta: `usuarios/${user["PK"]}/notificaciones/sin-leer.json`
-        });
+        // let sin_leer = await JSONBD({
+        //         ruta: `usuarios/${user["PK"]}/notificaciones/sin-leer.json`
+        // });
+        let sin_leer = {
+                estado: true,
+        }
         document.querySelector(".notificaciones .sin-leer").style.display = sin_leer && sin_leer.estado ? "block" : "none";
 }
 

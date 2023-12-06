@@ -68,7 +68,8 @@ passport.use(
       passwordField: "contrasena",
     },
     async (usuario, contraseña, done) => {
-      let login = SQL.EXEC(`SELECT * FROM tbl_usuario WHERE LOGIN = '${usuario}' AND CONTRASENA = SHA2('${contraseña}', 256)`);
+      let login = await SQL.EXEC(`SELECT * FROM tbl_usuario WHERE LOGIN = '${usuario}' AND CONTRASENA = SHA2('${contraseña}', 256)`);
+      login = login[0];
       if (!login || login.error) {
         return done(null, false);
       }
@@ -82,7 +83,7 @@ passport.serializeUser(function (user, done) {
 });
 
 passport.deserializeUser(async function (PK, done) {
-  let login = SQL.EXEC(`SELECT * FROM tbl_usuario WHERE PK_USUARIO = ${PK}`);
+  let login = (await SQL.EXEC(`SELECT * FROM tbl_usuario WHERE PK = ${PK}`))[0];
   if (login) {
     done(null, login);
   } else {
