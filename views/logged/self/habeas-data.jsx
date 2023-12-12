@@ -129,7 +129,6 @@ async function App() {
                                 confirmButtonText: "Ok",
                                 timer: 2000,
                         });
-
                         window.location.reload();
                 }
                 if (json["error"]) {

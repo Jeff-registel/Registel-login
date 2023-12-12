@@ -6,6 +6,7 @@ module.exports = ({ query }) => {
   switch (diccionario) {
     //Diccionarios admitidos
     case "tbl_tipo_documento":
+    case "tbl_perfil":
       break;
     default:
       return {

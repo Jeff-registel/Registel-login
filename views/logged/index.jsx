@@ -18,6 +18,14 @@ crearEstilo({
 
         ".filtro-buscar": {
                 display: "none !important",
+        },
+        "usuario-punto-estado": {
+                position: "absolute",
+                width: 5,
+                height: 5,
+                borderRadius: 10,
+                top: 5,
+                left: 5,
         }
 });
 
@@ -149,13 +157,13 @@ async function render_empresasAcceso() {
 
 async function render_todosLosUsuarios() {
         let contador_usuarios = 0;
+
         if (actualizarListaDeUsuarios) {
                 usuarios = await MACRO({
-                        macro: "authreq/usuarios/todos", 
+                        macro: "authreq/usuarios/todos",
                 });
                 actualizarListaDeUsuarios = false;
         }
-        console.log(usuarios)
         usuarios = usuarios.sort((a, b) => {
                 if (a["NOMBRE"].toLowerCase() > b["NOMBRE"].toLowerCase()) {
                         return 1;
@@ -192,9 +200,19 @@ async function render_todosLosUsuarios() {
                         let llave = "";
                         switch (tipo_agrupamiento) {
                                 case "Perfil":
-                                        info_perfiles ??= (await JSONBD({
-                                                ruta: "diccionarios/perfiles-usuario.json"
-                                        }))["perfiles"];
+                                        info_perfiles ??= (await MACRO({
+                                                macro: "public/diccionarios",
+                                                parametros: {
+                                                        "diccionario": "perfil"
+                                                }
+                                        }));
+                                        if (info_perfiles["error"]) {
+                                                return swal.fire({
+                                                        title: "Error",
+                                                        text: info_perfiles["error"],
+                                                        icon: "error",
+                                                });
+                                        }
                                         llave = info_perfiles.find(info_perfil => info_perfil["PK"] == usuario["FK_PERFIL"])["NOMBRE"];
                                         break;
                                 case "Alfabetico":
@@ -207,12 +225,33 @@ async function render_todosLosUsuarios() {
         }
 
         ReactDOM.render(
-                <ThemeProvider theme={theme}>
+                <React.Fragment>
                         <BloqueDeUsuarios />
                         <BotonesControlVisualizacionUsuarios />
-                </ThemeProvider>
+                </React.Fragment>
                 , document.querySelector(".ultimos-usuarios-modificados")
         );
+
+        contador_usuarios = 0;
+
+        (async () => {
+                let i = 0;
+                for (let usuario of usuarios) {
+                        ReactDOM.render(
+                                <AppRender>
+                                        <Usuario usuario={usuario} />
+                                </AppRender>
+                                , document.querySelector(`.PK-${usuario["PK"]}`)
+                        )
+                        if (i++ % 100 == 0) {
+                                await new Promise((resolve) => {
+                                        setTimeout(() => {
+                                                resolve();
+                                        }, 0);
+                                });
+                        }
+                }
+        })();
 
         function BotonesControlVisualizacionUsuarios() {
                 return !tipo_agrupamiento ?
@@ -255,7 +294,7 @@ async function render_todosLosUsuarios() {
                                                                 :
                                                                 ""}
                                                         {_usuarios.map((usuario) => {
-                                                                return <Usuario usuario={usuario} />;
+                                                                return <UsuarioSkeleton usuario={usuario} />;
                                                         })}
                                                         {index != array.length - 1 ?
                                                                 <React.Fragment>
@@ -267,6 +306,54 @@ async function render_todosLosUsuarios() {
                                                 </React.Fragment>
                                         );
                                 }) ?? ""}
+                        </div>
+                )
+        }
+
+        function UsuarioSkeleton({ usuario }) {
+                let ocultar = contador_usuarios >= 12 && !ver_todos_usuarios && !tipo_agrupamiento;
+                let filtro_buscar = false;
+                let val_buscar = document.querySelector(".buscar-empleados input")?.value;
+                if (val_buscar) {
+                        let compareText = Object.values(usuario).join(" ").toLowerCase();
+                        filtro_buscar = !compareText.includes(val_buscar.toLowerCase());
+                }
+                if (!ocultar && !filtro_buscar) {
+                        contador_usuarios++;
+                }
+                return (
+                        <div className={`
+                                PK-${usuario["PK"]}
+                                d-inline-block
+                        `}>
+                                <FormControl component="fieldset" className={`
+                                        ${filtro_buscar ? 'filtro-buscar' : ''}
+                                        ${ocultar ? 'd-none' : ''}
+                                        usuario
+                                `}>
+                                        <FormGroup
+                                                className={`
+                                                        p-relative 
+                                                        d-inline-flex 
+                                                        flex-row 
+                                                        m-5px 
+                                                        b-s-1px-neutro2
+                                                `}>
+                                                <span
+                                                        className="
+                                                                usuario-punto-estado
+                                                                bg-lime 
+                                                                op-50P
+                                                        "
+                                                />
+                                                <div className="d-inline-block usuario-imagen pad-10">
+                                                        <Skeleton variant="circular" width={60} height={60} />
+                                                </div>
+                                                <div className="usuario-nombre d-inline-block tt-normal" style={{ width: 120, overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis", textAlign: "left" }}>
+                                                        <Skeleton variant="text" width={200} height={20} />
+                                                </div>
+                                        </FormGroup>
+                                </FormControl>
                         </div>
                 )
         }
@@ -297,15 +384,8 @@ async function render_todosLosUsuarios() {
                                                 b-s-1px-neutro2
                                         `}>
                                         <span
-                                                style={{
-                                                        position: "absolute",
-                                                        width: 5,
-                                                        height: 5,
-                                                        borderRadius: 10,
-                                                        top: 5,
-                                                        left: 5,
-                                                }}
                                                 className={`
+                                                        usuario-punto-estado
                                                         ${usuario["ESTADO"] ? 'bg-lime' : 'bg-red'}
                                                         op-50P
                                                 `}
@@ -313,7 +393,7 @@ async function render_todosLosUsuarios() {
                                         <Tooltip
                                                 title={usuario["NOMBRE"] + " " + usuario["APELLIDO"]}
                                                 arrow
-                                                TransitionComponent={Zoom}
+
                                         >
                                                 <Button
                                                         /* href={`/logged/admin/usuarios/editar?usuario=${usuario["PK"]}`} */
@@ -347,7 +427,6 @@ async function render_todosLosUsuarios() {
                                                 <Tooltip
                                                         title="Editar aquí"
                                                         arrow
-                                                        TransitionComponent={Zoom}
                                                         placement="right"
                                                 >
                                                         <Button
@@ -361,7 +440,6 @@ async function render_todosLosUsuarios() {
                                                 <Tooltip
                                                         title="Editar en otra pestaña"
                                                         arrow
-                                                        TransitionComponent={Zoom}
                                                         placement="right"
                                                 >
                                                         <Button
@@ -394,9 +472,14 @@ socket.on("global: usuarios modificados", async (usuariosMod) => {
                 user["EMPRESAS_ACCESO"] = empresas_acceso_mod;
                 render_empresasAcceso();
         }
-        usuarios ??= (await (await fetch(`/BD?json-query=usuarios/${JSON.stringify({ TODO: {} })}`)).json());
-        render_todosLosUsuarios();
-        actualizarListaDeUsuarios = true;
+        usuariosMod.forEach(usuarioMod => {
+                ReactDOM.render(
+                        <AppRender>
+                                <Usuario usuario={usuarioMod} />
+                        </AppRender>
+                        , document.querySelector(`.PK-${usuarioMod["PK"]}`)
+                )
+        });
 });
 
 render_todosLosUsuarios();
