@@ -11,10 +11,14 @@ async function init({ FadeIn = true } = {}) {
                 document.body
         );
 
-        try {
-                await onLoad();
-        } catch (error) {
-        }
+        setTimeout(async () => {
+                try {
+                        await onLoad();
+                } catch (error) {
+                }
+        }, 0);
+
+
 
         let _entrada = FadeIn ? ["animate__animated", "animate__fadeIn", "animate__faster"] : [];
 

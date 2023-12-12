@@ -46,20 +46,20 @@ global.SQL = {
       table = "tbl_" + table;
     }
     await SQL.EXEC(`
-                        CREATE TABLE IF NOT EXISTS ${tabla} (
-                                PK INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT
-                        )
-                `);
+            CREATE TABLE IF NOT EXISTS ${table} (
+                    PK INT(10) NOT NULL PRIMARY KEY AUTO_INCREMENT
+            )
+    `);
     if (data["error"]) {
       console.log(data);
       return data;
     }
     for (let key in data) {
       if (!data[key] || data[key] == "null") {
-        delete data[key];
+        data[key] = "";
       }
     }
-    let ahora = new Date();
+    let ahora = new Date().getTime();
     data["TIME_CREACION"] = ahora;
     data["TIME_ACTUALIZACION"] = ahora;
     let coincide =
@@ -73,7 +73,7 @@ global.SQL = {
     for (let column_data of columns_data) {
       if (!columns_table.includes(column_data)) {
         if (["TIME_CREACION", "TIME_ACTUALIZACION"].includes(column_data)) {
-          await SQL.EXEC(`ALTER TABLE ${table} ADD ${column_data} DATE`);
+          await SQL.EXEC(`ALTER TABLE ${table} ADD ${column_data} BIGINT`);
         } else if (column_data.startsWith("FK_")) {
           await SQL.EXEC(`ALTER TABLE ${table} ADD ${column_data} INT`);
         } else {
@@ -85,24 +85,27 @@ global.SQL = {
       return await SQL.EXEC(`
                                 UPDATE ${table}
                                 SET ${columns_data
-                                  .map((column) => {
-                                    return `${column} = '${
-                                      data[column] ?? ""
-                                    }'`;
-                                  })
-                                  .join(", ")}
-                                WHERE PK = ${data["PK"]}
-                        `);
+          .map((column) => {
+            return `${column} = '${data[column] ?? ""
+              }'`;
+          })
+          .join(", ")}
+                  WHERE PK = ${data["PK"]}
+          `);
     } else {
       return await SQL.EXEC(`
-                                INSERT INTO ${table} (${columns_data.join(
+        INSERT INTO ${table} (${columns_data.join(
         ", "
       )})
-                                VALUES (${columns_data
-                                  .map((column) => {
-                                    return `'${data[column]}'`;
-                                  })
-                                  .join(", ")})`);
+        VALUES (${columns_data
+          .map((column) => {
+            if (column.startsWith("TIME_") || column.startsWith("FK_")) {
+              return data[column];
+            }
+            return `'${data[column]}'`;
+          })
+          .join(", ")})
+      `);
     }
   },
   USE: async (database) => {

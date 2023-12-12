@@ -33,6 +33,9 @@ function App() {
         return (
                 <AppLogged>
                         <center>
+                                <h1>
+                                        ¡Bienvenido! {user["NOMBRE"]} {user["APELLIDO"]}
+                                </h1>
                                 <Paper className="ultimas-empresas-consultadas d-inline-block w-90P ta-left pad-20" elevation={3}>
                                 </Paper>
                                 <br />
@@ -160,7 +163,7 @@ async function render_todosLosUsuarios() {
 
         if (actualizarListaDeUsuarios) {
                 usuarios = await MACRO({
-                        macro: "authreq/usuarios/todos",
+                        macro: "authreq/nodos/usuarios/todos",
                 });
                 actualizarListaDeUsuarios = false;
         }

@@ -7,6 +7,7 @@ module.exports = ({ query }) => {
     //Diccionarios admitidos
     case "tbl_tipo_documento":
     case "tbl_perfil":
+    case "tbl_empresa":
       break;
     default:
       return {
