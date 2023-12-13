@@ -4,7 +4,7 @@ if (user) {
 
 crearEstilo({
         ".background-container": {
-                position: "absolute",
+                position: "fixed",
                 overflow: "hidden",
                 top: 0,
                 left: 0,
@@ -41,35 +41,177 @@ crearEstilo({
                 }
         },
 
-        ".app": {
+        ".contenedor-formulario": {
+                position: "relative",
                 display: "flex",
-                justifyContent: "space-evenly",
+                justifyContent: "center",
+                transform: "translateX(-10%)",
                 alignItems: "center",
                 height: "100vh",
-                width: "100vw",
-
-                ".banner-izquierda": {
-                        width: "500px",
-
-                        "& h1": {
-                                fontSize: "80px",
-                                display: "flex",
-                                justifyContent: "start",
-                                alignItems: "center",
-                        },
-                },
+                zIndex: 11,
         }
 });
+
+function resize() {
+        document.querySelector(".background-container").style.transform = `scale(${Math.max(window.innerWidth / 1280, window.innerHeight / 720)}) translate(-50%, -50%)`;
+}
+
+window.addEventListener("resize", resize);
+
+function onLoad() {
+        resize();
+}
 
 function App() {
         return (
                 <AppSimple>
-                        <div className="background-container">
-                                <div className="background">
-                                </div>
-                                <img src="img/svg/back1.svg" className="background2" />
+                        <div className="background-container"
+                                style={{
+                                        background: "white",
+                                        width: 1280,
+                                        height: 720,
+                                        transformOrigin: "0 0",
+                                        top: "50%",
+                                        left: "50%",
+                                }}
+                        >
+                                <svg viewBox="0 0 640 720" style={{
+                                        position: "absolute",
+                                        top: 720 * 0.5,
+                                }}>
+                                        <rect x="0" y="0" width="100%" height="100%" fill="#D0DEB8" />
+                                </svg>
+                                <img src="img/svg/login/Recurso 5.svg"
+                                        style={{
+                                                position: "absolute",
+                                                width: 1280 * 1.2,
+                                                top: 720 * 0.25,
+                                                left: -1280 * 0.05,
+                                        }}
+                                />
+                                <img src="img/svg/login/Recurso 6.svg"
+                                        style={{
+                                                position: "absolute",
+                                                width: 1280 * 0.45,
+                                                top: 720 * 0.45,
+                                                left: -1280 * 0.05,
+                                        }}
+                                />
+                                <img src="img/svg/login/Recurso 6.svg"
+                                        style={{
+                                                position: "absolute",
+                                                width: 1280 * 0.5,
+                                                top: 720 * 0.45,
+                                                right: -1280 * 0.05,
+                                        }}
+                                />
+                                <img src="img/svg/login/Recurso 7.svg"
+                                        style={{
+                                                position: "absolute",
+                                                width: 1280 * 0.5,
+                                                top: 720 * 0.45,
+                                                left: -1280 * 0.05,
+                                        }}
+                                />
+                                <img src="img/svg/login/Recurso 7.svg"
+                                        style={{
+                                                position: "absolute",
+                                                width: 1280 * 0.5,
+                                                top: 720 * 0.45,
+                                                right: -1280 * 0.05,
+                                        }}
+                                />
+                                {
+                                        Array.from({ length: 4 }).map(() =>
+                                                <img src="img/svg/login/Recurso 11.svg"
+                                                        style={{
+                                                                position: "absolute",
+                                                                width: 1280 * 0.10,
+                                                                top: 720 * 0.49,
+                                                                left: Math.random() * 1280,
+                                                        }}
+                                                />
+                                        )
+                                }
+                                {
+                                        Array.from({ length: 4 }).map(() =>
+                                                <img src="img/svg/login/Recurso 12.svg"
+                                                        style={{
+                                                                position: "absolute",
+                                                                width: 1280 * 0.07,
+                                                                top: 720 * 0.49,
+                                                                left: Math.random() * 1280,
+                                                        }}
+                                                />
+                                        )
+                                }
+                                {
+                                        Array.from({ length: 7 }).map(() =>
+                                                <img src="img/svg/login/Recurso 13.svg"
+                                                        style={{
+                                                                position: "absolute",
+                                                                width: 1280 * 0.05,
+                                                                top: 720 * 0.49,
+                                                                left: Math.random() * 1280,
+                                                        }}
+                                                />
+                                        )
+                                }
+                                {
+                                        Array.from({ length: 4 }).map(() =>
+                                                <img src="img/svg/login/Recurso 8.svg"
+                                                        style={{
+                                                                position: "absolute",
+                                                                height: 720 * 0.10,
+                                                                top: 720 * 0.45,
+                                                                left: Math.random() * 1280,
+                                                        }}
+                                                />
+                                        )
+                                }
+                                {
+                                        Array.from({ length: 4 }).map(() =>
+                                                <img src="img/svg/login/Recurso 9.svg"
+                                                        style={{
+                                                                position: "absolute",
+                                                                height: 720 * 0.10,
+                                                                top: 720 * 0.45,
+                                                                left: Math.random() * 1280,
+                                                        }}
+                                                />
+                                        )
+                                }
+                                {
+                                        Array.from({ length: 4 }).map(() =>
+                                                <img src="img/svg/login/Recurso 10.svg"
+                                                        style={{
+                                                                position: "absolute",
+                                                                height: 720 * 0.08,
+                                                                top: 720 * 0.47,
+                                                                left: Math.random() * 1280,
+                                                        }}
+                                                />
+                                        )
+                                }
+                                <svg viewBox="0 0 1280 360" style={{
+                                        position: "absolute",
+                                        top: 720 * 0.52,
+                                }}>
+                                                <polygon points={`
+                                                ${1280 * 0.645},0
+                                                ${1280 * 0.655},0
+                                                ${1280+40},360
+                                                ${-40},360
+                                        `} fill="#555" />
+                                        <polygon points={`
+                                                ${1280 * 0.645},0
+                                                ${1280 * 0.655},0
+                                                ${1280},360
+                                                ${0},360
+                                        `} fill="gray" />
+                                </svg>
                         </div>
-                        <div className="app">
+                        <div className="contenedor-formulario">
                                 <Paper elevation={3} className="d-inline-block pad-20">
                                         <Formulario />
                                 </Paper>

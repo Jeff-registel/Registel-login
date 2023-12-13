@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 986.16 208.08">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #aab595;
+        filter: url(#drop-shadow-1);
+        stroke-width: 0px;
+      }
+    </style>
+    <filter id="drop-shadow-1" filterUnits="userSpaceOnUse">
+      <feOffset dx="11" dy="-3"/>
+      <feGaussianBlur result="blur" stdDeviation="5"/>
+      <feFlood flood-color="#1d1d1b" flood-opacity=".27"/>
+      <feComposite in2="blur" operator="in"/>
+      <feComposite in="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="Capa_1-2" data-name="Capa 1">
+    <path class="cls-1" d="m959.99,195.89H4.14c15.28-35.16,50.31-59.75,91.08-59.75,21.82,0,42,7.05,58.38,18.98,22.96-31.9,60.41-52.68,102.72-52.68,20.86,0,40.54,5.05,57.88,14,10.36-14.06,27.02-23.19,45.82-23.19,14.88,0,28.42,5.72,38.56,15.08,8.21-3.53,17.24-5.49,26.74-5.49,4.47,0,8.83.45,13.05,1.27,7.5-11.44,18.66-20.61,32.54-25.52,6.89-2.44,13.91-3.63,20.83-3.72,22.96-34.24,62.02-56.78,106.35-56.78,57.72,0,106.5,38.22,122.45,90.73,9.15-3.85,19.2-5.98,29.74-5.98,37.69,0,69.01,27.16,75.52,62.97,18.71.91,35.12,10.58,45.22,25,7.16-17.01,23.97-28.95,43.58-28.95,21.51,0,39.67,14.37,45.39,34.03Z"/>
+  </g>
+</svg>
