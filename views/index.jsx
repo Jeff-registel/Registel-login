@@ -197,26 +197,42 @@ function App() {
                                         position: "absolute",
                                         top: 720 * 0.52,
                                 }}>
-                                                <polygon points={`
+                                        <polygon points={`
                                                 ${1280 * 0.645},0
                                                 ${1280 * 0.655},0
-                                                ${1280+40},360
-                                                ${-40},360
+                                                ${1280 + 250},360
+                                                ${-250},360
                                         `} fill="#555" />
+                                        <polygon points={`
+                                                ${1280 * 0.645},0
+                                                ${1280 * 0.655},0
+                                                ${1280 + 30},360
+                                                ${-30},360
+                                        `} fill="white" />
                                         <polygon points={`
                                                 ${1280 * 0.645},0
                                                 ${1280 * 0.655},0
                                                 ${1280},360
                                                 ${0},360
                                         `} fill="gray" />
+                                        <polygon points={`
+                                                ${1280 *( 0.645 + 0.655) / 2},0
+                                                ${1280 *( 0.645 + 0.655) / 2},0
+                                                ${1280 / 2-20},360
+                                                ${1280 / 2+20},360
+                                        `} fill="white" />
                                 </svg>
                         </div>
                         <div className="contenedor-formulario">
-                                <Paper elevation={3} className="d-inline-block pad-20">
+                                <Paper elevation={0} className="d-inline-block pad-20" style={{
+                                        background: "rgba(215, 237, 248, 0.5)",
+                                        width: 350,
+                                        borderRadius: 25,
+                                }} >
                                         <Formulario />
                                 </Paper>
                         </div>
-                </AppSimple>
+                </AppSimple >
         );
 };
 
@@ -233,6 +249,10 @@ function Formulario() {
                         return auth["error"];
                 }
         }
+
+        let sombraForm = "drop-shadow(7px 7px 5px rgba(0, 0, 0, 0.5))";
+        let sombraForm2 = "drop-shadow(3px 3px 5px rgba(0, 0, 0, 0.5))";
+
         return (
                 <ThemeProvider theme={theme}>
                         <form action="/login-verify" method="POST"
@@ -245,29 +265,57 @@ function Formulario() {
                                         evt.target.submit();
                                 }}
                         >
-                                <LogoConNombre className={`
-                                        ${theme == darkTheme ? "silueta-blanca" : "silueta-negra"}
-                                        pad-10
-                                `} w={300} h={100} />
+                                <div style={{
+                                        position: "relative",
+                                        background: "white",
+                                        width: 150,
+                                        height: 150,
+                                        margin: "auto",
+                                        borderRadius: "50%",
+                                        filter: sombraForm2,
+                                }} >
+                                        <img src="img/svg/login/Recurso 39.svg"
+                                                style={{
+                                                        position: "absolute",
+                                                        width: 140,
+                                                        height: 140,
+                                                        top: "50%",
+                                                        left: "50%",
+                                                        transform: "translate(-50%, -50%)",
+                                                }}
+                                        />
+                                        <img src="img/svg/login/Recurso 38.svg"
+                                                style={{
+                                                        position: "absolute",
+                                                        width: 110,
+                                                        height: 110,
+                                                        top: "50%",
+                                                        left: "50%",
+                                                        transform: "translate(-50%, -50%)",
+                                                }}
+                                        />
+                                </div>
                                 <br />
                                 <br />
-                                <br />
-                                <TextField id="usuario" name="usuario" label="Usuario"
-                                        required
-                                        fullWidth
-                                />
-                                <br />
-                                <br />
-                                <TextField id="contrasena" name="contrasena" label="Contraseña" type="password" fullWidth required />
+
+                                <TextFieldCustom urlSVG="img/svg/login/Recurso 36.svg" id="usuario" name="usuario" label="Usuario" />
 
                                 <br />
                                 <br />
-                                <hr />
+                                <TextFieldCustom urlSVG="img/svg/login/Recurso 37.svg" id="contrasena" name="contrasena" label="Contraseña" type="password" />
+
+                                <br />
+                                <br />
+                                <center>
+                                        <Button variant="contained" color="primary" type="submit">
+                                                Ingresar
+                                        </Button>
+                                </center>
                                 <br />
                                 <div
                                         style={{
                                                 display: "flex",
-                                                justifyContent: "space-between",
+                                                justifyContent: "flex-end",
                                                 alignItems: "center",
                                         }}
                                 >
@@ -306,14 +354,49 @@ function Formulario() {
                                                 }}
                                         >
                                                 <small>
-                                                        ¿Olvidaste tu contraseña?
+                                                        Recuperar contraseña
                                                 </small>
                                         </Link>
-                                        <Button variant="contained" color="primary" type="submit">
-                                                Ingresar
-                                        </Button>
                                 </div>
                         </form>
                 </ThemeProvider >
         );
+
+        function TextFieldCustom({ urlSVG, id, name, label, type = "text" }) {
+                return <TextField id={id} name={name}
+                        type={type}
+                        label={(
+                                <div style={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        transform: "translate(-25px, -20px)",
+                                }}>
+                                        <img src={urlSVG}
+                                                style={{
+                                                        width: 40,
+                                                        height: 40,
+                                                        margin: 10,
+                                                        transform: "translateX(-5px)",
+                                                }}
+                                        />
+                                        {label}
+                                </div>
+                        )}
+                        sx={{
+                                filter: sombraForm,
+                                ".MuiOutlinedInput-root": {
+                                        borderRadius: 25,
+                                        background: "white",
+                                },
+                                input: {
+                                        color: "black",
+                                },
+                                "label": {
+                                        color: "lightgray",
+                                        overflow: "unset",
+                                }
+                        }}
+                        fullWidth
+                />
+        }
 }

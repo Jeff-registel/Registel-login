@@ -26,7 +26,7 @@ Object.assign(window, window['MaterialUI']);
 
 let palette = {
   primary: {
-    main: '#1E90FF',
+    main: '#194F8F',
   },
   secondary: {
     main: localStorage.getItem("theme") == "dark" ? '#363640' : '#ccccff',
