@@ -45,7 +45,7 @@ crearEstilo({
                 position: "relative",
                 display: "flex",
                 justifyContent: "center",
-                transform: "translateX(-10%)",
+                transform: "translateY(-10%)",
                 alignItems: "center",
                 height: "100vh",
                 zIndex: 11,
@@ -81,7 +81,7 @@ function App() {
                                 }}>
                                         <rect x="0" y="0" width="100%" height="100%" fill="#D0DEB8" />
                                 </svg>
-                                <img src="img/svg/login/Recurso 5.svg"
+                                <img src="/img/svg/login/Recurso 5.svg"
                                         style={{
                                                 position: "absolute",
                                                 width: 1280 * 1.2,
@@ -89,7 +89,7 @@ function App() {
                                                 left: -1280 * 0.05,
                                         }}
                                 />
-                                <img src="img/svg/login/Recurso 6.svg"
+                                <img src="/img/svg/login/Recurso 6.svg"
                                         style={{
                                                 position: "absolute",
                                                 width: 1280 * 0.45,
@@ -97,7 +97,7 @@ function App() {
                                                 left: -1280 * 0.05,
                                         }}
                                 />
-                                <img src="img/svg/login/Recurso 6.svg"
+                                <img src="/img/svg/login/Recurso 6.svg"
                                         style={{
                                                 position: "absolute",
                                                 width: 1280 * 0.5,
@@ -105,7 +105,7 @@ function App() {
                                                 right: -1280 * 0.05,
                                         }}
                                 />
-                                <img src="img/svg/login/Recurso 7.svg"
+                                <img src="/img/svg/login/Recurso 7.svg"
                                         style={{
                                                 position: "absolute",
                                                 width: 1280 * 0.5,
@@ -113,7 +113,7 @@ function App() {
                                                 left: -1280 * 0.05,
                                         }}
                                 />
-                                <img src="img/svg/login/Recurso 7.svg"
+                                <img src="/img/svg/login/Recurso 7.svg"
                                         style={{
                                                 position: "absolute",
                                                 width: 1280 * 0.5,
@@ -123,7 +123,7 @@ function App() {
                                 />
                                 {
                                         Array.from({ length: 4 }).map(() =>
-                                                <img src="img/svg/login/Recurso 11.svg"
+                                                <img src="/img/svg/login/Recurso 11.svg"
                                                         style={{
                                                                 position: "absolute",
                                                                 width: 1280 * 0.10,
@@ -135,7 +135,7 @@ function App() {
                                 }
                                 {
                                         Array.from({ length: 4 }).map(() =>
-                                                <img src="img/svg/login/Recurso 12.svg"
+                                                <img src="/img/svg/login/Recurso 12.svg"
                                                         style={{
                                                                 position: "absolute",
                                                                 width: 1280 * 0.07,
@@ -147,7 +147,7 @@ function App() {
                                 }
                                 {
                                         Array.from({ length: 7 }).map(() =>
-                                                <img src="img/svg/login/Recurso 13.svg"
+                                                <img src="/img/svg/login/Recurso 13.svg"
                                                         style={{
                                                                 position: "absolute",
                                                                 width: 1280 * 0.05,
@@ -159,7 +159,7 @@ function App() {
                                 }
                                 {
                                         Array.from({ length: 4 }).map(() =>
-                                                <img src="img/svg/login/Recurso 8.svg"
+                                                <img src="/img/svg/login/Recurso 8.svg"
                                                         style={{
                                                                 position: "absolute",
                                                                 height: 720 * 0.10,
@@ -171,7 +171,7 @@ function App() {
                                 }
                                 {
                                         Array.from({ length: 4 }).map(() =>
-                                                <img src="img/svg/login/Recurso 9.svg"
+                                                <img src="/img/svg/login/Recurso 9.svg"
                                                         style={{
                                                                 position: "absolute",
                                                                 height: 720 * 0.10,
@@ -183,7 +183,7 @@ function App() {
                                 }
                                 {
                                         Array.from({ length: 4 }).map(() =>
-                                                <img src="img/svg/login/Recurso 10.svg"
+                                                <img src="/img/svg/login/Recurso 10.svg"
                                                         style={{
                                                                 position: "absolute",
                                                                 height: 720 * 0.08,
@@ -193,39 +193,48 @@ function App() {
                                                 />
                                         )
                                 }
-                                <svg viewBox="0 0 1280 360" style={{
-                                        position: "absolute",
-                                        top: 720 * 0.52,
-                                }}>
+                                <svg viewBox="0 -200 1280 560"
+                                        style={{
+                                                position: "absolute",
+                                                transform: "translateY(-200px)",
+                                                top: 720 * 0.52,
+                                        }}>
                                         <polygon points={`
-                                                ${1280 * 0.645},0
-                                                ${1280 * 0.655},0
+                                                ${1280 * 0.495},0
+                                                ${1280 * 0.505},0
                                                 ${1280 + 250},360
                                                 ${-250},360
                                         `} fill="#555" />
                                         <polygon points={`
-                                                ${1280 * 0.645},0
-                                                ${1280 * 0.655},0
+                                                ${1280 * 0.495},0
+                                                ${1280 * 0.505},0
                                                 ${1280 + 30},360
                                                 ${-30},360
                                         `} fill="white" />
                                         <polygon points={`
-                                                ${1280 * 0.645},0
-                                                ${1280 * 0.655},0
+                                                ${1280 * 0.495},0
+                                                ${1280 * 0.505},0
                                                 ${1280},360
                                                 ${0},360
                                         `} fill="gray" />
                                         <polygon points={`
-                                                ${1280 *( 0.645 + 0.655) / 2},0
-                                                ${1280 *( 0.645 + 0.655) / 2},0
-                                                ${1280 / 2-20},360
-                                                ${1280 / 2+20},360
+                                                ${1280 * (0.495 + 0.505) / 2},0
+                                                ${1280 * (0.495 + 0.505) / 2},0
+                                                ${1280 / 2 - 20},360
+                                                ${1280 / 2 + 20},360
                                         `} fill="white" />
+
+                                        <g className="bus-izquierda" >
+                                                        <image xlinkHref="/img/svg/login/Recurso 22.svg" style={{
+                                                                transformOrigin: "100% 100%",
+                                                        }}  />
+                                        </g>
                                 </svg>
                         </div>
                         <div className="contenedor-formulario">
                                 <Paper elevation={0} className="d-inline-block pad-20" style={{
-                                        background: "rgba(215, 237, 248, 0.5)",
+                                        background: "rgba(168,218,241, 0.5)",
+                                        transform: "scale(0.9)",
                                         width: 350,
                                         borderRadius: 25,
                                 }} >
@@ -235,6 +244,21 @@ function App() {
                 </AppSimple >
         );
 };
+
+let p = 0;
+
+setInterval(() => {
+        p += 0.01;
+        if (p > 1) {
+                p = 0;
+        }
+        let p2 = p;
+        document.querySelector(".bus-izquierda").setAttribute("background", `rgb(0, 0, 0)`);
+        document.querySelector(".bus-izquierda").setAttribute("transform", `
+                translate(${(1200) * p-650}, ${ (20) * p2})
+                scale(${10 * (1 - p2)})
+        `);
+}, 1000 / 30);
 
 function Formulario() {
         let Error = async () => {
@@ -274,7 +298,7 @@ function Formulario() {
                                         borderRadius: "50%",
                                         filter: sombraForm2,
                                 }} >
-                                        <img src="img/svg/login/Recurso 39.svg"
+                                        <img src="/img/svg/login/Recurso 39.svg"
                                                 style={{
                                                         position: "absolute",
                                                         width: 140,
@@ -284,7 +308,7 @@ function Formulario() {
                                                         transform: "translate(-50%, -50%)",
                                                 }}
                                         />
-                                        <img src="img/svg/login/Recurso 38.svg"
+                                        <img src="/img/svg/login/Recurso 38.svg"
                                                 style={{
                                                         position: "absolute",
                                                         width: 110,
@@ -298,11 +322,11 @@ function Formulario() {
                                 <br />
                                 <br />
 
-                                <TextFieldCustom urlSVG="img/svg/login/Recurso 36.svg" id="usuario" name="usuario" label="Usuario" />
+                                <TextFieldCustom urlSVG="/img/svg/login/Recurso 36.svg" id="usuario" name="usuario" label="Usuario" />
 
                                 <br />
                                 <br />
-                                <TextFieldCustom urlSVG="img/svg/login/Recurso 37.svg" id="contrasena" name="contrasena" label="Contraseña" type="password" />
+                                <TextFieldCustom urlSVG="/img/svg/login/Recurso 37.svg" id="contrasena" name="contrasena" label="Contraseña" type="password" />
 
                                 <br />
                                 <br />
